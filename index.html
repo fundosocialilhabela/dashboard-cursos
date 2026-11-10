@@ -3,116 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Fundo Social de Solidariedade de Ilhabela</title>
+    <title>Dashboard Executivo - Fundo Social de Solidariedade de Ilhabela</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Font: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-header {
+            background: linear-gradient(135deg, #004d28 0%, #006837 50%, #004423 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+        .card-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.09);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Header / Navbar -->
-    <header class="bg-emerald-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4">
-                <!-- Logo Oficial do Fundo Social -->
-                <div class="bg-white p-2.5 rounded-xl shadow-md flex items-center justify-center">
-                    <img src="LOGO FUNDO COLOR.png" alt="Logo Fundo Social de Solidariedade Ilhabela" class="h-12 w-auto object-contain">
+    <!-- Top Header -->
+    <header class="glass-header text-white shadow-lg border-b border-emerald-700/50">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-5">
+                <div class="bg-white p-3 rounded-2xl shadow-md flex items-center justify-center border border-emerald-100/50">
+                    <!-- Certifique-se de que o arquivo se chama logo.png no GitHub -->
+                    <img src="logo.png" alt="Logo Fundo Social de Ilhabela" class="h-14 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/160x60?text=Fundo+Social';">
                 </div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Fundo Social de Solidariedade</h1>
-                    <p class="text-emerald-200 text-xs mt-0.5">Painel Analítico de Cursos, Alunos e Matrículas - SigaCap</p>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-amber-400 text-emerald-950 text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-md">Oficial</span>
+                        <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">Fundo Social de Solidariedade</h1>
+                    </div>
+                    <p class="text-emerald-200/90 text-xs mt-1 font-medium">Prefeitura Municipal de Ilhabela • Sistema SigaCap</p>
                 </div>
             </div>
-            <div class="bg-emerald-800/80 px-4 py-2 rounded-lg text-xs border border-emerald-700 flex items-center gap-2">
-                <i class="fa-solid fa-circle-check text-green-400"></i>
-                <span>Dados Integrados Oficialmente</span>
+
+            <!-- Badge Status -->
+            <div class="bg-emerald-900/60 backdrop-blur-md px-4 py-2.5 rounded-xl text-xs border border-emerald-500/30 flex items-center gap-3">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span class="font-semibold text-emerald-100">Base Integrada SigaCap</span>
             </div>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="max-w-7xl mx-auto px-4 mt-2 flex gap-4 border-b border-emerald-800">
-            <button id="tab-overview-btn" onclick="switchTab('overview')" class="px-5 py-3 font-semibold text-sm border-b-2 border-white text-white flex items-center gap-2">
-                <i class="fa-solid fa-chart-line"></i> Visão Geral
+        <div class="max-w-7xl mx-auto px-6 mt-2 flex gap-2">
+            <button id="tab-overview-btn" onclick="switchTab('overview')" class="px-6 py-3 font-bold text-sm border-b-2 border-amber-400 text-white flex items-center gap-2.5 transition">
+                <i class="fa-solid fa-chart-pie text-amber-400"></i> Visão Geral & KPIs
             </button>
-            <button id="tab-courses-btn" onclick="switchTab('courses')" class="px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200 hover:text-white flex items-center gap-2">
-                <i class="fa-solid fa-graduation-cap"></i> Desempenho por Curso
+            <button id="tab-courses-btn" onclick="switchTab('courses')" class="px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200/80 hover:text-white flex items-center gap-2.5 transition">
+                <i class="fa-solid fa-graduation-cap"></i> Desempenho dos Cursos
             </button>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8 w-full flex-grow">
 
         <!-- TAB 1: VISÃO GERAL -->
-        <div id="tab-overview" class="block">
+        <div id="tab-overview" class="block space-y-8">
+            
             <!-- KPI Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-emerald-600 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Total de Alunos</p>
-                        <h3 class="text-3xl font-bold text-gray-900 mt-1">387</h3>
-                    </div>
-                    <div class="bg-emerald-50 text-emerald-600 p-3 rounded-full text-xl">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-600 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Cursos Ofertados</p>
-                        <h3 class="text-3xl font-bold text-gray-900 mt-1">43</h3>
-                    </div>
-                    <div class="bg-blue-50 text-blue-600 p-3 rounded-full text-xl">
-                        <i class="fa-solid fa-book-open"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- KPI 1 -->
+                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-emerald-500"></div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total de Alunos</p>
+                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">387</h3>
+                            <p class="text-xs font-semibold text-emerald-600 mt-2 flex items-center gap-1">
+                                <i class="fa-solid fa-user-check"></i> Cadastrados no sistema
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-amber-500 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Total de Matrículas</p>
-                        <h3 class="text-3xl font-bold text-gray-900 mt-1">455</h3>
-                    </div>
-                    <div class="bg-amber-50 text-amber-600 p-3 rounded-full text-xl">
-                        <i class="fa-solid fa-id-card"></i>
+                <!-- KPI 2 -->
+                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-sky-500"></div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Cursos Ofertados</p>
+                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">43</h3>
+                            <p class="text-xs font-semibold text-sky-600 mt-2 flex items-center gap-1">
+                                <i class="fa-solid fa-layer-group"></i> Em 4 áreas temáticas
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-600 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Taxa de Conclusão</p>
-                        <h3 class="text-3xl font-bold text-gray-900 mt-1">85.8%</h3>
+                <!-- KPI 3 -->
+                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-amber-500"></div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Matrículas</p>
+                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">455</h3>
+                            <p class="text-xs font-semibold text-amber-600 mt-2 flex items-center gap-1">
+                                <i class="fa-solid fa-file-signature"></i> Inscrições efetuadas
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
                     </div>
-                    <div class="bg-green-50 text-green-600 p-3 rounded-full text-xl">
-                        <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <!-- KPI 4 -->
+                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-2 h-full bg-emerald-600"></div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Taxa Conclusão</p>
+                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">85.8%</h3>
+                            <p class="text-xs font-semibold text-emerald-600 mt-2 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> 242 alunos formados
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Charts Section Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <!-- Chart 1: Categorias de Cursos -->
-                <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-gray-800">Cursos por Categoria</h2>
-                        <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">Distribuição</span>
+            <!-- Row 1 Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Doughnut Chart -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Distribuição por Categoria</h2>
+                            <p class="text-xs text-slate-400">Proporção de oferta de turmas</p>
+                        </div>
+                        <span class="bg-slate-100 text-slate-600 text-xs px-3 py-1 rounded-full font-bold">4 Categorias</span>
                     </div>
                     <div class="relative h-72 flex items-center justify-center">
                         <canvas id="chartCategorias"></canvas>
                     </div>
                 </div>
 
-                <!-- Chart 2: Status Final das Matrículas -->
-                <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-gray-800">Status Final das Matrículas</h2>
-                        <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">Desempenho</span>
+                <!-- Status Bar Chart -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Status Final das Matrículas</h2>
+                            <p class="text-xs text-slate-400">Conclusões vs Desistências</p>
+                        </div>
+                        <span class="bg-emerald-50 text-emerald-700 text-xs px-3 py-1 rounded-full font-bold">Aproveitamento</span>
                     </div>
                     <div class="relative h-72 flex items-center justify-center">
                         <canvas id="chartStatus"></canvas>
@@ -120,88 +179,109 @@
                 </div>
             </div>
 
-            <!-- Second Row Charts -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                <!-- Chart 3: Top Bairros -->
-                <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2 flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-gray-800">Concentração de Alunos por Bairro (Top 8)</h2>
-                        <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">Geografia</span>
+            <!-- Row 2 Charts & Executive Summary -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Bairros Horizontal Bar Chart -->
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 lg:col-span-2 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Alcance Territorial por Bairro (Top 8)</h2>
+                            <p class="text-xs text-slate-400">Bairros com maior número de moradores atendidos</p>
+                        </div>
+                        <span class="bg-sky-50 text-sky-700 text-xs px-3 py-1 rounded-full font-bold">Geografia</span>
                     </div>
                     <div class="relative h-80">
                         <canvas id="chartBairros"></canvas>
                     </div>
                 </div>
 
-                <!-- Quick Summary Panel -->
-                <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col justify-between">
+                <!-- Executive Summary Box -->
+                <div class="bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-2xl p-7 card-shadow flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl"></div>
                     <div>
-                        <h2 class="text-lg font-bold text-gray-800 mb-4">Resumo Executivo</h2>
-                        <ul class="space-y-4 text-sm text-gray-600">
+                        <div class="flex items-center gap-2 text-amber-400 text-xs font-extrabold uppercase tracking-widest mb-3">
+                            <i class="fa-solid fa-compass"></i> Diagnóstico Geral
+                        </div>
+                        <h2 class="text-lg font-bold mb-4">Resumo Executivo</h2>
+                        <ul class="space-y-4 text-xs text-slate-300">
                             <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
-                                <span><strong>Ofícios e Geração de Renda</strong> lideram com ampla margem a oferta de cursos municipais.</span>
+                                <span class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+                                <span><strong>Ofícios e Geração de Renda</strong> correspondem à maior parte das capacitações oferecidas no município.</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
-                                <span><strong>Barra Velha</strong> e <strong>Água Branca</strong> destacam-se como as regiões com maior volume de participação cidadã.</span>
+                                <span class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+                                <span><strong>Barra Velha</strong> lidera isoladamente a demanda por cursos, seguida por Água Branca e Reino.</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
-                                <span>Alta eficácia com índice expressivo de concluintes nas turmas profissionalizantes e oficinas.</span>
+                                <span class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg mt-0.5"><i class="fa-solid fa-check text-xs"></i></span>
+                                <span>Alta taxa de retenção: mais de <strong>85% dos alunos matriculados</strong> concluem com sucesso suas formações.</span>
                             </li>
                         </ul>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-400 text-center">
-                        Fundo Social de Solidariedade • Ilhabela/SP
+                    <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span>Ilhabela / SP</span>
+                        <span>SigaCap 2026</span>
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <!-- TAB 2: CATÁLOGO & DESEMPENHO DOS CURSOS -->
-        <div id="tab-courses" class="hidden">
+        <!-- TAB 2: DESEMPENHO DOS CURSOS -->
+        <div id="tab-courses" class="hidden space-y-8">
 
             <!-- Top Highlights Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white p-6 rounded-xl shadow-sm flex items-center justify-between">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex items-center justify-between card-hover">
                     <div>
-                        <p class="text-emerald-100 text-xs font-semibold uppercase tracking-wider">Mais Concluintes</p>
-                        <h4 class="text-lg font-bold mt-1">Workshop Consertos e Reparos</h4>
-                        <p class="text-2xl font-black mt-2">34 <span class="text-xs font-normal text-emerald-200">alunos formados</span></p>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mais Concluintes</p>
+                        <h4 class="text-base font-bold text-slate-900 mt-1">Consertos e Reparos</h4>
+                        <p class="text-2xl font-extrabold text-emerald-600 mt-1">34 <span class="text-xs font-semibold text-slate-400">formados</span></p>
                     </div>
-                    <i class="fa-solid fa-trophy text-amber-300 text-3xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white p-6 rounded-xl shadow-sm flex items-center justify-between">
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex items-center justify-between card-hover">
                     <div>
-                        <p class="text-blue-100 text-xs font-semibold uppercase tracking-wider">Mais Edições Ofertadas</p>
-                        <h4 class="text-lg font-bold mt-1">Costura Iniciante & Arte Terapia</h4>
-                        <p class="text-2xl font-black mt-2">5 <span class="text-xs font-normal text-blue-200">turmas cada</span></p>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mais Ofertados</p>
+                        <h4 class="text-base font-bold text-slate-900 mt-1">Costura & Arte Terapia</h4>
+                        <p class="text-2xl font-extrabold text-sky-600 mt-1">5 <span class="text-xs font-semibold text-slate-400">turmas cada</span></p>
                     </div>
-                    <i class="fa-solid fa-rotate text-blue-200 text-3xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-purple-600 to-purple-800 text-white p-6 rounded-xl shadow-sm flex items-center justify-between">
+                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex items-center justify-between card-hover">
                     <div>
-                        <p class="text-purple-100 text-xs font-semibold uppercase tracking-wider">100% Conclusão</p>
-                        <h4 class="text-lg font-bold mt-1">Barbearia, Administração & Maquiagem</h4>
-                        <p class="text-2xl font-black mt-2">100% <span class="text-xs font-normal text-purple-200">aproveitamento</span></p>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Máxima Eficiência</p>
+                        <h4 class="text-base font-bold text-slate-900 mt-1">Barbearia & Gestão</h4>
+                        <p class="text-2xl font-extrabold text-purple-600 mt-1">100% <span class="text-xs font-semibold text-slate-400">conclusão</span></p>
                     </div>
-                    <i class="fa-solid fa-award text-purple-200 text-3xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
                 </div>
             </div>
 
-            <!-- Table Container -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
-                <!-- Search & Filter Controls -->
+            <!-- Table Card -->
+            <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
+                <!-- Table Header Controls -->
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-emerald-600"></i> Lista de Cursos & Desempenho
-                    </h2>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-emerald-600"></i> Catálogo Completo de Cursos
+                        </h2>
+                        <p class="text-xs text-slate-400">Desempenho detalhado por modalidade</p>
+                    </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <input type="text" id="searchInput" onkeyup="filterCourses()" placeholder="Buscar curso..." class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-64">
-                        <select id="categoryFilter" onchange="filterCourses()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <div class="relative w-full sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                            <input type="text" id="searchInput" onkeyup="filterCourses()" placeholder="Buscar curso..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full">
+                        </div>
+                        <select id="categoryFilter" onchange="filterCourses()" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             <option value="">Todas as Categorias</option>
                             <option value="Ofícios e Geração de Renda">Ofícios e Geração de Renda</option>
                             <option value="Beleza e Estética">Beleza e Estética</option>
@@ -211,32 +291,33 @@
                     </div>
                 </div>
 
-                <!-- Table -->
+                <!-- Table Content -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                <th class="py-3.5 px-4">Nome do Curso</th>
+                            <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3.5 px-4 rounded-l-xl">Nome do Curso</th>
                                 <th class="py-3.5 px-4">Categoria</th>
-                                <th class="py-3.5 px-4 text-center">Edições / Turmas</th>
-                                <th class="py-3.5 px-4 text-center">Total Inscritos</th>
-                                <th class="py-3.5 px-4 text-center">Concluintes</th>
-                                <th class="py-3.5 px-4 text-center">Taxa de Conclusão</th>
+                                <th class="py-3.5 px-4 text-center">Turmas</th>
+                                <th class="py-3.5 px-4 text-center">Inscritos</th>
+                                <th class="py-3.5 px-4 text-center">Formados</th>
+                                <th class="py-3.5 px-4 text-center rounded-r-xl">Aproveitamento</th>
                             </tr>
                         </thead>
-                        <tbody id="coursesTableBody" class="divide-y divide-gray-100 text-sm">
-                            <!-- Populated dynamically via Javascript -->
+                        <tbody id="coursesTableBody" class="divide-y divide-slate-100 text-xs">
+                            <!-- Populated dynamically -->
                         </tbody>
                     </table>
                 </div>
             </div>
+
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-12 py-6 text-center text-sm text-gray-500">
-        <p>Desenvolvido exclusivamente para a gestão e análise de dados sociais de Ilhabela.</p>
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+        <p>Fundo Social de Solidariedade de Ilhabela • Painel Interativo de Gestão</p>
     </footer>
 
     <!-- JavaScript -->
@@ -250,13 +331,13 @@
             if(tab === 'overview') {
                 overviewTab.classList.remove('hidden');
                 coursesTab.classList.add('hidden');
-                btnOverview.className = "px-5 py-3 font-semibold text-sm border-b-2 border-white text-white flex items-center gap-2";
-                btnCourses.className = "px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200 hover:text-white flex items-center gap-2";
+                btnOverview.className = "px-6 py-3 font-bold text-sm border-b-2 border-amber-400 text-white flex items-center gap-2.5 transition";
+                btnCourses.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200/80 hover:text-white flex items-center gap-2.5 transition";
             } else {
                 overviewTab.classList.add('hidden');
                 coursesTab.classList.remove('hidden');
-                btnCourses.className = "px-5 py-3 font-semibold text-sm border-b-2 border-white text-white flex items-center gap-2";
-                btnOverview.className = "px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200 hover:text-white flex items-center gap-2";
+                btnCourses.className = "px-6 py-3 font-bold text-sm border-b-2 border-amber-400 text-white flex items-center gap-2.5 transition";
+                btnOverview.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200/80 hover:text-white flex items-center gap-2.5 transition";
             }
         }
 
@@ -270,4 +351,131 @@
             {"NOME_CURSO": "OFICINA DE DECOUPAGEM", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 2, "CONCLUINTES": 15, "TOTAL_INSCRITOS": 17, "TAXA_CONCLUSAO": 88.2},
             {"NOME_CURSO": "OFICINA DE NATAL", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 14, "TOTAL_INSCRITOS": 15, "TAXA_CONCLUSAO": 93.3},
             {"NOME_CURSO": "MODELAGEM", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 2, "CONCLUINTES": 11, "TOTAL_INSCRITOS": 20, "TAXA_CONCLUSAO": 55.0},
-            {"NOME_CURSO": "WORKSHOP PELE PROFISSIONAL", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 10, "TOTAL_INSCRITOS":
+            {"NOME_CURSO": "WORKSHOP PELE PROFISSIONAL", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 10, "TOTAL_INSCRITOS": 11, "TAXA_CONCLUSAO": 90.9},
+            {"NOME_CURSO": "BARBEARIA", "CATEGORIA": "Beleza e Estética", "EDICOES": 1, "CONCLUINTES": 10, "TOTAL_INSCRITOS": 10, "TAXA_CONCLUSAO": 100.0},
+            {"NOME_CURSO": "ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS", "CATEGORIA": "Gestão e Empreendedorismo", "EDICOES": 1, "CONCLUINTES": 8, "TOTAL_INSCRITOS": 8, "TAXA_CONCLUSAO": 100.0},
+            {"NOME_CURSO": "OFICINA DE FELTRO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 7, "TOTAL_INSCRITOS": 11, "TAXA_CONCLUSAO": 63.6},
+            {"NOME_CURSO": "WORKSHOP MAQUIAGEM DO DIA A DIA", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 7, "TOTAL_INSCRITOS": 11, "TAXA_CONCLUSAO": 63.6},
+            {"NOME_CURSO": "MAQUIAGEM", "CATEGORIA": "Beleza e Estética", "EDICOES": 1, "CONCLUINTES": 6, "TOTAL_INSCRITOS": 6, "TAXA_CONCLUSAO": 100.0},
+            {"NOME_CURSO": "PINTURA EM TECIDO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 5, "TOTAL_INSCRITOS": 12, "TAXA_CONCLUSAO": 41.7},
+            {"NOME_CURSO": "MANICURE & PEDICURE", "CATEGORIA": "Beleza e Estética", "EDICOES": 3, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 36, "TAXA_CONCLUSAO": 0.0},
+            {"NOME_CURSO": "CROCHÊ AVANÇADO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 13, "TAXA_CONCLUSAO": 0.0},
+            {"NOME_CURSO": "CROCHÊ", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 12, "TAXA_CONCLUSAO": 0.0},
+            {"NOME_CURSO": "MOSAICO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 2, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 18, "TAXA_CONCLUSAO": 0.0},
+            {"NOME_CURSO": "ARTE TERAPIA", "CATEGORIA": "Bem-Estar", "EDICOES": 5, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 73, "TAXA_CONCLUSAO": 0.0}
+        ];
+
+        function renderTable(data) {
+            const tbody = document.getElementById('coursesTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(item => {
+                const badgeStyle = item.TAXA_CONCLUSAO >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                  item.TAXA_CONCLUSAO >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
+
+                const row = `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-3 px-4 font-bold text-slate-800">${item.NOME_CURSO}</td>
+                        <td class="py-3 px-4 text-slate-500 font-medium">${item.CATEGORIA}</td>
+                        <td class="py-3 px-4 text-center font-bold text-slate-700">${item.EDICOES}</td>
+                        <td class="py-3 px-4 text-center text-slate-600">${item.TOTAL_INSCRITOS}</td>
+                        <td class="py-3 px-4 text-center font-bold text-emerald-600">${item.CONCLUINTES}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${badgeStyle}">
+                                ${item.TAXA_CONCLUSAO}%
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function filterCourses() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const categoryVal = document.getElementById('categoryFilter').value;
+
+            const filtered = listaCursos.filter(item => {
+                const matchesSearch = item.NOME_CURSO.toLowerCase().includes(searchVal);
+                const matchesCategory = categoryVal === '' || item.CATEGORIA === categoryVal;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderTable(filtered);
+        }
+
+        renderTable(listaCursos);
+
+        // Render High Resolution Charts with Chart.js
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+        // Chart 1: Categorias
+        new Chart(document.getElementById('chartCategorias').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Ofícios e Geração de Renda', 'Beleza e Estética', 'Bem-Estar', 'Gestão'],
+                datasets: [{
+                    data: [30, 7, 5, 1],
+                    backgroundColor: ['#006837', '#0071CE', '#FDB913', '#8b5cf6'],
+                    borderWidth: 3,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11, weight: '600' } } }
+                }
+            }
+        });
+
+        // Chart 2: Status
+        new Chart(document.getElementById('chartStatus').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Concluiu', 'Desistiu', 'Reprovou'],
+                datasets: [{
+                    data: [242, 39, 1],
+                    backgroundColor: ['#10b981', '#f43f5e', '#64748b'],
+                    borderRadius: 8,
+                    barThickness: 36
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Chart 3: Bairros
+        new Chart(document.getElementById('chartBairros').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Barra Velha', 'Água Branca', 'Reino', 'Itaquanduba', 'Bexiga', 'Perequê', 'Zabumba', 'Armação'],
+                datasets: [{
+                    data: [110, 42, 33, 27, 23, 26, 13, 9],
+                    backgroundColor: '#006837',
+                    borderRadius: 6,
+                    barThickness: 18
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
