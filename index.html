@@ -18,22 +18,26 @@
 <body class="bg-gray-50 text-gray-800">
 
     <!-- Header / Navbar -->
-    <header class="bg-emerald-800 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3">
-                    <i class="fa-solid fa-chart-pie text-emerald-300"></i> Fundo Social de Solidariedade
-                </h1>
-                <p class="text-emerald-200 text-sm mt-1">Painel Analítico de Cursos, Alunos e Matrículas - SigaCap</p>
+    <header class="bg-emerald-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <!-- Logo Oficial do Fundo Social -->
+                <div class="bg-white p-2.5 rounded-xl shadow-md flex items-center justify-center">
+                    <img src="LOGO FUNDO COLOR.png" alt="Logo Fundo Social de Solidariedade Ilhabela" class="h-12 w-auto object-contain">
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Fundo Social de Solidariedade</h1>
+                    <p class="text-emerald-200 text-xs mt-0.5">Painel Analítico de Cursos, Alunos e Matrículas - SigaCap</p>
+                </div>
             </div>
-            <div class="mt-4 md:mt-0 bg-emerald-700 px-4 py-2 rounded-lg text-sm border border-emerald-600 flex items-center gap-2">
+            <div class="bg-emerald-800/80 px-4 py-2 rounded-lg text-xs border border-emerald-700 flex items-center gap-2">
                 <i class="fa-solid fa-circle-check text-green-400"></i>
                 <span>Dados Integrados Oficialmente</span>
             </div>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="max-w-7xl mx-auto px-4 mt-6 flex gap-4 border-b border-emerald-700">
+        <div class="max-w-7xl mx-auto px-4 mt-2 flex gap-4 border-b border-emerald-800">
             <button id="tab-overview-btn" onclick="switchTab('overview')" class="px-5 py-3 font-semibold text-sm border-b-2 border-white text-white flex items-center gap-2">
                 <i class="fa-solid fa-chart-line"></i> Visão Geral
             </button>
@@ -237,7 +241,6 @@
 
     <!-- JavaScript -->
     <script>
-        // Tab Switcher Function
         function switchTab(tab) {
             const overviewTab = document.getElementById('tab-overview');
             const coursesTab = document.getElementById('tab-courses');
@@ -257,7 +260,6 @@
             }
         }
 
-        // Detailed Course Performance Dataset (Extracted directly from SigaCap Excel)
         const listaCursos = [
             {"NOME_CURSO": "WORKSHOP - CONSERTOS E REPAROS", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 4, "CONCLUINTES": 34, "TOTAL_INSCRITOS": 34, "TAXA_CONCLUSAO": 100.0},
             {"NOME_CURSO": "COSTURA INICIANTE", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 5, "CONCLUINTES": 30, "TOTAL_INSCRITOS": 49, "TAXA_CONCLUSAO": 61.2},
@@ -268,130 +270,4 @@
             {"NOME_CURSO": "OFICINA DE DECOUPAGEM", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 2, "CONCLUINTES": 15, "TOTAL_INSCRITOS": 17, "TAXA_CONCLUSAO": 88.2},
             {"NOME_CURSO": "OFICINA DE NATAL", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 14, "TOTAL_INSCRITOS": 15, "TAXA_CONCLUSAO": 93.3},
             {"NOME_CURSO": "MODELAGEM", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 2, "CONCLUINTES": 11, "TOTAL_INSCRITOS": 20, "TAXA_CONCLUSAO": 55.0},
-            {"NOME_CURSO": "WORKSHOP PELE PROFISSIONAL", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 10, "TOTAL_INSCRITOS": 11, "TAXA_CONCLUSAO": 90.9},
-            {"NOME_CURSO": "BARBEARIA", "CATEGORIA": "Beleza e Estética", "EDICOES": 1, "CONCLUINTES": 10, "TOTAL_INSCRITOS": 10, "TAXA_CONCLUSAO": 100.0},
-            {"NOME_CURSO": "ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS", "CATEGORIA": "Gestão e Empreendedorismo", "EDICOES": 1, "CONCLUINTES": 8, "TOTAL_INSCRITOS": 8, "TAXA_CONCLUSAO": 100.0},
-            {"NOME_CURSO": "OFICINA DE FELTRO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 7, "TOTAL_INSCRITOS": 11, "TAXA_CONCLUSAO": 63.6},
-            {"NOME_CURSO": "WORKSHOP MAQUIAGEM DO DIA A DIA", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 7, "TOTAL_INSCRITOS": 11, "TAXA_CONCLUSAO": 63.6},
-            {"NOME_CURSO": "MAQUIAGEM", "CATEGORIA": "Beleza e Estética", "EDICOES": 1, "CONCLUINTES": 6, "TOTAL_INSCRITOS": 6, "TAXA_CONCLUSAO": 100.0},
-            {"NOME_CURSO": "PINTURA EM TECIDO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 5, "TOTAL_INSCRITOS": 12, "TAXA_CONCLUSAO": 41.7},
-            {"NOME_CURSO": "MANICURE & PEDICURE", "CATEGORIA": "Beleza e Estética", "EDICOES": 3, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 36, "TAXA_CONCLUSAO": 0.0},
-            {"NOME_CURSO": "CROCHÊ AVANÇADO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 13, "TAXA_CONCLUSAO": 0.0},
-            {"NOME_CURSO": "CROCHÊ", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 12, "TAXA_CONCLUSAO": 0.0},
-            {"NOME_CURSO": "MOSAICO", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 2, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 18, "TAXA_CONCLUSAO": 0.0},
-            {"NOME_CURSO": "ARTE TERAPIA", "CATEGORIA": "Bem-Estar", "EDICOES": 5, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 73, "TAXA_CONCLUSAO": 0.0}
-        ];
-
-        function renderTable(data) {
-            const tbody = document.getElementById('coursesTableBody');
-            tbody.innerHTML = '';
-
-            data.forEach(item => {
-                const badgeColor = item.TAXA_CONCLUSAO >= 80 ? 'bg-green-100 text-green-800' :
-                                 item.TAXA_CONCLUSAO >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600';
-
-                const row = `
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="py-3 px-4 font-semibold text-gray-900">${item.NOME_CURSO}</td>
-                        <td class="py-3 px-4 text-gray-600">${item.CATEGORIA}</td>
-                        <td class="py-3 px-4 text-center font-bold text-gray-700">${item.EDICOES}</td>
-                        <td class="py-3 px-4 text-center text-gray-600">${item.TOTAL_INSCRITOS}</td>
-                        <td class="py-3 px-4 text-center font-bold text-emerald-600">${item.CONCLUINTES}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${badgeColor}">
-                                ${item.TAXA_CONCLUSAO}%
-                            </span>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-
-        function filterCourses() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const categoryVal = document.getElementById('categoryFilter').value;
-
-            const filtered = listaCursos.filter(item => {
-                const matchesSearch = item.NOME_CURSO.toLowerCase().includes(searchVal);
-                const matchesCategory = categoryVal === '' || item.CATEGORIA === categoryVal;
-                return matchesSearch && matchesCategory;
-            });
-
-            renderTable(filtered);
-        }
-
-        // Initialize table
-        renderTable(listaCursos);
-
-        // Chart 1: Categorias
-        const ctxCat = document.getElementById('chartCategorias').getContext('2d');
-        new Chart(ctxCat, {
-            type: 'doughnut',
-            data: {
-                labels: ['Ofícios e Geração de Renda', 'Beleza e Estética', 'Bem-Estar', 'Gestão e Empreendedorismo'],
-                datasets: [{
-                    data: [30, 7, 5, 1],
-                    backgroundColor: ['#059669', '#3b82f6', '#f59e0b', '#8b5cf6'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } } }
-            }
-        });
-
-        // Chart 2: Status
-        const ctxStatus = document.getElementById('chartStatus').getContext('2d');
-        new Chart(ctxStatus, {
-            type: 'bar',
-            data: {
-                labels: ['Concluiu', 'Desistiu', 'Reprovou'],
-                datasets: [{
-                    label: 'Matrículas',
-                    data: [242, 39, 1],
-                    backgroundColor: ['#10b981', '#ef4444', '#6b7280'],
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-
-        // Chart 3: Bairros
-        const ctxBairros = document.getElementById('chartBairros').getContext('2d');
-        new Chart(ctxBairros, {
-            type: 'bar',
-            data: {
-                labels: ['Barra Velha', 'Água Branca', 'Reino', 'Itaquanduba', 'Bexiga', 'Perequê', 'Zabumba', 'Armação'],
-                datasets: [{
-                    label: 'Alunos por Bairro',
-                    data: [110, 42, 33, 27, 23, 26, 13, 9],
-                    backgroundColor: '#047857',
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { beginAtZero: true, grid: { borderDash: [4, 4] } },
-                    y: { grid: { display: false } }
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+            {"NOME_CURSO": "WORKSHOP PELE PROFISSIONAL", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 1, "CONCLUINTES": 10, "TOTAL_INSCRITOS":
