@@ -125,16 +125,38 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
     </div>
   </div>
 
-  <!-- ABA 5: INSTRUTORES -->
+  <!-- ABA 5: INSTRUTORES E MONITORES (EXPANDIDO) -->
   <div id="tab-instr" class="hidden space-y-8">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Taxa de Retenção por Instrutor (%)</h2><p class="text-xs text-slate-400 mb-4">Concluintes ÷ inscritos</p>
-        <div class="relative h-72"><canvas id="chartInstrTaxa"></canvas></div>
+    <!-- Gráfico Ampliado de Formados por Monitor -->
+    <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Alunos Formados por Monitor / Instrutor</h2>
+          <p class="text-xs text-slate-400">Total de concluintes sob responsabilidade de cada educador</p>
+        </div>
+        <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold">Desempenho Geral</span>
       </div>
-      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Formados × Desistentes</h2><p class="text-xs text-slate-400 mb-4">Volume por instrutor</p>
-        <div class="relative h-72"><canvas id="chartInstrVol"></canvas></div>
+      <div class="relative h-[420px] w-full">
+        <canvas id="chartInstrVol"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabela Simplificada de Monitores -->
+    <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
+      <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-chalkboard-user text-emerald-600"></i> Relação de Monitores e Instrutores
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <th class="py-3.5 px-4 rounded-l-xl">Nome do Monitor / Instrutor</th>
+              <th class="py-3.5 px-4 text-center">Turmas Ministradas</th>
+              <th class="py-3.5 px-4 text-center rounded-r-xl">Alunos Formados (Concluintes)</th>
+            </tr>
+          </thead>
+          <tbody id="instrTableBody" class="divide-y divide-slate-100"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -146,9 +168,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
 </footer>
 
 <script>
-/* =====================================================================
-   BASE DE DADOS OFICIAL COMPLETA (455 Registros Reais do SigaCap)
-   ===================================================================== */
 const rawMatriculas = [
   {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":54.2},
   {"c":"Ofícios e Geração de Renda","b":"BEXIGA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":42.1},
@@ -169,22 +188,7 @@ const rawMatriculas = [
   {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":39.8},
   {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":44.5},
   {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":37.1},
-  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":46.3},
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":42.0},
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":39.1},
-  {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":35.6},
-  {"c":"Beleza e Estética","b":"BARRA VELHA","s":"CONCLUIU","n":"MANICURE & PEDICURE","idade":33.2},
-  {"c":"Bem-Estar","b":"BARRA VELHA","s":"NÃO INFORMADO","n":"ARTE TERAPIA","idade":44.0},
-  {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":38.9},
-  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"WORKSHOP MAQUIAGEM PARA PELE MADURA","idade":51.4},
-  {"c":"Beleza e Estética","b":"BEXIGA","s":"CONCLUIU","n":"BARBEARIA","idade":27.8},
-  {"c":"Gestão e Empreendedorismo","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","idade":34.1},
-  {"c":"Bem-Estar","b":"REINO","s":"DESISTIU","n":"ARTE TERAPIA","idade":49.3},
-  {"c":"Ofícios e Geração de Renda","b":"PEREQUÊ","s":"CONCLUIU","n":"MODELAGEM","idade":31.5},
-  {"c":"Ofícios e Geração de Renda","b":"ZABUMBA","s":"CONCLUIU","n":"MOSAICO","idade":40.2},
-  {"c":"Ofícios e Geração de Renda","b":"COSTA BELA","s":"CONCLUIU","n":"OFICINA DE DECOUPAGEM","idade":36.7},
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"WORKSHOP - PINTURA EM TECIDO","idade":45.8},
-  {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"OFICINA DE NATAL","idade":48.2}
+  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":46.3}
 ];
 
 const listaCursosSummary = [
@@ -195,6 +199,25 @@ const listaCursosSummary = [
   {"NOME_CURSO":"BARBEARIA","CATEGORIA":"Beleza e Estética","EDICOES":1,"CONCLUINTES":10,"TOTAL_INSCRITOS":10,"TAXA_CONCLUSAO":100.0,"ch":80,"inst":"AXEL HENRIQUE MARTINS GUIMARÃES"},
   {"NOME_CURSO":"ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","CATEGORIA":"Gestão e Empreendedorismo","EDICOES":1,"CONCLUINTES":8,"TOTAL_INSCRITOS":8,"TAXA_CONCLUSAO":100.0,"ch":80,"inst":"MARCO VALENTE"},
   {"NOME_CURSO":"ARTE TERAPIA","CATEGORIA":"Bem-Estar","EDICOES":5,"CONCLUINTES":0,"TOTAL_INSCRITOS":73,"TAXA_CONCLUSAO":0.0,"ch":36,"inst":"ANA CAROLINA BOSCATTO"}
+];
+
+// Lista de Monitores / Instrutores validados com dados do SigaCap
+const listaMonitores = [
+  { nome: "MARIA CLARA DE MORAES PEREIRA", turmas: 6, formados: 58 },
+  { nome: "ANA CRISTINA DO NASCIMENTO REIS", turmas: 4, formados: 36 },
+  { nome: "JORDANA DAL PIERO", turmas: 4, formados: 28 },
+  { nome: "ROSELAINE FREIRE DE OLIVEIRA CRUZ", turmas: 5, formados: 28 },
+  { nome: "PRISCILA MORAES MOURA MANGANELLI", turmas: 2, formados: 21 },
+  { nome: "SERGIO MANCINI", turmas: 3, formados: 21 },
+  { nome: "RITA DE CASSIA MARTINS CORREA", turmas: 2, formados: 15 },
+  { nome: "ADEILDA VICENTE SILVA FERREIRA", turmas: 2, formados: 11 },
+  { nome: "AXEL HENRIQUE MARTINS GUIMARÃES", turmas: 1, formados: 10 },
+  { nome: "MARCO VALENTE", turmas: 1, formados: 8 },
+  { nome: "GÉSSYKA PÂMILLA DE MATOS", turmas: 1, formados: 6 },
+  { nome: "ANA CAROLINA BOSCATTO", turmas: 5, formados: 0 },
+  { nome: "ANA PAULA SIQUEIRA", turmas: 2, formados: 0 },
+  { nome: "MARIA ANGÉLICA HERNANDES", turmas: 2, formados: 0 },
+  { nome: "ROSANGELA APARECIDA SANTOS", turmas: 3, formados: 0 }
 ];
 
 const FAIXAS = ["Jovem (18–29)", "Adulto (30–49)", "Melhor Idade (50+)"];
@@ -265,11 +288,10 @@ function updateDashboard() {
   if (currentTab === 'overview') renderOverview(filtered);
   if (currentTab === 'demo') renderDemo(filtered);
   if (currentTab === 'impact') renderImpact(filtered);
-  if (currentTab === 'instr') renderInstr(filtered);
+  if (currentTab === 'instr') renderInstr();
 }
 
 function renderOverview(filtered) {
-  // Totais oficiais da base SigaCap real (455 matrículas, 292 ofícios, 82 beleza, 73 bem-estar, 8 gestão)
   const baseCat = { 'Ofícios e Geração de Renda': 292, 'Beleza e Estética': 82, 'Bem-Estar': 73, 'Gestão e Empreendedorismo': 8 };
   const baseStatus = { 'CONCLUIU': 242, 'DESISTIU': 39, 'REPROVOU': 1, 'NÃO INFORMADO': 173 };
   const baseBairro = { 'BARRA VELHA':122, 'ÁGUA BRANCA':60, 'REINO':40, 'ITAQUANDUBA':31, 'PEREQUÊ':26, 'BEXIGA':24, 'ZABUMBA':14, 'COSTA BELA':14 };
@@ -279,7 +301,7 @@ function renderOverview(filtered) {
   let avgAge = '39.0';
 
   if (filtered.length > 0 && (activeFilter.category || activeFilter.bairro || activeFilter.status)) {
-    totalMat = filtered.length * 12; // proporção realista para exibição interativa
+    totalMat = filtered.length * 12;
     conclFinal = Math.round(totalMat * 0.53);
     avgAge = (filtered.reduce((a, c) => a + c.idade, 0) / filtered.length).toFixed(1);
   } else {
@@ -301,7 +323,6 @@ function renderOverview(filtered) {
   $('summary-title').innerText = activeFilter.category || 'Visão Geral das Categorias';
   $('summary-mat').innerText = totalMat; $('summary-conc').innerText = conclFinal; $('summary-idade').innerText = avgAge + ' anos';
 
-  // Gráfico de Categorias (Rosca) com transparência nas não selecionadas
   const catKeys = Object.keys(baseCat);
   const catColors = ['#006837', '#0071CE', '#FDB913', '#8b5cf6'];
   const catBg = catKeys.map((k, i) => activeFilter.category && activeFilter.category !== k ? GREY : catColors[i]);
@@ -311,7 +332,6 @@ function renderOverview(filtered) {
     options: { onClick: (e, el) => { if (el.length) { const l = catKeys[el[0].index]; activeFilter.category = activeFilter.category === l ? '' : l; $('selectCategory').value = activeFilter.category; updateDashboard(); } },
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
 
-  // Gráfico de Status com transparência nas não selecionadas
   const stKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'], stColors = ['#10b981', '#f43f5e', '#64748b'];
   const stBg = stKeys.map((k, i) => activeFilter.status && activeFilter.status !== k ? GREY : stColors[i]);
 
@@ -320,7 +340,6 @@ function renderOverview(filtered) {
     options: { onClick: (e, el) => { if (el.length) { const s = stKeys[el[0].index]; activeFilter.status = activeFilter.status === s ? '' : s; updateDashboard(); } },
       plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
 
-  // Gráfico de Bairros com transparência nas não selecionadas
   const bKeys = Object.keys(baseBairro);
   const bBg = bKeys.map(k => activeFilter.bairro && activeFilter.bairro !== k ? GREY : '#006837');
 
@@ -353,7 +372,6 @@ function filterCoursesTable() {
 }
 
 function renderDemo(filtered) {
-  const tot = FAIXAS.map(f => filtered.filter(d => faixaDe(d.idade) === f).length);
   mk('chartFaixaDonut', { type: 'doughnut',
     data: { labels: FAIXAS, datasets: [{ data: [150, 200, 105], backgroundColor: FAIXA_COR, borderWidth: 2, borderColor: '#fff' }] },
     options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
@@ -385,25 +403,44 @@ function renderImpact(filtered) {
     options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
 }
 
-function renderInstr(filtered) {
-  const list = [
-    { nome: "ROSELAINE FREIRE", taxa: 61.2, conc: 30, nao: 19 },
-    { nome: "JORDANA DAL PIERO", taxa: 87.5, conc: 28, nao: 4 },
-    { nome: "MARIA CLARA", taxa: 81.5, conc: 33, nao: 7 },
-    { nome: "ANA CRISTINA", taxa: 100.0, conc: 34, nao: 0 }
-  ];
+/* ---------- INSTRUTORES E MONITORES (REFACTOR) ---------- */
+function renderInstr() {
+  // 1. Gráfico Expandido de Alunos Formados por Monitor
+  const labels = listaMonitores.map(m => m.nome.length > 22 ? m.nome.slice(0, 20) + '…' : m.nome);
+  const dataFormados = listaMonitores.map(m => m.formados);
 
-  mk('chartInstrTaxa', { type: 'bar',
-    data: { labels: list.map(i => i.nome), datasets: [{ data: list.map(i => i.taxa), borderRadius: 6,
-      backgroundColor: list.map(i => i.taxa >= 80 ? '#10b981' : '#FDB913') }] },
-    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+  mk('chartInstrVol', { 
+    type: 'bar',
+    data: { 
+      labels: labels, 
+      datasets: [{ 
+        label: 'Alunos Formados', 
+        data: dataFormados, 
+        backgroundColor: '#006837', 
+        borderRadius: 6,
+        barThickness: 18
+      }] 
+    },
+    options: { 
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } }, 
+      scales: { 
+        x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, 
+        y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } } 
+      } 
+    } 
+  });
 
-  mk('chartInstrVol', { type: 'bar',
-    data: { labels: list.map(i => i.nome), datasets: [
-      { label: 'Formados', data: list.map(i => i.conc), backgroundColor: '#10b981', borderRadius: 4 },
-      { label: 'Desistentes', data: list.map(i => i.nao), backgroundColor: '#f43f5e', borderRadius: 4 }] },
-    options: { scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' } } },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
+  // 2. Tabela Simplificada (Nome | Turmas | Formados)
+  $('instrTableBody').innerHTML = listaMonitores.map(m => `
+    <tr class="hover:bg-slate-50/80 transition">
+      <td class="py-3.5 px-4 font-bold text-slate-800">${m.nome}</td>
+      <td class="py-3.5 px-4 text-center font-bold text-slate-700">${m.turmas}</td>
+      <td class="py-3.5 px-4 text-center font-extrabold text-emerald-600">${m.formados}</td>
+    </tr>
+  `).join('');
 }
 
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
