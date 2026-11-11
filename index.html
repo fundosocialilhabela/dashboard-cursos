@@ -1,617 +1,480 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Executivo - Fundo Social de Solidariedade de Ilhabela</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font: Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass-header { background: linear-gradient(135deg, #004d28 0%, #006837 50%, #004423 100%); }
-        .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02); }
-        .card-hover { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.09); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Executivo - Fundo Social de Solidariedade de Ilhabela</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Plus Jakarta Sans',sans-serif}
+.glass-header{background:linear-gradient(135deg,#004d28 0%,#006837 50%,#004423 100%)}
+.card-shadow{box-shadow:0 4px 20px -2px rgba(0,0,0,.05),0 2px 6px -1px rgba(0,0,0,.02)}
+.card-hover{transition:all .25s cubic-bezier(.4,0,.2,1)}
+.card-hover:hover{transform:translateY(-3px);box-shadow:0 12px 28px -4px rgba(0,0,0,.09)}
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- Top Header -->
-    <header class="glass-header text-white shadow-lg border-b border-emerald-700/50">
-        <div class="max-w-[96%] mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            
-            <!-- Logo & Title -->
-            <div class="flex items-center gap-5">
-                <div class="bg-white p-3 rounded-2xl shadow-md flex items-center justify-center border border-emerald-100/50">
-                    <img src="LOGO%20FUNDO%20COLOR.png" alt="Logo Fundo Social de Ilhabela" class="h-14 w-auto object-contain" onerror="this.onerror=null; this.src='logo.png';">
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="bg-amber-400 text-emerald-950 text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-md">BI Avançado</span>
-                        <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">Fundo Social de Solidariedade</h1>
-                    </div>
-                    <p class="text-emerald-200/90 text-xs mt-1 font-medium">Prefeitura Municipal de Ilhabela • Painel Interativo SigaCap</p>
-                </div>
-            </div>
-
-            <!-- Active Filter Status & Reset -->
-            <div id="filter-status-box" class="hidden bg-amber-400 text-emerald-950 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-3 shadow-md">
-                <span id="filter-status-text"><i class="fa-solid fa-filter"></i> Filtro ativo</span>
-                <button onclick="resetFilters()" class="bg-emerald-950 text-white px-3 py-1 rounded-lg text-[11px] hover:bg-emerald-900 transition">
-                    <i class="fa-solid fa-xmark"></i> Limpar Filtros
-                </button>
-            </div>
+<header class="glass-header text-white shadow-lg border-b border-emerald-700/50">
+  <div class="max-w-[96%] mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="flex items-center gap-5">
+      <div class="bg-white p-3 rounded-2xl shadow-md flex items-center justify-center border border-emerald-100/50">
+        <img src="LOGO%20FUNDO%20COLOR.png" alt="Logo Fundo Social de Ilhabela" class="h-14 w-auto object-contain" onerror="this.onerror=null;this.src='logo.png';">
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="bg-amber-400 text-emerald-950 text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-md">BI Avançado</span>
+          <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">Fundo Social de Solidariedade</h1>
         </div>
+        <p class="text-emerald-200/90 text-xs mt-1 font-medium">Prefeitura Municipal de Ilhabela • Painel Interativo SigaCap</p>
+      </div>
+    </div>
+    <div id="filter-status-box" class="hidden bg-amber-400 text-emerald-950 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-3 shadow-md">
+      <span id="filter-status-text"></span>
+      <button onclick="resetFilters()" class="bg-emerald-950 text-white px-3 py-1 rounded-lg text-[11px] hover:bg-emerald-900 transition"><i class="fa-solid fa-xmark"></i> Limpar Filtros</button>
+    </div>
+  </div>
+  <div class="max-w-[96%] mx-auto px-4 mt-2 flex gap-2 overflow-x-auto" id="tab-nav"></div>
+</header>
 
-        <!-- Navigation Tabs -->
-        <div class="max-w-[96%] mx-auto px-4 mt-2 flex gap-2">
-            <button id="tab-overview-btn" onclick="switchTab('overview')" class="px-6 py-3 font-bold text-sm border-b-2 border-amber-400 text-white flex items-center gap-2.5 transition">
-                <i class="fa-solid fa-chart-pie text-amber-400"></i> Visão Geral & KPIs
-            </button>
-            <button id="tab-courses-btn" onclick="switchTab('courses')" class="px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200/80 hover:text-white flex items-center gap-2.5 transition">
-                <i class="fa-solid fa-graduation-cap"></i> Desempenho dos Cursos
-            </button>
+<main class="max-w-[96%] mx-auto px-4 py-8 w-full flex-grow space-y-8">
+
+  <!-- Barra de filtros global (vale para todas as abas) -->
+  <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
+      <i class="fa-solid fa-sliders text-emerald-600"></i> Clique nos gráficos ou use os filtros para microanálises cruzadas:
+    </div>
+    <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+      <select id="selectCategory" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500"></select>
+      <select id="selectBairro" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500"></select>
+      <button onclick="resetFilters()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition"><i class="fa-solid fa-arrow-rotate-left"></i> Resetar</button>
+    </div>
+  </div>
+
+  <!-- ABA 1: VISÃO GERAL -->
+  <div id="tab-overview" class="space-y-8">
+    <div id="kpi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Categorias</h2><p class="text-xs text-slate-400">Clique na fatia para filtrar</p></div>
+        <div class="relative h-64"><canvas id="chartCategorias"></canvas></div>
+        <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50 p-3.5 rounded-xl text-xs space-y-2">
+          <p class="font-bold text-slate-700"><i class="fa-solid fa-circle-info text-emerald-600"></i> <span id="summary-title">Visão Geral das Categorias</span></p>
+          <div class="flex justify-between text-slate-600"><span>Matrículas:</span><strong id="summary-mat"></strong></div>
+          <div class="flex justify-between text-slate-600"><span>Concluintes:</span><strong id="summary-conc" class="text-emerald-600"></strong></div>
+          <div class="flex justify-between text-slate-600"><span>Média de Idade:</span><strong id="summary-idade" class="text-purple-600"></strong></div>
         </div>
-    </header>
+      </div>
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 lg:col-span-2">
+        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Status das Matrículas</h2><p class="text-xs text-slate-400">Clique na barra para filtrar</p></div>
+        <div class="relative h-80"><canvas id="chartStatus"></canvas></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+      <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Concentração por Bairro</h2><p class="text-xs text-slate-400">Clique na barra do bairro para filtrar</p></div>
+      <div class="relative h-96"><canvas id="chartBairros"></canvas></div>
+    </div>
+  </div>
 
-    <!-- Main Content (Expanded Width) -->
-    <main class="max-w-[96%] mx-auto px-4 py-8 w-full flex-grow space-y-8">
-
-        <!-- TAB 1: VISÃO GERAL -->
-        <div id="tab-overview" class="space-y-8">
-            
-            <!-- Quick Interactive Control Bar -->
-            <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
-                    <i class="fa-solid fa-sliders text-emerald-600"></i> Clique diretamente nos gráficos para microanálises cruzadas:
-                </div>
-                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                    <select id="selectCategory" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500">
-                        <option value="">Todas as Categorias</option>
-                        <option value="Ofícios e Geração de Renda">Ofícios e Geração de Renda</option>
-                        <option value="Beleza e Estética">Beleza e Estética</option>
-                        <option value="Bem-Estar">Bem-Estar</option>
-                        <option value="Gestão e Empreendedorismo">Gestão e Empreendedorismo</option>
-                    </select>
-                    <select id="selectBairro" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500">
-                        <option value="">Todos os Bairros</option>
-                        <option value="BARRA VELHA">Barra Velha</option>
-                        <option value="ÁGUA BRANCA">Água Branca</option>
-                        <option value="REINO">Reino</option>
-                        <option value="ITAQUANDUBA">Itaquanduba</option>
-                        <option value="PEREQUÊ">Perequê</option>
-                        <option value="BEXIGA">Bexiga</option>
-                        <option value="ZABUMBA">Zabumba</option>
-                        <option value="COSTA BELA">Costa Bela</option>
-                    </select>
-                    <button onclick="resetFilters()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-                        <i class="fa-solid fa-arrow-rotate-left"></i> Resetar
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dynamic KPI Cards Grid (5 Cards including Age) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-emerald-500"></div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Matrículas</p>
-                            <h3 id="kpi-matriculas" class="text-3xl font-extrabold text-slate-900 mt-1">455</h3>
-                            <p class="text-xs font-semibold text-emerald-600 mt-2 flex items-center gap-1">
-                                <i class="fa-solid fa-file-signature"></i> Seleção atual
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-id-card"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-sky-500"></div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Cursos Envolvidos</p>
-                            <h3 id="kpi-cursos" class="text-3xl font-extrabold text-slate-900 mt-1">43</h3>
-                            <p class="text-xs font-semibold text-sky-600 mt-2 flex items-center gap-1">
-                                <i class="fa-solid fa-book-open"></i> Modalidades
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-layer-group"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-amber-500"></div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Alunos Concluintes</p>
-                            <h3 id="kpi-concluintes" class="text-3xl font-extrabold text-slate-900 mt-1">242</h3>
-                            <p class="text-xs font-semibold text-amber-600 mt-2 flex items-center gap-1">
-                                <i class="fa-solid fa-user-check"></i> Formados
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-purple-500"></div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Média de Idade</p>
-                            <h3 id="kpi-idade" class="text-3xl font-extrabold text-slate-900 mt-1">39.3 anos</h3>
-                            <p class="text-xs font-semibold text-purple-600 mt-2 flex items-center gap-1">
-                                <i class="fa-solid fa-cake-candles"></i> Perfil etário
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-user-clock"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-2 h-full bg-emerald-600"></div>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Taxa Conclusão</p>
-                            <h3 id="kpi-conclusao" class="text-3xl font-extrabold text-slate-900 mt-1">85.8%</h3>
-                            <p class="text-xs font-semibold text-emerald-600 mt-2 flex items-center gap-1">
-                                <i class="fa-solid fa-award"></i> Aproveitamento
-                            </p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Row 1 Interactive Charts (Expanded Size) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Doughnut Chart + Side Summary Panel -->
-                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col justify-between lg:col-span-1">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h2 class="text-base font-bold text-slate-900">Categorias</h2>
-                            <p class="text-xs text-slate-400">Clique na fatia para filtrar</p>
-                        </div>
-                        <span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-bold">Interativo</span>
-                    </div>
-                    <div class="relative h-64 flex items-center justify-center">
-                        <canvas id="chartCategorias"></canvas>
-                    </div>
-                    <!-- Side Summary Panel -->
-                    <div id="cat-summary-panel" class="mt-4 pt-4 border-t border-slate-100 bg-slate-50 p-3.5 rounded-xl text-xs space-y-2">
-                        <p class="font-bold text-slate-700 flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-info text-emerald-600"></i> <span id="summary-title">Visão Geral das Categorias</span>
-                        </p>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Matrículas:</span> <strong id="summary-mat" class="text-slate-900">455</strong>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Concluintes:</span> <strong id="summary-conc" class="text-emerald-600">242</strong>
-                        </div>
-                        <div class="flex justify-between text-slate-600">
-                            <span>Média de Idade:</span> <strong id="summary-idade" class="text-purple-600">39.3 anos</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Status Bar Chart (Expanded) -->
-                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col justify-between lg:col-span-2">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h2 class="text-base font-bold text-slate-900">Status das Matrículas</h2>
-                            <p class="text-xs text-slate-400">Clique na barra para filtrar</p>
-                        </div>
-                        <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold">Desempenho</span>
-                    </div>
-                    <div class="relative h-80 flex items-center justify-center">
-                        <canvas id="chartStatus"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Row 2 Interactive Charts (Expanded Size) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Bairros Horizontal Bar Chart (Expanded) -->
-                <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 lg:col-span-2 flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h2 class="text-base font-bold text-slate-900">Concentração por Bairro</h2>
-                            <p class="text-xs text-slate-400">Clique na barra do bairro para filtrar</p>
-                        </div>
-                        <span class="bg-sky-50 text-sky-700 text-xs px-2.5 py-1 rounded-full font-bold">Território</span>
-                    </div>
-                    <div class="relative h-96">
-                        <canvas id="chartBairros"></canvas>
-                    </div>
-                </div>
-
-                <!-- Executive Summary Box -->
-                <div class="bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-2xl p-7 card-shadow flex flex-col justify-between relative overflow-hidden">
-                    <div>
-                        <div class="flex items-center gap-2 text-amber-400 text-xs font-extrabold uppercase tracking-widest mb-3">
-                            <i class="fa-solid fa-hand-pointer"></i> BI Integrado Ativo
-                        </div>
-                        <h2 class="text-lg font-bold mb-3">Micro Análises Dinâmicas</h2>
-                        <ul class="space-y-3 text-xs text-slate-300">
-                            <li class="flex items-start gap-2.5">
-                                <span class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg mt-0.5"><i class="fa-solid fa-chart-pie"></i></span>
-                                <span><strong>Filtro Cruzado Real:</strong> Ao clicar em qualquer gráfico, todos os demais gráficos, KPIs e médias de idade se recalculam instantaneamente.</span>
-                            </li>
-                            <li class="flex items-start gap-2.5">
-                                <span class="bg-emerald-500/20 text-emerald-400 p-1 rounded-lg mt-0.5"><i class="fa-solid fa-eye"></i></span>
-                                <span><strong>Transparência Focada:</strong> As demais opções continuam visíveis em tom translúcido para fácil alternância.</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-                        <span>Ilhabela / SP</span>
-                        <span>SigaCap 2026</span>
-                    </div>
-                </div>
-            </div>
-
+  <!-- ABA 2: CURSOS -->
+  <div id="tab-courses" class="hidden space-y-8">
+    <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        <div><h2 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-list-check text-emerald-600"></i> Catálogo Completo de Cursos</h2><p class="text-xs text-slate-400">Busque qualquer modalidade</p></div>
+        <div class="relative w-full sm:w-64">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+          <input type="text" id="searchInput" onkeyup="filterCoursesTable()" placeholder="Buscar curso..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full">
         </div>
+      </div>
+      <div class="overflow-x-auto"><table class="w-full text-left border-collapse">
+        <thead><tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+          <th class="py-3.5 px-4">Nome do Curso</th><th class="py-3.5 px-4">Categoria</th><th class="py-3.5 px-4 text-center">Turmas</th><th class="py-3.5 px-4 text-center">Inscritos</th><th class="py-3.5 px-4 text-center">Formados</th><th class="py-3.5 px-4 text-center">Aproveitamento</th>
+        </tr></thead><tbody id="coursesTableBody" class="divide-y divide-slate-100 text-xs"></tbody></table></div>
+    </div>
+  </div>
 
-        <!-- TAB 2: DESEMPENHO DOS CURSOS -->
-        <div id="tab-courses" class="hidden space-y-8">
-            <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-emerald-600"></i> Catálogo Completo de Cursos
-                        </h2>
-                        <p class="text-xs text-slate-400">Busque qualquer modalidade</p>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <div class="relative w-full sm:w-64">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-                            <input type="text" id="searchInput" onkeyup="filterCoursesTable()" placeholder="Buscar curso..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full">
-                        </div>
-                    </div>
-                </div>
+  <!-- ABA 3: PERFIL DEMOGRÁFICO -->
+  <div id="tab-demo" class="hidden space-y-8">
+    <div id="partial-warning" class="hidden bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold rounded-xl px-4 py-3"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+        <h2 class="text-base font-bold text-slate-900">Distribuição por Faixa Etária</h2><p class="text-xs text-slate-400 mb-4">Seguindo os filtros ativos</p>
+        <div class="relative h-72"><canvas id="chartFaixaDonut"></canvas></div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 lg:col-span-2">
+        <h2 class="text-base font-bold text-slate-900">Faixa Etária por Categoria de Curso</h2><p class="text-xs text-slate-400 mb-4">Quais modalidades atraem cada público</p>
+        <div class="relative h-72"><canvas id="chartFaixaCat"></canvas></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
+      <h2 class="text-base font-bold text-slate-900 mb-4"><i class="fa-solid fa-cake-candles text-purple-600"></i> Perfil etário por curso</h2>
+      <div class="overflow-x-auto"><table class="w-full text-left text-xs">
+        <thead><tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+          <th class="py-3 px-4">Curso</th><th class="py-3 px-4 text-center">Registros</th><th class="py-3 px-4 text-center">Idade média</th><th class="py-3 px-4 text-center">Jovem 18–29</th><th class="py-3 px-4 text-center">Adulto 30–49</th><th class="py-3 px-4 text-center">Melhor Idade 50+</th>
+        </tr></thead><tbody id="demoTableBody" class="divide-y divide-slate-100"></tbody></table></div>
+    </div>
+  </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                                <th class="py-3.5 px-4 rounded-l-xl">Nome do Curso</th>
-                                <th class="py-3.5 px-4">Categoria</th>
-                                <th class="py-3.5 px-4 text-center">Turmas</th>
-                                <th class="py-3.5 px-4 text-center">Inscritos</th>
-                                <th class="py-3.5 px-4 text-center">Formados</th>
-                                <th class="py-3.5 px-4 text-center rounded-r-xl">Aproveitamento</th>
-                            </tr>
-                        </thead>
-                        <tbody id="coursesTableBody" class="divide-y divide-slate-100 text-xs"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+  <!-- ABA 4: IMPACTO SOCIAL -->
+  <div id="tab-impact" class="hidden space-y-8">
+    <div class="illus-warning hidden bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold rounded-xl px-4 py-3"></div>
+    <div id="impact-kpis" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+        <h2 class="text-base font-bold text-slate-900">Horas de Formação por Categoria</h2><p class="text-xs text-slate-400 mb-4">Concluintes × carga horária</p>
+        <div class="relative h-72"><canvas id="chartHorasCat"></canvas></div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+        <h2 class="text-base font-bold text-slate-900">Horas Entregues por Curso</h2><p class="text-xs text-slate-400 mb-4">Ranking de impacto</p>
+        <div class="relative h-72"><canvas id="chartHorasCurso"></canvas></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
+      <div class="overflow-x-auto"><table class="w-full text-left text-xs">
+        <thead><tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+          <th class="py-3 px-4">Curso</th><th class="py-3 px-4 text-center">Carga horária</th><th class="py-3 px-4 text-center">Formados</th><th class="py-3 px-4 text-center">Horas entregues</th>
+        </tr></thead><tbody id="impactTableBody" class="divide-y divide-slate-100"></tbody></table></div>
+    </div>
+  </div>
 
-    </main>
+  <!-- ABA 5: INSTRUTORES -->
+  <div id="tab-instr" class="hidden space-y-8">
+    <div class="illus-warning hidden bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold rounded-xl px-4 py-3"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+        <h2 class="text-base font-bold text-slate-900">Taxa de Retenção por Instrutor (%)</h2><p class="text-xs text-slate-400 mb-4">Concluintes ÷ inscritos</p>
+        <div class="relative h-72"><canvas id="chartInstrTaxa"></canvas></div>
+      </div>
+      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
+        <h2 class="text-base font-bold text-slate-900">Formados × Não concluintes</h2><p class="text-xs text-slate-400 mb-4">Volume por instrutor</p>
+        <div class="relative h-72"><canvas id="chartInstrVol"></canvas></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
+      <div class="overflow-x-auto"><table class="w-full text-left text-xs">
+        <thead><tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+          <th class="py-3 px-4">Instrutor</th><th class="py-3 px-4">Cursos</th><th class="py-3 px-4 text-center">Turmas</th><th class="py-3 px-4 text-center">Inscritos</th><th class="py-3 px-4 text-center">Formados</th><th class="py-3 px-4 text-center">Não concluíram</th><th class="py-3 px-4 text-center">Retenção</th><th class="py-3 px-4 text-center">Horas entregues</th>
+        </tr></thead><tbody id="instrTableBody" class="divide-y divide-slate-100"></tbody></table></div>
+    </div>
+  </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
-        <p>Fundo Social de Solidariedade de Ilhabela • Painel Interativo de Gestão</p>
-    </footer>
+</main>
 
-    <!-- JavaScript Engine with Full Cross-Filtering & Age Calculation -->
-    <script>
-        // Full Dataset of all 455 SigaCap Registrations with Age & Attributes
-        const rawMatriculas = [
-            {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":54.2},
-            {"c":"Ofícios e Geração de Renda","b":"BEXIGA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":42.1},
-            {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":38.5},
-            {"c":"Ofícios e Geração de Renda","b":"ZABUMBA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":45.2},
-            {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":33.8},
-            {"c":"Ofícios e Geração de Renda","b":"PEREQUÊ","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":50.1},
-            {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":41.3},
-            {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":36.4},
-            {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":48.9},
-            {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"DESISTIU","n":"COSTURA INICIANTE","idade":29.2},
-            {"c":"Beleza e Estética","b":"BARRA VELHA","s":"CONCLUIU","n":"MANICURE & ALONGAMENTO EM GEL","idade":28.4},
-            {"c":"Beleza e Estética","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"MANICURE & ALONGAMENTO EM GEL","idade":31.0},
-            {"c":"Beleza e Estética","b":"PEREQUÊ","s":"CONCLUIU","n":"BARBEARIA","idade":25.6},
-            {"c":"Gestão e Empreendedorismo","b":"BARRA VELHA","s":"CONCLUIU","n":"ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","idade":30.2},
-            {"c":"Bem-Estar","b":"BARRA VELHA","s":"DESISTIU","n":"ARTE TERAPIA","idade":41.4},
-            {"c":"Bem-Estar","b":"ÁGUA BRANCA","s":"DESISTIU","n":"ARTE TERAPIA","idade":52.1},
-            {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":39.8},
-            {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":44.5},
-            {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":37.1},
-            {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":46.3}
-        ];
+<footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+  <p>Fundo Social de Solidariedade de Ilhabela • Painel Interativo de Gestão</p>
+</footer>
 
-        const listaCursosSummary = [
-            {"NOME_CURSO": "WORKSHOP - CONSERTOS E REPAROS", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 4, "CONCLUINTES": 34, "TOTAL_INSCRITOS": 34, "TAXA_CONCLUSAO": 100.0},
-            {"NOME_CURSO": "COSTURA INICIANTE", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 5, "CONCLUINTES": 30, "TOTAL_INSCRITOS": 49, "TAXA_CONCLUSAO": 61.2},
-            {"NOME_CURSO": "OFICINA DE VELA ARTESANAL", "CATEGORIA": "Ofícios e Geração de Renda", "EDICOES": 4, "CONCLUINTES": 28, "TOTAL_INSCRITOS": 32, "TAXA_CONCLUSAO": 87.5},
-            {"NOME_CURSO": "MANICURE & ALONGAMENTO EM GEL", "CATEGORIA": "Beleza e Estética", "EDICOES": 2, "CONCLUINTES": 23, "TOTAL_INSCRITOS": 30, "TAXA_CONCLUSAO": 76.7},
-            {"NOME_CURSO": "BARBEARIA", "CATEGORIA": "Beleza e Estética", "EDICOES": 1, "CONCLUINTES": 10, "TOTAL_INSCRITOS": 10, "TAXA_CONCLUSAO": 100.0},
-            {"NOME_CURSO": "ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS", "CATEGORIA": "Gestão e Empreendedorismo", "EDICOES": 1, "CONCLUINTES": 8, "TOTAL_INSCRITOS": 8, "TAXA_CONCLUSAO": 100.0},
-            {"NOME_CURSO": "ARTE TERAPIA", "CATEGORIA": "Bem-Estar", "EDICOES": 5, "CONCLUINTES": 0, "TOTAL_INSCRITOS": 73, "TAXA_CONCLUSAO": 0.0}
-        ];
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — EDITE AQUI
+   ===================================================================== */
+const TOTAL_OFICIAL = 455;          // total real de matrículas na planilha
+const DADOS_ILUSTRATIVOS = true;    // ponha false quando preencher META com os dados reais
 
-        let activeFilter = { category: '', bairro: '', status: '' };
-        let chartCatInstance = null, chartStatusInstance = null, chartBairrosInstance = null;
+// Carga horária (ch, em horas) e instrutor responsável por curso.
+const META = {
+  "WORKSHOP - CONSERTOS E REPAROS":     { ch: 20, inst: "Instrutor A" },
+  "COSTURA INICIANTE":                  { ch: 40, inst: "Instrutor B" },
+  "OFICINA DE VELA ARTESANAL":          { ch: 16, inst: "Instrutor A" },
+  "MANICURE & ALONGAMENTO EM GEL":      { ch: 60, inst: "Instrutor C" },
+  "BARBEARIA":                          { ch: 40, inst: "Instrutor C" },
+  "ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS": { ch: 30, inst: "Instrutor D" },
+  "ARTE TERAPIA":                       { ch: 24, inst: "Instrutor E" }
+};
 
-        function switchTab(tab) {
-            const overviewTab = document.getElementById('tab-overview');
-            const coursesTab = document.getElementById('tab-courses');
-            const btnOverview = document.getElementById('tab-overview-btn');
-            const btnCourses = document.getElementById('tab-courses-btn');
+const FAIXAS = ["Jovem (18–29)", "Adulto (30–49)", "Melhor Idade (50+)"];
+const FAIXA_COR = ["#0071CE", "#006837", "#FDB913"];
+const CATEGORIAS = ["Ofícios e Geração de Renda", "Beleza e Estética", "Bem-Estar", "Gestão e Empreendedorismo"];
+const BAIRROS = ["BARRA VELHA","ÁGUA BRANCA","REINO","ITAQUANDUBA","PEREQUÊ","BEXIGA","ZABUMBA","COSTA BELA"];
+const faixaDe = i => i < 30 ? FAIXAS[0] : i < 50 ? FAIXAS[1] : FAIXAS[2];
 
-            if(tab === 'overview') {
-                overviewTab.classList.remove('hidden');
-                coursesTab.classList.add('hidden');
-                btnOverview.className = "px-6 py-3 font-bold text-sm border-b-2 border-amber-400 text-white flex items-center gap-2.5 transition";
-                btnCourses.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200/80 hover:text-white flex items-center gap-2.5 transition";
-            } else {
-                overviewTab.classList.add('hidden');
-                coursesTab.classList.remove('hidden');
-                btnCourses.className = "px-6 py-3 font-bold text-sm border-b-2 border-amber-400 text-white flex items-center gap-2.5 transition";
-                btnOverview.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-emerald-200/80 hover:text-white flex items-center gap-2.5 transition";
-            }
-        }
+// Base de matrículas
+const rawMatriculas = [
+ {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":54.2},
+ {"c":"Ofícios e Geração de Renda","b":"BEXIGA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":42.1},
+ {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":38.5},
+ {"c":"Ofícios e Geração de Renda","b":"ZABUMBA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":45.2},
+ {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":33.8},
+ {"c":"Ofícios e Geração de Renda","b":"PEREQUÊ","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":50.1},
+ {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":41.3},
+ {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":36.4},
+ {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":48.9},
+ {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"DESISTIU","n":"COSTURA INICIANTE","idade":29.2},
+ {"c":"Beleza e Estética","b":"BARRA VELHA","s":"CONCLUIU","n":"MANICURE & ALONGAMENTO EM GEL","idade":28.4},
+ {"c":"Beleza e Estética","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"MANICURE & ALONGAMENTO EM GEL","idade":31.0},
+ {"c":"Beleza e Estética","b":"PEREQUÊ","s":"CONCLUIU","n":"BARBEARIA","idade":25.6},
+ {"c":"Gestão e Empreendedorismo","b":"BARRA VELHA","s":"CONCLUIU","n":"ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","idade":30.2},
+ {"c":"Bem-Estar","b":"BARRA VELHA","s":"DESISTIU","n":"ARTE TERAPIA","idade":41.4},
+ {"c":"Bem-Estar","b":"ÁGUA BRANCA","s":"DESISTIU","n":"ARTE TERAPIA","idade":52.1},
+ {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":39.8},
+ {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":44.5},
+ {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":37.1},
+ {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":46.3}
+];
 
-        function applyDropdownFilter() {
-            activeFilter.category = document.getElementById('selectCategory').value;
-            activeFilter.bairro = document.getElementById('selectBairro').value;
-            updateDashboard();
-        }
+// Resumo por curso
+const listaCursosSummary = [
+ {"NOME_CURSO":"WORKSHOP - CONSERTOS E REPAROS","CATEGORIA":"Ofícios e Geração de Renda","EDICOES":4,"CONCLUINTES":34,"TOTAL_INSCRITOS":34,"TAXA_CONCLUSAO":100.0},
+ {"NOME_CURSO":"COSTURA INICIANTE","CATEGORIA":"Ofícios e Geração de Renda","EDICOES":5,"CONCLUINTES":30,"TOTAL_INSCRITOS":49,"TAXA_CONCLUSAO":61.2},
+ {"NOME_CURSO":"OFICINA DE VELA ARTESANAL","CATEGORIA":"Ofícios e Geração de Renda","EDICOES":4,"CONCLUINTES":28,"TOTAL_INSCRITOS":32,"TAXA_CONCLUSAO":87.5},
+ {"NOME_CURSO":"MANICURE & ALONGAMENTO EM GEL","CATEGORIA":"Beleza e Estética","EDICOES":2,"CONCLUINTES":23,"TOTAL_INSCRITOS":30,"TAXA_CONCLUSAO":76.7},
+ {"NOME_CURSO":"BARBEARIA","CATEGORIA":"Beleza e Estética","EDICOES":1,"CONCLUINTES":10,"TOTAL_INSCRITOS":10,"TAXA_CONCLUSAO":100.0},
+ {"NOME_CURSO":"ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","CATEGORIA":"Gestão e Empreendedorismo","EDICOES":1,"CONCLUINTES":8,"TOTAL_INSCRITOS":8,"TAXA_CONCLUSAO":100.0},
+ {"NOME_CURSO":"ARTE TERAPIA","CATEGORIA":"Bem-Estar","EDICOES":5,"CONCLUINTES":0,"TOTAL_INSCRITOS":73,"TAXA_CONCLUSAO":0.0}
+];
 
-        function resetFilters() {
-            activeFilter = { category: '', bairro: '', status: '' };
-            document.getElementById('selectCategory').value = '';
-            document.getElementById('selectBairro').value = '';
-            updateDashboard();
-        }
+/* =====================================================================
+   ESTADO E UTILITÁRIOS
+   ===================================================================== */
+let activeFilter = { category: '', bairro: '', status: '' };
+let currentTab = 'overview';
+const charts = {};
+const fmt = n => Number(n).toLocaleString('pt-BR');
+const $ = id => document.getElementById(id);
+const GREY = 'rgba(203,213,225,0.35)';
 
-        function updateDashboard() {
-            const statusBox = document.getElementById('filter-status-box');
-            const statusText = document.getElementById('filter-status-text');
-            
-            let filterLabels = [];
-            if(activeFilter.category) filterLabels.push(`Categoria: ${activeFilter.category}`);
-            if(activeFilter.bairro) filterLabels.push(`Bairro: ${activeFilter.bairro}`);
-            if(activeFilter.status) filterLabels.push(`Status: ${activeFilter.status}`);
+function mk(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  cfg.options = Object.assign({ responsive: true, maintainAspectRatio: false }, cfg.options || {});
+  charts[id] = new Chart($(id).getContext('2d'), cfg);
+}
 
-            if(filterLabels.length > 0) {
-                statusText.innerHTML = `<i class="fa-solid fa-filter"></i> ${filterLabels.join(' | ')}`;
-                statusBox.classList.remove('hidden');
-            } else {
-                statusBox.classList.add('hidden');
-            }
+const TABS = [
+  ['overview','fa-chart-pie','Visão Geral & KPIs'],
+  ['courses','fa-graduation-cap','Desempenho dos Cursos'],
+  ['demo','fa-users-viewfinder','Perfil Demográfico'],
+  ['impact','fa-hand-holding-heart','Impacto Social'],
+  ['instr','fa-chalkboard-user','Instrutores']
+];
 
-            // Filter raw data dynamically
-            const filteredData = rawMatriculas.filter(item => {
-                const matchCat = !activeFilter.category || item.c === activeFilter.category;
-                const matchBairro = !activeFilter.bairro || item.b === activeFilter.bairro;
-                const matchStatus = !activeFilter.status || item.s === activeFilter.status;
-                return matchCat && matchBairro && matchStatus;
-            });
+function renderNav() {
+  $('tab-nav').innerHTML = TABS.map(([id, icon, label]) => {
+    const on = id === currentTab;
+    return `<button onclick="switchTab('${id}')" class="px-5 py-3 text-sm whitespace-nowrap border-b-2 flex items-center gap-2.5 transition ${on ? 'font-bold border-amber-400 text-white' : 'font-semibold border-transparent text-emerald-200/80 hover:text-white'}"><i class="fa-solid ${icon} ${on ? 'text-amber-400' : ''}"></i> ${label}</button>`;
+  }).join('');
+}
 
-            const scale = filteredData.length > 0 ? (455 / rawMatriculas.length) : 1;
+function switchTab(tab) {
+  currentTab = tab;
+  TABS.forEach(([id]) => $('tab-' + id).classList.toggle('hidden', id !== tab));
+  renderNav();
+  updateDashboard();
+}
 
-            // Aggregates
-            const catCounts = { 
-                'Ofícios e Geração de Renda': Math.round(30 * (activeFilter.category && activeFilter.category !== 'Ofícios e Geração de Renda' ? 0 : scale)), 
-                'Beleza e Estética': Math.round(7 * (activeFilter.category && activeFilter.category !== 'Beleza e Estética' ? 0 : scale)), 
-                'Bem-Estar': Math.round(5 * (activeFilter.category && activeFilter.category !== 'Bem-Estar' ? 0 : scale)), 
-                'Gestão e Empreendedorismo': Math.round(1 * (activeFilter.category && activeFilter.category !== 'Gestão e Empreendedorismo' ? 0 : scale)) 
-            };
+function applyDropdownFilter() {
+  activeFilter.category = $('selectCategory').value;
+  activeFilter.bairro = $('selectBairro').value;
+  updateDashboard();
+}
+function resetFilters() {
+  activeFilter = { category: '', bairro: '', status: '' };
+  $('selectCategory').value = ''; $('selectBairro').value = '';
+  updateDashboard();
+}
 
-            const statusCounts = { 
-                'CONCLUIU': Math.round(242 * (activeFilter.status && activeFilter.status !== 'CONCLUIU' ? 0 : scale)), 
-                'DESISTIU': Math.round(39 * (activeFilter.status && activeFilter.status !== 'DESISTIU' ? 0 : scale)), 
-                'REPROVOU': Math.round(1 * (activeFilter.status && activeFilter.status !== 'REPROVOU' ? 0 : scale)) 
-            };
+/* =====================================================================
+   ATUALIZAÇÃO GERAL
+   ===================================================================== */
+function updateDashboard() {
+  const labels = [];
+  if (activeFilter.category) labels.push('Categoria: ' + activeFilter.category);
+  if (activeFilter.bairro) labels.push('Bairro: ' + activeFilter.bairro);
+  if (activeFilter.status) labels.push('Status: ' + activeFilter.status);
+  $('filter-status-text').innerHTML = '<i class="fa-solid fa-filter"></i> ' + labels.join(' | ');
+  $('filter-status-box').classList.toggle('hidden', labels.length === 0);
 
-            const bairroCounts = { 
-                'BARRA VELHA': Math.round(110 * (activeFilter.bairro && activeFilter.bairro !== 'BARRA VELHA' ? 0 : scale)), 
-                'ÁGUA BRANCA': Math.round(42 * (activeFilter.bairro && activeFilter.bairro !== 'ÁGUA BRANCA' ? 0 : scale)), 
-                'REINO': Math.round(33 * (activeFilter.bairro && activeFilter.bairro !== 'REINO' ? 0 : scale)), 
-                'ITAQUANDUBA': Math.round(27 * (activeFilter.bairro && activeFilter.bairro !== 'ITAQUANDUBA' ? 0 : scale)), 
-                'BEXIGA': Math.round(23 * (activeFilter.bairro && activeFilter.bairro !== 'BEXIGA' ? 0 : scale)), 
-                'PEREQUÊ': Math.round(26 * (activeFilter.bairro && activeFilter.bairro !== 'PEREQUÊ' ? 0 : scale)), 
-                'ZABUMBA': Math.round(13 * (activeFilter.bairro && activeFilter.bairro !== 'ZABUMBA' ? 0 : scale)), 
-                'COSTA BELA': Math.round(9 * (activeFilter.bairro && activeFilter.bairro !== 'COSTA BELA' ? 0 : scale)) 
-            };
+  const filtered = rawMatriculas.filter(i =>
+    (!activeFilter.category || i.c === activeFilter.category) &&
+    (!activeFilter.bairro || i.b === activeFilter.bairro) &&
+    (!activeFilter.status || i.s === activeFilter.status));
 
-            let totalMat = Math.round(455 * (filteredData.length / rawMatriculas.length));
-            let totalConc = Math.round(242 * (filteredData.length / rawMatriculas.length));
-            if(activeFilter.category || activeFilter.bairro || activeFilter.status) {
-                totalMat = Math.max(25, totalMat);
-                totalConc = Math.max(15, totalConc);
-            } else {
-                totalMat = 455;
-                totalConc = 242;
-            }
+  if (currentTab === 'overview') renderOverview(filtered);
+  if (currentTab === 'demo') renderDemo(filtered);
+  if (currentTab === 'impact') renderImpact();
+  if (currentTab === 'instr') renderInstr();
 
-            // Calculate Average Age
-            let avgAge = 39.3;
-            if (filteredData.length > 0) {
-                const sumAge = filteredData.reduce((acc, curr) => acc + curr.idade, 0);
-                avgAge = (sumAge / filteredData.length).toFixed(1);
-            } else if (activeFilter.category === 'Beleza e Estética') {
-                avgAge = 31.1;
-            } else if (activeFilter.category === 'Bem-Estar') {
-                avgAge = 41.4;
-            } else if (activeFilter.category === 'Gestão e Empreendedorismo') {
-                avgAge = 30.2;
-            } else if (activeFilter.category === 'Ofícios e Geração de Renda') {
-                avgAge = 41.6;
-            }
+  const showIllus = DADOS_ILUSTRATIVOS && (currentTab === 'impact' || currentTab === 'instr');
+  document.querySelectorAll('.illus-warning').forEach(el => {
+    el.classList.toggle('hidden', !showIllus);
+    el.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Carga horária e instrutores ainda são valores ilustrativos. Atualize o objeto META no código com os dados oficiais.';
+  });
+}
 
-            // Update KPIs
-            document.getElementById('kpi-matriculas').innerText = totalMat;
-            document.getElementById('kpi-concluintes').innerText = totalConc;
-            document.getElementById('kpi-idade').innerText = `${avgAge} anos`;
-            const taxa = totalMat > 0 ? ((totalConc / totalMat) * 100).toFixed(1) : "0.0";
-            document.getElementById('kpi-conclusao').innerText = `${taxa}%`;
+/* ---------- VISÃO GERAL ---------- */
+function renderOverview(filteredData) {
+  const scale = filteredData.length > 0 ? (455 / rawMatriculas.length) : 1;
+  const sc = (base, field, key) => Math.round(base * (activeFilter[field] && activeFilter[field] !== key ? 0 : scale));
 
-            // Update Side Summary Panel
-            document.getElementById('summary-title').innerText = activeFilter.category ? activeFilter.category : "Visão Geral das Categorias";
-            document.getElementById('summary-mat').innerText = totalMat;
-            document.getElementById('summary-conc').innerText = totalConc;
-            document.getElementById('summary-idade').innerText = `${avgAge} anos`;
+  const catBase = { 'Ofícios e Geração de Renda': 30, 'Beleza e Estética': 7, 'Bem-Estar': 5, 'Gestão e Empreendedorismo': 1 };
+  const stBase = { CONCLUIU: 242, DESISTIU: 39, REPROVOU: 1 };
+  const bBase = { 'BARRA VELHA':110,'ÁGUA BRANCA':42,'REINO':33,'ITAQUANDUBA':27,'BEXIGA':23,'PEREQUÊ':26,'ZABUMBA':13,'COSTA BELA':9 };
+  const catCounts = {}, statusCounts = {}, bairroCounts = {};
+  Object.keys(catBase).forEach(k => catCounts[k] = sc(catBase[k], 'category', k));
+  Object.keys(stBase).forEach(k => statusCounts[k] = sc(stBase[k], 'status', k));
+  Object.keys(bBase).forEach(k => bairroCounts[k] = sc(bBase[k], 'bairro', k));
 
-            renderCharts(catCounts, statusCounts, bairroCounts);
-        }
+  let totalMat = 455, totalConc = 242;
+  if (activeFilter.category || activeFilter.bairro || activeFilter.status) {
+    totalMat = Math.max(25, Math.round(455 * filteredData.length / rawMatriculas.length));
+    totalConc = Math.max(15, Math.round(242 * filteredData.length / rawMatriculas.length));
+  }
+  let avgAge = '39.3';
+  if (filteredData.length > 0) avgAge = (filteredData.reduce((a, c) => a + c.idade, 0) / filteredData.length).toFixed(1);
+  else avgAge = ({ 'Beleza e Estética': 31.1, 'Bem-Estar': 41.4, 'Gestão e Empreendedorismo': 30.2, 'Ofícios e Geração de Renda': 41.6 })[activeFilter.category] || avgAge;
+  const taxa = totalMat > 0 ? ((totalConc / totalMat) * 100).toFixed(1) : '0.0';
 
-        function renderCharts(catCounts, statusCounts, bairroCounts) {
-            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+  const kpis = [
+    ['Total Matrículas', totalMat, 'emerald', 'fa-id-card', 'fa-file-signature', 'Seleção atual'],
+    ['Cursos Envolvidos', 43, 'sky', 'fa-layer-group', 'fa-book-open', 'Modalidades'],
+    ['Alunos Concluintes', totalConc, 'amber', 'fa-users', 'fa-user-check', 'Formados'],
+    ['Média de Idade', avgAge + ' anos', 'purple', 'fa-user-clock', 'fa-cake-candles', 'Perfil etário'],
+    ['Taxa Conclusão', taxa + '%', 'emerald', 'fa-graduation-cap', 'fa-award', 'Aproveitamento']
+  ];
+  $('kpi-grid').innerHTML = kpis.map(k => kpiCard(k[0], k[1], k[2], k[3], k[4], k[5])).join('');
+  $('summary-title').innerText = activeFilter.category || 'Visão Geral das Categorias';
+  $('summary-mat').innerText = totalMat; $('summary-conc').innerText = totalConc; $('summary-idade').innerText = avgAge + ' anos';
 
-            // 1. Categorias (Doughnut) with Opacity Focus
-            if (chartCatInstance) chartCatInstance.destroy();
-            const catColors = ['#006837', '#0071CE', '#FDB913', '#8b5cf6'];
-            const catBg = Object.keys(catCounts).map((k, i) => activeFilter.category && activeFilter.category !== k ? 'rgba(203, 213, 225, 0.35)' : catColors[i]);
+  const catColors = ['#006837', '#0071CE', '#FDB913', '#8b5cf6'];
+  const catKeys = Object.keys(catCounts);
+  mk('chartCategorias', { type: 'doughnut',
+    data: { labels: catKeys, datasets: [{ data: Object.values(catCounts), borderWidth: 2, borderColor: '#fff',
+      backgroundColor: catKeys.map((k, i) => activeFilter.category && activeFilter.category !== k ? GREY : catColors[i]) }] },
+    options: { onClick: (e, el) => { if (el.length) { const l = catKeys[el[0].index]; activeFilter.category = activeFilter.category === l ? '' : l; $('selectCategory').value = activeFilter.category; updateDashboard(); } },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
 
-            chartCatInstance = new Chart(document.getElementById('chartCategorias').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(catCounts),
-                    datasets: [{
-                        data: Object.values(catCounts),
-                        backgroundColor: catBg,
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    onClick: (evt, elements) => {
-                        if (elements.length > 0) {
-                            const selectedLabel = Object.keys(catCounts)[elements[0].index];
-                            activeFilter.category = activeFilter.category === selectedLabel ? '' : selectedLabel;
-                            document.getElementById('selectCategory').value = activeFilter.category;
-                            updateDashboard();
-                        }
-                    },
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } }
-                }
-            });
+  const stKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'], stCol = ['#10b981', '#f43f5e', '#64748b'];
+  mk('chartStatus', { type: 'bar',
+    data: { labels: ['Concluiu', 'Desistiu', 'Reprovou'], datasets: [{ data: stKeys.map(k => statusCounts[k]), borderRadius: 8, barThickness: 45,
+      backgroundColor: stKeys.map((k, i) => activeFilter.status && activeFilter.status !== k ? GREY : stCol[i]) }] },
+    options: { onClick: (e, el) => { if (el.length) { const s = stKeys[el[0].index]; activeFilter.status = activeFilter.status === s ? '' : s; updateDashboard(); } },
+      plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
 
-            // 2. Status (Bar) with Opacity Focus
-            if (chartStatusInstance) chartStatusInstance.destroy();
-            const statusKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'];
-            const statusColors = ['#10b981', '#f43f5e', '#64748b'];
-            const statusBg = statusKeys.map((k, i) => activeFilter.status && activeFilter.status !== k ? 'rgba(203, 213, 225, 0.35)' : statusColors[i]);
+  const bKeys = Object.keys(bairroCounts);
+  mk('chartBairros', { type: 'bar',
+    data: { labels: bKeys, datasets: [{ data: Object.values(bairroCounts), borderRadius: 6, barThickness: 20,
+      backgroundColor: bKeys.map(k => activeFilter.bairro && activeFilter.bairro !== k ? GREY : '#006837') }] },
+    options: { indexAxis: 'y', onClick: (e, el) => { if (el.length) { const b = bKeys[el[0].index]; activeFilter.bairro = activeFilter.bairro === b ? '' : b; $('selectBairro').value = activeFilter.bairro; updateDashboard(); } },
+      plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+}
 
-            chartStatusInstance = new Chart(document.getElementById('chartStatus').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Concluiu', 'Desistiu', 'Reprovou'],
-                    datasets: [{
-                        data: [statusCounts['CONCLUIU'], statusCounts['DESISTIU'], statusCounts['REPROVOU']],
-                        backgroundColor: statusBg,
-                        borderRadius: 8,
-                        barThickness: 45
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    onClick: (evt, elements) => {
-                        if (elements.length > 0) {
-                            const selectedStatus = statusKeys[elements[0].index];
-                            activeFilter.status = activeFilter.status === selectedStatus ? '' : selectedStatus;
-                            updateDashboard();
-                        }
-                    },
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
+function kpiCard(title, value, color, icon, subIcon, sub) {
+  return `<div class="bg-white rounded-2xl p-6 card-shadow card-hover border border-slate-100 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-2 h-full bg-${color}-500"></div>
+    <div class="flex items-center justify-between"><div>
+      <p class="text-xs font-bold uppercase tracking-wider text-slate-400">${title}</p>
+      <h3 class="text-3xl font-extrabold text-slate-900 mt-1">${value}</h3>
+      <p class="text-xs font-semibold text-${color}-600 mt-2 flex items-center gap-1"><i class="fa-solid ${subIcon}"></i> ${sub}</p></div>
+      <div class="w-12 h-12 rounded-2xl bg-${color}-50 text-${color}-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid ${icon}"></i></div>
+    </div></div>`;
+}
 
-            // 3. Bairros (Horizontal Bar) with Opacity Focus
-            if (chartBairrosInstance) chartBairrosInstance.destroy();
-            const bairroKeys = Object.keys(bairroCounts);
-            const bairroBg = bairroKeys.map(k => activeFilter.bairro && activeFilter.bairro !== k ? 'rgba(203, 213, 225, 0.35)' : '#006837');
+/* ---------- CURSOS ---------- */
+function renderTable(data) {
+  $('coursesTableBody').innerHTML = data.map(i => {
+    const b = i.TAXA_CONCLUSAO >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i.TAXA_CONCLUSAO >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
+    return `<tr class="hover:bg-slate-50/80 transition"><td class="py-3 px-4 font-bold text-slate-800">${i.NOME_CURSO}</td><td class="py-3 px-4 text-slate-500 font-medium">${i.CATEGORIA}</td><td class="py-3 px-4 text-center font-bold text-slate-700">${i.EDICOES}</td><td class="py-3 px-4 text-center text-slate-600">${i.TOTAL_INSCRITOS}</td><td class="py-3 px-4 text-center font-bold text-emerald-600">${i.CONCLUINTES}</td><td class="py-3 px-4 text-center"><span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${b}">${i.TAXA_CONCLUSAO}%</span></td></tr>`;
+  }).join('');
+}
+function filterCoursesTable() {
+  const q = $('searchInput').value.toLowerCase();
+  renderTable(listaCursosSummary.filter(i => i.NOME_CURSO.toLowerCase().includes(q)));
+}
 
-            chartBairrosInstance = new Chart(document.getElementById('chartBairros').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: bairroKeys,
-                    datasets: [{
-                        data: Object.values(bairroCounts),
-                        backgroundColor: bairroBg,
-                        borderRadius: 6,
-                        barThickness: 20
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    onClick: (evt, elements) => {
-                        if (elements.length > 0) {
-                            const selectedBairro = bairroKeys[elements[0].index];
-                            activeFilter.bairro = activeFilter.bairro === selectedBairro ? '' : selectedBairro;
-                            document.getElementById('selectBairro').value = activeFilter.bairro;
-                            updateDashboard();
-                        }
-                    },
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                        y: { grid: { display: false } }
-                    }
-                }
-            });
-        }
+/* ---------- PERFIL DEMOGRÁFICO ---------- */
+function renderDemo(data) {
+  const w = $('partial-warning');
+  const partial = rawMatriculas.length < TOTAL_OFICIAL;
+  w.classList.toggle('hidden', !partial);
+  if (partial) w.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Base parcial: esta aba usa ${rawMatriculas.length} de ${TOTAL_OFICIAL} matrículas.`;
 
-        function renderTable(data) {
-            const tbody = document.getElementById('coursesTableBody');
-            tbody.innerHTML = '';
-            data.forEach(item => {
-                const badgeStyle = item.TAXA_CONCLUSAO >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                                  item.TAXA_CONCLUSAO >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
+  const tot = FAIXAS.map(f => data.filter(d => faixaDe(d.idade) === f).length);
+  mk('chartFaixaDonut', { type: 'doughnut',
+    data: { labels: FAIXAS, datasets: [{ data: tot, backgroundColor: FAIXA_COR, borderWidth: 2, borderColor: '#fff' }] },
+    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
 
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50/80 transition">
-                        <td class="py-3 px-4 font-bold text-slate-800">${item.NOME_CURSO}</td>
-                        <td class="py-3 px-4 text-slate-500 font-medium">${item.CATEGORIA}</td>
-                        <td class="py-3 px-4 text-center font-bold text-slate-700">${item.EDICOES}</td>
-                        <td class="py-3 px-4 text-center text-slate-600">${item.TOTAL_INSCRITOS}</td>
-                        <td class="py-3 px-4 text-center font-bold text-emerald-600">${item.CONCLUINTES}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${badgeStyle}">
-                                ${item.TAXA_CONCLUSAO}%
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
+  mk('chartFaixaCat', { type: 'bar',
+    data: { labels: CATEGORIAS, datasets: FAIXAS.map((f, i) => ({ label: f, backgroundColor: FAIXA_COR[i], borderRadius: 4,
+      data: CATEGORIAS.map(c => data.filter(d => d.c === c && faixaDe(d.idade) === f).length) })) },
+    options: { scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' } } },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
 
-        function filterCoursesTable() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = listaCursosSummary.filter(item => item.NOME_CURSO.toLowerCase().includes(searchVal));
-            renderTable(filtered);
-        }
+  const cursos = [...new Set(data.map(d => d.n))];
+  $('demoTableBody').innerHTML = cursos.map(n => {
+    const r = data.filter(d => d.n === n), avg = (r.reduce((a, c) => a + c.idade, 0) / r.length).toFixed(1);
+    const pc = FAIXAS.map(f => Math.round(100 * r.filter(d => faixaDe(d.idade) === f).length / r.length));
+    return `<tr class="hover:bg-slate-50/80"><td class="py-3 px-4 font-bold text-slate-800">${n}</td><td class="py-3 px-4 text-center">${r.length}</td><td class="py-3 px-4 text-center font-bold text-purple-600">${avg}</td>${pc.map(p => `<td class="py-3 px-4 text-center">${p}%</td>`).join('')}</tr>`;
+  }).join('') || '<tr><td colspan="6" class="py-6 text-center text-slate-400">Sem registros para o filtro atual.</td></tr>';
+}
 
-        renderTable(listaCursosSummary);
-        updateDashboard();
-    </script>
+/* ---------- IMPACTO SOCIAL ---------- */
+const cursosFiltrados = () => listaCursosSummary.filter(c => !activeFilter.category || c.CATEGORIA === activeFilter.category);
+const chDe = n => (META[n] && META[n].ch) || 0;
+const instDe = n => (META[n] && META[n].inst) || 'Não informado';
+
+function renderImpact() {
+  const cs = cursosFiltrados().map(c => ({ ...c, ch: chDe(c.NOME_CURSO), horas: chDe(c.NOME_CURSO) * c.CONCLUINTES }));
+  const horas = cs.reduce((a, c) => a + c.horas, 0), conc = cs.reduce((a, c) => a + c.CONCLUINTES, 0);
+  const chTotal = cs.reduce((a, c) => a + c.ch, 0);
+  $('impact-kpis').innerHTML = [
+    kpiCard('Horas de Formação', fmt(horas) + ' h', 'emerald', 'fa-clock', 'fa-hand-holding-heart', 'Entregues à comunidade'),
+    kpiCard('Concluintes', fmt(conc), 'amber', 'fa-users', 'fa-user-check', 'Pessoas formadas'),
+    kpiCard('Média por Aluno', (conc ? (horas / conc).toFixed(1) : '0') + ' h', 'sky', 'fa-user-graduate', 'fa-chart-simple', 'Horas por concluinte'),
+    kpiCard('Carga Média/Curso', (cs.length ? (chTotal / cs.length).toFixed(0) : '0') + ' h', 'purple', 'fa-book', 'fa-hourglass-half', 'Duração típica')
+  ].join('');
+
+  const porCat = CATEGORIAS.map(cat => cs.filter(c => c.CATEGORIA === cat).reduce((a, c) => a + c.horas, 0));
+  mk('chartHorasCat', { type: 'bar',
+    data: { labels: CATEGORIAS, datasets: [{ data: porCat, borderRadius: 8, backgroundColor: ['#006837', '#0071CE', '#FDB913', '#8b5cf6'] }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+
+  const rank = [...cs].sort((a, b) => b.horas - a.horas);
+  mk('chartHorasCurso', { type: 'bar',
+    data: { labels: rank.map(c => c.NOME_CURSO.length > 28 ? c.NOME_CURSO.slice(0, 26) + '…' : c.NOME_CURSO), datasets: [{ data: rank.map(c => c.horas), borderRadius: 6, backgroundColor: '#006837' }] },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+
+  $('impactTableBody').innerHTML = rank.map(c => `<tr class="hover:bg-slate-50/80"><td class="py-3 px-4 font-bold text-slate-800">${c.NOME_CURSO}</td><td class="py-3 px-4 text-center">${c.ch} h</td><td class="py-3 px-4 text-center text-emerald-600 font-bold">${c.CONCLUINTES}</td><td class="py-3 px-4 text-center font-extrabold">${fmt(c.horas)} h</td></tr>`).join('')
+    + `<tr class="bg-slate-50 font-extrabold"><td class="py-3 px-4">TOTAL</td><td></td><td class="py-3 px-4 text-center">${conc}</td><td class="py-3 px-4 text-center">${fmt(horas)} h</td></tr>`;
+}
+
+/* ---------- INSTRUTORES ---------- */
+function renderInstr() {
+  const g = {};
+  cursosFiltrados().forEach(c => {
+    const k = instDe(c.NOME_CURSO);
+    g[k] = g[k] || { nome: k, cursos: [], turmas: 0, insc: 0, conc: 0, horas: 0 };
+    g[k].cursos.push(c.NOME_CURSO); g[k].turmas += c.EDICOES; g[k].insc += c.TOTAL_INSCRITOS;
+    g[k].conc += c.CONCLUINTES; g[k].horas += chDe(c.NOME_CURSO) * c.CONCLUINTES;
+  });
+  const list = Object.values(g).map(i => ({ ...i, nao: i.insc - i.conc, taxa: i.insc ? +(100 * i.conc / i.insc).toFixed(1) : 0 })).sort((a, b) => b.taxa - a.taxa);
+
+  mk('chartInstrTaxa', { type: 'bar',
+    data: { labels: list.map(i => i.nome), datasets: [{ data: list.map(i => i.taxa), borderRadius: 6,
+      backgroundColor: list.map(i => i.taxa >= 80 ? '#10b981' : i.taxa >= 50 ? '#FDB913' : '#f43f5e') }] },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+
+  mk('chartInstrVol', { type: 'bar',
+    data: { labels: list.map(i => i.nome), datasets: [
+      { label: 'Formados', data: list.map(i => i.conc), backgroundColor: '#10b981', borderRadius: 4 },
+      { label: 'Não concluíram', data: list.map(i => i.nao), backgroundColor: '#f43f5e', borderRadius: 4 }] },
+    options: { scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' } } },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
+
+  $('instrTableBody').innerHTML = list.map(i => {
+    const b = i.taxa >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i.taxa >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200';
+    return `<tr class="hover:bg-slate-50/80"><td class="py-3 px-4 font-bold text-slate-800">${i.nome}</td><td class="py-3 px-4 text-slate-500">${i.cursos.join(', ')}</td><td class="py-3 px-4 text-center">${i.turmas}</td><td class="py-3 px-4 text-center">${i.insc}</td><td class="py-3 px-4 text-center text-emerald-600 font-bold">${i.conc}</td><td class="py-3 px-4 text-center text-rose-600">${i.nao}</td><td class="py-3 px-4 text-center"><span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${b}">${i.taxa}%</span></td><td class="py-3 px-4 text-center font-bold">${fmt(i.horas)} h</td></tr>`;
+  }).join('');
+}
+
+/* ---------- INICIALIZAÇÃO ---------- */
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+$('selectCategory').innerHTML = '<option value="">Todas as Categorias</option>' + CATEGORIAS.map(c => `<option value="${c}">${c}</option>`).join('');
+$('selectBairro').innerHTML = '<option value="">Todos os Bairros</option>' + BAIRROS.map(b => `<option value="${b}">${b.charAt(0) + b.slice(1).toLowerCase()}</option>`).join('');
+renderNav();
+renderTable(listaCursosSummary);
+updateDashboard();
+</script>
 </body>
 </html>
