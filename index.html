@@ -45,7 +45,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
   <!-- Barra de filtros global -->
   <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
-      <i class="fa-solid fa-sliders text-emerald-600"></i> Clique nos gráficos para microanálises cruzadas reais:
+      <i class="fa-solid fa-sliders text-emerald-600"></i> Clique nas fatias ou barras para microanálises cruzadas:
     </div>
     <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
       <select id="selectCategory" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500"></select>
@@ -59,7 +59,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
     <div id="kpi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6"></div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col justify-between">
-        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Categorias</h2><p class="text-xs text-slate-400">Clique na fatia para filtrar</p></div>
+        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Categorias</h2><p class="text-xs text-slate-400">Clique na fatia para destacar</p></div>
         <div class="relative h-64"><canvas id="chartCategorias"></canvas></div>
         <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50 p-3.5 rounded-xl text-xs space-y-2">
           <p class="font-bold text-slate-700"><i class="fa-solid fa-circle-info text-emerald-600"></i> <span id="summary-title">Visão Geral das Categorias</span></p>
@@ -69,12 +69,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
         </div>
       </div>
       <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 lg:col-span-2">
-        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Status das Matrículas</h2><p class="text-xs text-slate-400">Clique na barra para filtrar</p></div>
+        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Status das Matrículas</h2><p class="text-xs text-slate-400">Clique na barra para destacar</p></div>
         <div class="relative h-80"><canvas id="chartStatus"></canvas></div>
       </div>
     </div>
     <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-      <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Concentração por Bairro</h2><p class="text-xs text-slate-400">Clique na barra do bairro para filtrar</p></div>
+      <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Concentração por Bairro</h2><p class="text-xs text-slate-400">Clique na barra do bairro para destacar</p></div>
       <div class="relative h-96"><canvas id="chartBairros"></canvas></div>
     </div>
   </div>
@@ -146,9 +146,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
 </footer>
 
 <script>
-/* =====================================================================
-   BASE DE DADOS REAL EXTRAÍDA DO SIGACAP (455 Matrículas validadas)
-   ===================================================================== */
 const rawMatriculas = [
   {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":54.2,"inst":"ANA CRISTINA DO NASCIMENTO REIS","ch":16},
   {"c":"Ofícios e Geração de Renda","b":"BEXIGA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":42.1,"inst":"ANA CRISTINA DO NASCIMENTO REIS","ch":16},
@@ -169,13 +166,7 @@ const rawMatriculas = [
   {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":39.8,"inst":"JORDANA DAL PIERO","ch":9},
   {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":44.5,"inst":"JORDANA DAL PIERO","ch":9},
   {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":37.1,"inst":"JORDANA DAL PIERO","ch":9},
-  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":46.3,"inst":"JORDANA DAL PIERO","ch":9},
-  // Simulação proporcional real para atingir exatamente o volume SigaCap mantendo a consistência dos dados
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":43.0,"inst":"ROSELAINE FREIRE DE OLIVEIRA CRUZ","ch":72},
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":38.2,"inst":"JORDANA DAL PIERO","ch":9},
-  {"c":"Beleza e Estética","b":"BEXIGA","s":"CONCLUIU","n":"MANICURE & ALONGAMENTO EM GEL","idade":29.5,"inst":"MARIA CLARA DE MORAES PEREIRA","ch":72},
-  {"c":"Bem-Estar","b":"ITAQUANDUBA","s":"NÃO INFORMADO","n":"ARTE TERAPIA","idade":45.0,"inst":"ANA CAROLINA BOSCATTO","ch":36},
-  {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":37.4,"inst":"ANA CRISTINA DO NASCIMENTO REIS","ch":16}
+  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":46.3,"inst":"JORDANA DAL PIERO","ch":9}
 ];
 
 const listaCursosSummary = [
@@ -240,9 +231,6 @@ function resetFilters() {
   updateDashboard();
 }
 
-/* =====================================================================
-   ATUALIZAÇÃO DINÂMICA COM FILTRAGEM CRUZADA REAL
-   ===================================================================== */
 function updateDashboard() {
   const labels = [];
   if (activeFilter.category) labels.push('Categoria: ' + activeFilter.category);
@@ -251,7 +239,6 @@ function updateDashboard() {
   $('filter-status-text').innerHTML = '<i class="fa-solid fa-filter"></i> ' + labels.join(' | ');
   $('filter-status-box').classList.toggle('hidden', labels.length === 0);
 
-  // Filtragem real e direta sobre o dataset SigaCap
   const filtered = rawMatriculas.filter(i =>
     (!activeFilter.category || i.c === activeFilter.category) &&
     (!activeFilter.bairro || i.b === activeFilter.bairro) &&
@@ -263,7 +250,6 @@ function updateDashboard() {
   if (currentTab === 'instr') renderInstr(filtered);
 }
 
-/* ---------- VISÃO GERAL COM CRUZAMENTO REAL ---------- */
 function renderOverview(filtered) {
   const totalMat = filtered.length > 0 ? filtered.length : 455;
   const concluintes = filtered.filter(i => i.s === 'CONCLUIU').length;
@@ -275,37 +261,10 @@ function renderOverview(filtered) {
   }
   const taxa = totalMat > 0 ? ((conclFinal / totalMat) * 100).toFixed(1) : '0.0';
 
-  // Contagens dinâmicas baseadas estritamente nos dados filtrados
-  const catCounts = { 'Ofícios e Geração de Renda': 0, 'Beleza e Estética': 0, 'Bem-Estar': 0, 'Gestão e Empreendedorismo': 0 };
-  const statusCounts = { 'CONCLUIU': 0, 'DESISTIU': 0, 'REPROVOU': 0, 'NÃO INFORMADO': 0 };
-  const bairroCounts = { 'BARRA VELHA':0, 'ÁGUA BRANCA':0, 'REINO':0, 'ITAQUANDUBA':0, 'PEREQUÊ':0, 'BEXIGA':0, 'ZABUMBA':0, 'COSTA BELA':0 };
-
-  filtered.forEach(i => {
-    if (catCounts[i.c] !== undefined) catCounts[i.c]++;
-    if (statusCounts[i.s] !== undefined) statusCounts[i.s]++;
-    else statusCounts['NÃO INFORMADO'] = (statusCounts['NÃO INFORMADO'] || 0) + 1;
-    if (bairroCounts[i.b] !== undefined) bairroCounts[i.b]++;
-  });
-
-  // Se nenhum filtro ativo, exibe totais reais oficiais oficiais
-  if (!activeFilter.category && !activeFilter.bairro && !activeFilter.status) {
-    catCounts['Ofícios e Geração de Renda'] = 292;
-    catCounts['Beleza e Estética'] = 82;
-    catCounts['Bem-Estar'] = 73;
-    catCounts['Gestão e Empreendedorismo'] = 8;
-    statusCounts['CONCLUIU'] = 242;
-    statusCounts['DESISTIU'] = 39;
-    statusCounts['REPROVOU'] = 1;
-    statusCounts['NÃO INFORMADO'] = 173;
-    bairroCounts['BARRA VELHA'] = 122;
-    bairroCounts['ÁGUA BRANCA'] = 60;
-    bairroCounts['REINO'] = 40;
-    bairroCounts['ITAQUANDUBA'] = 31;
-    bairroCounts['PEREQUÊ'] = 26;
-    bairroCounts['BEXIGA'] = 24;
-    bairroCounts['ZABUMBA'] = 14;
-    bairroCounts['COSTA BELA'] = 14;
-  }
+  // Sempre exibe a estrutura completa de totais oficiais (455 matrículas, 292 ofícios, 82 beleza, etc.)
+  const catCounts = { 'Ofícios e Geração de Renda': 292, 'Beleza e Estética': 82, 'Bem-Estar': 73, 'Gestão e Empreendedorismo': 8 };
+  const statusCounts = { 'CONCLUIU': 242, 'DESISTIU': 39, 'REPROVOU': 1, 'NÃO INFORMADO': 173 };
+  const bairroCounts = { 'BARRA VELHA':122, 'ÁGUA BRANCA':60, 'REINO':40, 'ITAQUANDUBA':31, 'PEREQUÊ':26, 'BEXIGA':24, 'ZABUMBA':14, 'COSTA BELA':14 };
 
   const kpis = [
     ['Total Matrículas', totalMat, 'emerald', 'fa-id-card', 'fa-file-signature', 'Seleção atual'],
@@ -318,25 +277,29 @@ function renderOverview(filtered) {
   $('summary-title').innerText = activeFilter.category || 'Visão Geral das Categorias';
   $('summary-mat').innerText = totalMat; $('summary-conc').innerText = conclFinal; $('summary-idade').innerText = avgAge + ' anos';
 
+  // Cores institucionais e aplicação de transparência sutil nas fatias/barras não selecionadas
   const catColors = ['#006837', '#0071CE', '#FDB913', '#8b5cf6'];
   const catKeys = Object.keys(catCounts);
+  const catBg = catKeys.map((k, i) => activeFilter.category && activeFilter.category !== k ? 'rgba(203, 213, 225, 0.4)' : catColors[i]);
+
   mk('chartCategorias', { type: 'doughnut',
-    data: { labels: catKeys, datasets: [{ data: Object.values(catCounts), borderWidth: 2, borderColor: '#fff',
-      backgroundColor: catKeys.map((k, i) => activeFilter.category && activeFilter.category !== k ? GREY : catColors[i]) }] },
+    data: { labels: catKeys, datasets: [{ data: Object.values(catCounts), borderWidth: 2, borderColor: '#fff', backgroundColor: catBg }] },
     options: { onClick: (e, el) => { if (el.length) { const l = catKeys[el[0].index]; activeFilter.category = activeFilter.category === l ? '' : l; $('selectCategory').value = activeFilter.category; updateDashboard(); } },
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
 
-  const stKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'], stCol = ['#10b981', '#f43f5e', '#64748b'];
+  const stKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'], stColors = ['#10b981', '#f43f5e', '#64748b'];
+  const stBg = stKeys.map((k, i) => activeFilter.status && activeFilter.status !== k ? 'rgba(203, 213, 225, 0.4)' : stColors[i]);
+
   mk('chartStatus', { type: 'bar',
-    data: { labels: ['Concluiu', 'Desistiu', 'Reprovou'], datasets: [{ data: [statusCounts['CONCLUIU'], statusCounts['DESISTIU'], statusCounts['REPROVOU']], borderRadius: 8, barThickness: 45,
-      backgroundColor: stKeys.map((k, i) => activeFilter.status && activeFilter.status !== k ? GREY : stCol[i]) }] },
+    data: { labels: ['Concluiu', 'Desistiu', 'Reprovou'], datasets: [{ data: [statusCounts['CONCLUIU'], statusCounts['DESISTIU'], statusCounts['REPROVOU']], borderRadius: 8, barThickness: 45, backgroundColor: stBg }] },
     options: { onClick: (e, el) => { if (el.length) { const s = stKeys[el[0].index]; activeFilter.status = activeFilter.status === s ? '' : s; updateDashboard(); } },
       plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
 
   const bKeys = Object.keys(bairroCounts);
+  const bBg = bKeys.map(k => activeFilter.bairro && activeFilter.bairro !== k ? 'rgba(203, 213, 225, 0.4)' : '#006837');
+
   mk('chartBairros', { type: 'bar',
-    data: { labels: bKeys, datasets: [{ data: Object.values(bairroCounts), borderRadius: 6, barThickness: 20,
-      backgroundColor: bKeys.map(k => activeFilter.bairro && activeFilter.bairro !== k ? GREY : '#006837') }] },
+    data: { labels: bKeys, datasets: [{ data: Object.values(bairroCounts), borderRadius: 6, barThickness: 20, backgroundColor: bBg }] },
     options: { indexAxis: 'y', onClick: (e, el) => { if (el.length) { const b = bKeys[el[0].index]; activeFilter.bairro = activeFilter.bairro === b ? '' : b; $('selectBairro').value = activeFilter.bairro; updateDashboard(); } },
       plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
 }
@@ -352,7 +315,6 @@ function kpiCard(title, value, color, icon, subIcon, sub) {
     </div></div>`;
 }
 
-/* ---------- CURSOS ---------- */
 function renderTable(data) {
   $('coursesTableBody').innerHTML = data.map(i => {
     const b = i.TAXA_CONCLUSAO >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i.TAXA_CONCLUSAO >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
@@ -364,7 +326,6 @@ function filterCoursesTable() {
   renderTable(listaCursosSummary.filter(i => i.NOME_CURSO.toLowerCase().includes(q)));
 }
 
-/* ---------- DEMOGRÁFICO ---------- */
 function renderDemo(filtered) {
   const tot = FAIXAS.map(f => filtered.filter(d => faixaDe(d.idade) === f).length);
   mk('chartFaixaDonut', { type: 'doughnut',
@@ -378,7 +339,6 @@ function renderDemo(filtered) {
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
 }
 
-/* ---------- IMPACTO SOCIAL ---------- */
 function renderImpact(filtered) {
   const cs = listaCursosSummary.map(c => ({ ...c, horas: c.ch * c.CONCLUINTES }));
   const horas = cs.reduce((a, c) => a + c.horas, 0), conc = cs.reduce((a, c) => a + c.CONCLUINTES, 0);
@@ -400,7 +360,6 @@ function renderImpact(filtered) {
     options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
 }
 
-/* ---------- INSTRUTORES ---------- */
 function renderInstr(filtered) {
   const g = {};
   listaCursosSummary.forEach(c => {
@@ -423,7 +382,6 @@ function renderInstr(filtered) {
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
 }
 
-/* ---------- INICIALIZAÇÃO ---------- */
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 $('selectCategory').innerHTML = '<option value="">Todas as Categorias</option>' + CATEGORIAS.map(c => `<option value="${c}">${c}</option>`).join('');
 $('selectBairro').innerHTML = '<option value="">Todos os Bairros</option>' + BAIRROS.map(b => `<option value="${b}">${b.charAt(0) + b.slice(1).toLowerCase()}</option>`).join('');
