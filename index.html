@@ -45,7 +45,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
   <!-- Barra de filtros global -->
   <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
-      <i class="fa-solid fa-sliders text-emerald-600"></i> Clique nas fatias ou barras para microanálises cruzadas:
+      <i class="fa-solid fa-sliders text-emerald-600"></i> Clique em qualquer fatia ou barra para filtrar todo o painel em tempo real:
     </div>
     <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
       <select id="selectCategory" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500"></select>
@@ -59,7 +59,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
     <div id="kpi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6"></div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 flex flex-col justify-between">
-        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Categorias</h2><p class="text-xs text-slate-400">Clique na fatia para destacar</p></div>
+        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Categorias</h2><p class="text-xs text-slate-400">Clique na fatia para filtrar os demais gráficos</p></div>
         <div class="relative h-64"><canvas id="chartCategorias"></canvas></div>
         <div class="mt-4 pt-4 border-t border-slate-100 bg-slate-50 p-3.5 rounded-xl text-xs space-y-2">
           <p class="font-bold text-slate-700"><i class="fa-solid fa-circle-info text-emerald-600"></i> <span id="summary-title">Visão Geral das Categorias</span></p>
@@ -69,12 +69,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
         </div>
       </div>
       <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 lg:col-span-2">
-        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Status das Matrículas</h2><p class="text-xs text-slate-400">Clique na barra para destacar</p></div>
+        <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Status das Matrículas</h2><p class="text-xs text-slate-400">Atualizado conforme seleção • Clique na barra para filtrar</p></div>
         <div class="relative h-80"><canvas id="chartStatus"></canvas></div>
       </div>
     </div>
     <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-      <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Concentração por Bairro</h2><p class="text-xs text-slate-400">Clique na barra do bairro para destacar</p></div>
+      <div class="mb-4"><h2 class="text-base font-bold text-slate-900">Concentração por Bairro</h2><p class="text-xs text-slate-400">Top bairros na seleção atual • Clique na barra para filtrar</p></div>
       <div class="relative h-96"><canvas id="chartBairros"></canvas></div>
     </div>
   </div>
@@ -83,10 +83,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
   <div id="tab-courses" class="hidden space-y-8">
     <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
       <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div><h2 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-list-check text-emerald-600"></i> Catálogo Completo de Cursos</h2><p class="text-xs text-slate-400">Busque qualquer modalidade</p></div>
+        <div><h2 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-list-check text-emerald-600"></i> Catálogo Completo de Cursos</h2><p class="text-xs text-slate-400">Reflete os filtros ativos</p></div>
         <div class="relative w-full sm:w-64">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="searchInput" onkeyup="filterCoursesTable()" placeholder="Buscar curso..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full">
+          <input type="text" id="searchInput" onkeyup="renderCoursesTab()" placeholder="Buscar curso..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full">
         </div>
       </div>
       <div class="overflow-x-auto"><table class="w-full text-left border-collapse">
@@ -119,20 +119,19 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
         <div class="relative h-72"><canvas id="chartHorasCat"></canvas></div>
       </div>
       <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Horas Entregues por Curso</h2><p class="text-xs text-slate-400 mb-4">Ranking de impacto</p>
+        <h2 class="text-base font-bold text-slate-900">Horas Entregues por Curso (Top 10)</h2><p class="text-xs text-slate-400 mb-4">Ranking de impacto</p>
         <div class="relative h-72"><canvas id="chartHorasCurso"></canvas></div>
       </div>
     </div>
   </div>
 
-  <!-- ABA 5: INSTRUTORES E MONITORES (EXPANDIDO) -->
+  <!-- ABA 5: INSTRUTORES E MONITORES -->
   <div id="tab-instr" class="hidden space-y-8">
-    <!-- Gráfico Ampliado de Formados por Monitor -->
     <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
       <div class="flex justify-between items-center mb-4">
         <div>
           <h2 class="text-base font-bold text-slate-900">Alunos Formados por Monitor / Instrutor</h2>
-          <p class="text-xs text-slate-400">Total de concluintes sob responsabilidade de cada educador</p>
+          <p class="text-xs text-slate-400">Total de concluintes sob responsabilidade de cada educador na seleção atual</p>
         </div>
         <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold">Desempenho Geral</span>
       </div>
@@ -141,7 +140,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
       </div>
     </div>
 
-    <!-- Tabela Simplificada de Monitores -->
     <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
       <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
         <i class="fa-solid fa-chalkboard-user text-emerald-600"></i> Relação de Monitores e Instrutores
@@ -168,62 +166,26 @@ body{font-family:'Plus Jakarta Sans',sans-serif}
 </footer>
 
 <script>
-const rawMatriculas = [
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":54.2},
-  {"c":"Ofícios e Geração de Renda","b":"BEXIGA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":42.1},
-  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":38.5},
-  {"c":"Ofícios e Geração de Renda","b":"ZABUMBA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":45.2},
-  {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":33.8},
-  {"c":"Ofícios e Geração de Renda","b":"PEREQUÊ","s":"CONCLUIU","n":"WORKSHOP - CONSERTOS E REPAROS","idade":50.1},
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":41.3},
-  {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":36.4},
-  {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"COSTURA INICIANTE","idade":48.9},
-  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"DESISTIU","n":"COSTURA INICIANTE","idade":29.2},
-  {"c":"Beleza e Estética","b":"BARRA VELHA","s":"CONCLUIU","n":"MANICURE & ALONGAMENTO EM GEL","idade":28.4},
-  {"c":"Beleza e Estética","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"MANICURE & ALONGAMENTO EM GEL","idade":31.0},
-  {"c":"Beleza e Estética","b":"PEREQUÊ","s":"CONCLUIU","n":"BARBEARIA","idade":25.6},
-  {"c":"Gestão e Empreendedorismo","b":"BARRA VELHA","s":"CONCLUIU","n":"ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","idade":30.2},
-  {"c":"Bem-Estar","b":"BARRA VELHA","s":"DESISTIU","n":"ARTE TERAPIA","idade":41.4},
-  {"c":"Bem-Estar","b":"ÁGUA BRANCA","s":"DESISTIU","n":"ARTE TERAPIA","idade":52.1},
-  {"c":"Ofícios e Geração de Renda","b":"BARRA VELHA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":39.8},
-  {"c":"Ofícios e Geração de Renda","b":"ÁGUA BRANCA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":44.5},
-  {"c":"Ofícios e Geração de Renda","b":"REINO","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":37.1},
-  {"c":"Ofícios e Geração de Renda","b":"ITAQUANDUBA","s":"CONCLUIU","n":"OFICINA DE VELA ARTESANAL","idade":46.3}
-];
+/* =====================================================================
+   BASE DE DADOS OFICIAL COMPLETA (455 Matrículas Reais do SigaCap)
+   ===================================================================== */
+const DB = {"cats":["Beleza e Estética","Bem-Estar","Gestão e Empreendedorismo","Ofícios e Geração de Renda"],"bairros":["ALTO DA BARRA","ARMAÇÃO","BARRA VELHA","BEXIGA","BORRIFOS","CABARAÚ","COCAIA","COSTA BELA","CURRAL","ENGENHO D'ÁGUA","FEITICEIRA","FURNAS","GARAPOCAIA","GREEN PARK","ITAGUASSU","ITAPECERICA","ITAQUANDUBA","ITATINGA","MORRO DA CRUZ","NÃO INFORMADO","PEREQUÊ","PIÚVA","PONTA AZEDA","PORTINHO","PRAIA GRANDE","REINO","RIBEIRÃO","SACO DA CAPELA","SANTA TEREZA","SIRIUBA","TOCA","VELOSO","VIANA","VILA","ZABUMBA","ÁGUA BRANCA"],"statuses":["CONCLUIU","DESISTIU","NÃO INFORMADO","REPROVOU"],"cursos":["ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","ARTE TERAPIA","BARBEARIA","COSTURA INICIANTE","CROCHÊ","CROCHÊ AVANÇADO","MANICURE & ALONGAMENTO EM GEL","MANICURE & PEDICURE","MAQUIAGEM","MODELAGEM","MOSAICO","OFICINA DE DECOUPAGEM","OFICINA DE FELTRO","OFICINA DE NATAL","OFICINA DE VELA ARTESANAL","PINTURA EM TECIDO","WORKSHOP - CONSERTOS E REPAROS","WORKSHOP - PINTURA EM TECIDO","WORKSHOP MAQUIAGEM DO DIA A DIA","WORKSHOP MAQUIAGEM PARA PELE MADURA","WORKSHOP PELE PROFISSIONAL"],"insts":["ADEILDA VICENTE SILVA FERREIRA","ANA CAROLINA BOSCATTO","ANA CRISTINA DO NASCIMENTO REIS","ANA PAULA SIQUEIRA","AXEL HENRIQUE MARTINS GUIMARÃES","GÉSSYKA PÂMILLA DE MATOS","JORDANA DAL PIERO","MARCO VALENTE","MARIA ANGÉLICA HERNANDES","MARIA CLARA DE MORAES PEREIRA","PRISCILA MORAES MOURA MANGANELLI","RITA DE CASSIA MARTINS CORREA","ROSANGELA APARECIDA SANTOS","ROSELAINE FREIRE DE OLIVEIRA CRUZ","SERGIO MANCINI"],"cids":["CUR-2026-01","CUR-2026-02","CUR-2026-03","CUR-2026-04","CUR-2026-05","CUR-2026-06","CUR-2026-07","CUR-2026-08","CUR-2026-09","CUR-2026-10","CUR-2026-11","CUR-2026-12","CUR-2026-13","CUR-2026-14","CUR-2026-15","CUR-2026-16","CUR-2026-17","CUR-2026-18","CUR-2026-19","CUR-2026-20","CUR-2026-21","CUR-2026-22","CUR-2026-23","CUR-2026-24","CUR-2026-25","CUR-2026-26","CUR-2026-27","CUR-2026-28","CUR-2026-29","CUR-2026-30","CUR-2026-31","CUR-2026-32","CUR-2026-33","CUR-2026-34","CUR-2026-35","CUR-2026-36","CUR-2026-37","CUR-2026-38","CUR-2026-39","CUR-2026-40","CUR-2026-41","CUR-2026-42","CUR-2026-43"],"edicoes":[1,5,1,5,1,1,2,3,1,2,2,2,1,1,4,1,4,2,1,2,1],"data":[[3,2,0,16,54.2,2,16,0],[3,3,0,16,34.8,2,16,0],[3,16,0,16,62.7,2,16,0],[3,16,0,16,32.6,2,16,0],[3,34,0,16,37.6,2,16,0],[3,20,0,16,37.1,2,16,0],[3,35,0,16,29.6,2,16,0],[3,11,0,16,55.8,2,16,0],[3,25,0,16,46.5,2,16,0],[3,2,0,16,56.3,2,16,0],[3,3,0,16,55.0,2,16,0],[3,2,0,16,28.5,13,16,2],[3,2,0,16,61.3,13,16,2],[3,27,0,16,47.3,13,16,2],[3,28,0,16,53.8,13,16,2],[3,29,0,16,53.6,13,16,2],[3,25,0,16,59.8,13,16,2],[3,35,0,16,38.2,13,16,2],[2,2,0,0,25.3,7,80,1],[2,34,0,0,26.2,7,80,1],[2,19,0,0,39.0,7,80,1],[2,2,0,0,23.5,7,80,1],[2,3,0,0,34.6,7,80,1],[2,35,0,0,29.6,7,80,1],[2,3,0,0,33.7,7,80,1],[2,35,0,0,38.9,7,80,1],[3,2,0,3,47.1,13,72,3],[3,13,0,3,45.2,13,72,3],[3,35,0,3,57.9,13,72,3],[3,23,0,3,47.4,13,72,3],[3,2,0,3,42.3,13,72,3],[3,35,0,3,39.1,13,72,3],[3,35,0,3,45.6,13,72,3],[3,24,0,3,45.7,13,72,4],[3,13,0,3,31.4,13,72,4],[3,25,0,3,45.4,13,72,4],[3,9,0,3,58.7,13,72,4],[3,35,0,3,35.6,13,72,4],[3,35,0,3,53.8,13,72,4],[0,35,0,2,19.7,4,80,5],[0,20,0,2,35.4,4,80,5],[0,16,0,2,40.6,4,80,5],[0,2,0,2,32.7,4,80,5],[0,25,0,2,40.3,4,80,5],[0,7,0,2,26.0,4,80,5],[0,3,0,2,39.9,4,80,5],[0,25,0,2,28.9,4,80,5],[0,19,0,2,36.1,4,80,5],[0,25,0,2,28.5,4,80,5],[0,13,0,8,43.1,5,80,6],[0,2,0,8,25.4,5,80,6],[0,25,0,8,33.8,5,80,6],[0,20,0,8,31.7,5,80,6],[0,19,0,8,39.0,5,80,6],[0,19,0,8,39.0,5,80,6],[3,20,0,16,55.0,2,16,7],[3,2,0,16,46.9,2,16,7],[3,27,0,16,44.3,2,16,7],[3,16,0,16,40.5,2,16,7],[3,7,0,16,44.3,2,16,7],[3,33,0,16,29.0,2,16,7],[0,2,0,6,37.2,9,72,8],[0,20,0,6,29.8,9,72,8],[0,35,0,6,18.9,9,72,8],[0,16,0,6,23.3,9,72,8],[0,8,0,6,23.6,9,72,8],[0,19,1,6,39.0,9,72,8],[0,16,0,6,51.5,9,72,8],[0,2,0,6,25.4,9,72,8],[0,2,3,6,38.2,9,72,8],[0,20,0,6,25.1,9,72,8],[0,2,0,6,17.4,9,72,8],[0,19,1,6,20.1,9,72,8],[0,2,0,6,18.7,9,72,8],[0,19,0,6,39.0,9,72,8],[0,2,0,6,29.6,9,72,8],[3,35,0,16,53.8,2,16,9],[3,35,0,16,45.6,2,16,9],[3,24,0,16,45.7,2,16,9],[3,13,0,16,31.4,2,16,9],[3,25,0,16,45.4,2,16,9],[3,9,0,16,58.7,2,16,9],[3,35,0,16,35.6,2,16,9],[3,2,0,16,47.1,2,16,9],[3,13,0,16,45.2,2,16,9],[3,2,0,16,42.3,2,16,9],[3,14,0,3,24.9,2,72,10],[3,14,1,3,29.5,2,72,10],[3,2,0,3,39.8,2,72,10],[3,35,0,3,47.0,2,72,10],[3,25,1,3,33.8,2,72,10],[3,2,0,3,0.2,2,72,10],[3,1,0,3,60.7,2,72,10],[3,2,0,3,26.1,2,72,10],[3,1,0,3,43.7,2,72,10],[3,1,1,3,36.1,2,72,10],[3,35,0,3,32.0,2,72,10],[3,2,0,3,54.0,2,72,10],[3,20,0,3,16.3,13,72,11],[3,35,0,3,37.9,13,72,11],[3,2,1,3,29.0,13,72,11],[3,3,0,3,21.8,13,72,11],[3,13,0,3,32.1,13,72,11],[3,23,1,3,57.5,13,72,11],[3,2,0,3,44.7,13,72,11],[3,3,0,3,18.6,13,72,11],[3,34,1,3,48.5,13,72,11],[3,7,1,3,44.3,13,72,11],[3,25,0,3,42.4,13,72,11],[3,35,0,3,18.9,13,72,11],[3,29,0,9,58.5,0,72,12],[3,9,0,9,39.0,0,72,12],[3,25,0,9,57.2,0,72,12],[3,13,0,9,45.2,0,72,12],[3,2,1,9,22.3,0,72,12],[3,35,0,9,57.9,0,72,12],[3,2,0,9,42.3,0,72,12],[3,2,0,9,31.9,0,72,12],[3,16,0,9,62.7,0,72,12],[3,16,0,9,52.6,0,72,12],[3,2,0,9,54.0,0,72,12],[3,35,0,9,53.8,0,72,12],[3,1,2,4,19.2,8,72,13],[3,2,2,4,32.3,8,72,13],[3,14,2,4,29.5,8,72,13],[3,35,2,4,27.1,8,72,13],[3,21,2,4,32.3,8,72,13],[3,16,2,4,22.1,8,72,13],[3,7,2,4,46.6,8,72,13],[3,3,2,4,16.0,8,72,13],[3,20,2,4,47.0,8,72,13],[3,3,2,4,42.2,8,72,13],[3,25,2,4,17.8,8,72,13],[3,26,2,4,40.0,8,72,13],[3,2,2,5,40.2,8,72,14],[3,35,2,5,57.9,8,72,14],[3,2,2,5,24.3,8,72,14],[3,25,2,5,50.7,8,72,14],[3,16,2,5,71.2,8,72,14],[3,27,2,5,78.1,8,72,14],[3,16,2,5,40.5,8,72,14],[3,2,2,5,25.6,8,72,14],[3,35,2,5,42.0,8,72,14],[3,16,2,5,32.6,8,72,14],[3,16,2,5,77.4,8,72,14],[3,35,2,5,38.2,8,72,14],[3,20,2,5,75.3,8,72,14],[3,35,1,15,57.9,14,12,15],[3,7,1,15,25.6,14,12,15],[3,35,0,15,24.6,14,12,15],[3,34,1,15,36.5,14,12,15],[3,2,0,15,68.4,14,12,15],[3,14,1,15,48.1,14,12,15],[3,35,1,15,63.0,14,12,15],[3,35,0,15,35.6,14,12,15],[3,2,0,15,28.0,14,12,15],[3,35,0,15,48.1,14,12,15],[3,14,1,15,19.4,14,12,15],[3,2,2,15,19.8,14,12,15],[1,2,2,1,42.3,1,36,16],[1,16,2,1,54.9,1,36,16],[1,2,2,1,20.9,1,36,16],[1,2,2,1,20.9,1,36,16],[1,33,2,1,40.9,1,36,16],[1,3,2,1,57.1,1,36,16],[1,7,2,1,40.3,1,36,16],[1,35,2,1,37.7,1,36,16],[1,3,2,1,29.4,1,36,16],[1,34,2,1,17.5,1,36,16],[1,34,2,1,48.5,1,36,16],[1,2,2,1,67.4,1,36,16],[1,2,2,1,48.9,1,36,16],[1,1,2,1,44.2,1,36,16],[1,6,2,1,43.1,1,36,16],[1,20,2,1,39.2,1,36,17],[1,7,2,1,29.9,1,36,17],[1,2,2,1,33.5,1,36,17],[1,35,2,1,35.6,1,36,17],[1,20,2,1,80.9,1,36,17],[1,1,2,1,29.4,1,36,17],[1,10,2,1,67.0,1,36,17],[1,16,2,1,49.4,1,36,17],[1,20,2,1,58.1,1,36,17],[1,2,2,1,61.0,1,36,17],[1,25,2,1,44.6,1,36,17],[1,23,2,1,46.1,1,36,17],[1,25,2,1,63.8,1,36,17],[1,2,2,1,46.9,1,36,18],[1,16,2,1,28.3,1,36,18],[1,35,2,1,33.4,1,36,18],[1,6,2,1,27.7,1,36,18],[1,2,2,1,34.2,1,36,18],[1,14,2,1,47.2,1,36,18],[1,35,2,1,37.7,1,36,18],[1,35,2,1,41.5,1,36,18],[1,3,2,1,21.8,1,36,18],[1,2,2,1,28.4,1,36,18],[1,35,2,1,29.3,1,36,18],[1,34,2,1,22.1,1,36,18],[1,14,2,1,48.1,1,36,18],[1,2,2,1,31.8,1,36,18],[1,2,2,1,21.0,1,36,18],[1,34,2,1,56.3,1,36,19],[1,35,2,1,45.6,1,36,19],[1,2,2,1,51.7,1,36,19],[1,2,2,1,32.4,1,36,19],[1,31,2,1,33.1,1,36,19],[1,5,2,1,39.1,1,36,19],[1,3,2,1,49.2,1,36,19],[1,34,2,1,64.5,1,36,19],[1,2,2,1,58.4,1,36,19],[1,20,2,1,59.8,1,36,19],[1,2,2,1,27.6,1,36,19],[1,35,2,1,60.1,1,36,19],[1,2,2,1,65.1,1,36,19],[1,20,2,1,61.7,1,36,19],[1,35,2,1,73.3,1,36,19],[1,10,2,1,23.8,1,36,20],[1,2,2,1,52.5,1,36,20],[1,35,2,1,26.7,1,36,20],[1,2,2,1,24.8,1,36,20],[1,21,2,1,49.4,1,36,20],[1,7,2,1,39.0,1,36,20],[1,14,2,1,19.4,1,36,20],[1,25,2,1,19.1,1,36,20],[1,20,2,1,44.2,1,36,20],[1,25,2,1,45.8,1,36,20],[1,2,2,1,46.1,1,36,20],[1,2,2,1,33.4,1,36,20],[1,16,2,1,35.2,1,36,20],[1,34,2,1,35.9,1,36,20],[1,2,2,1,35.3,1,36,20],[0,25,2,7,26.7,12,72,21],[0,16,2,7,31.6,12,72,21],[0,2,2,7,32.0,12,72,21],[0,24,2,7,25.6,12,72,21],[0,2,2,7,35.8,12,72,21],[0,2,2,7,17.1,12,72,21],[0,16,2,7,27.5,12,72,21],[0,35,2,7,29.7,12,72,21],[0,35,2,7,26.8,12,72,21],[0,16,2,7,32.7,12,72,21],[0,25,2,7,30.7,12,72,21],[0,14,2,7,31.8,12,72,21],[0,16,2,7,54.2,12,72,22],[0,2,2,7,26.3,12,72,22],[0,2,2,7,19.4,12,72,22],[0,2,2,7,39.5,12,72,22],[0,25,2,7,20.4,12,72,22],[0,2,2,7,19.3,12,72,22],[0,7,2,7,48.8,12,72,22],[0,2,2,7,55.6,12,72,22],[0,25,2,7,22.6,12,72,22],[0,2,2,7,38.0,12,72,22],[0,2,2,7,27.2,12,72,22],[0,35,2,7,30.8,12,72,22],[0,35,2,7,43.6,12,72,23],[0,2,2,7,32.3,12,72,23],[0,20,2,7,29.6,12,72,23],[0,25,2,7,41.1,12,72,23],[0,2,2,7,46.2,12,72,23],[0,2,2,7,29.6,12,72,23],[0,3,2,7,25.9,12,72,23],[0,3,2,7,25.6,12,72,23],[0,35,2,7,30.1,12,72,23],[0,34,2,7,43.4,12,72,23],[0,2,2,7,29.2,12,72,23],[0,3,2,7,39.5,12,72,23],[0,2,1,6,38.1,9,72,24],[0,34,0,6,26.5,9,72,24],[0,35,1,6,40.9,9,72,24],[0,8,1,6,20.6,9,72,24],[0,25,0,6,42.4,9,72,24],[0,3,0,6,16.6,9,72,24],[0,25,1,6,17.1,9,72,24],[0,25,0,6,40.2,9,72,24],[0,20,0,6,23.7,9,72,24],[0,27,0,6,16.4,9,72,24],[0,35,0,6,16.3,9,72,24],[0,6,0,6,42.8,9,72,24],[0,28,0,6,26.3,9,72,24],[0,14,0,6,47.0,9,72,24],[0,34,0,6,22.8,9,72,24],[3,2,0,14,54.1,6,9,25],[3,6,0,14,42.3,6,9,25],[3,20,0,14,50.5,6,9,25],[3,2,0,14,41.5,6,9,25],[3,4,0,14,42.1,6,9,25],[3,35,0,14,37.9,6,9,25],[3,34,1,14,26.2,6,9,25],[3,16,0,14,24.2,6,9,25],[3,2,1,14,59.8,6,9,26],[3,2,0,14,26.6,6,9,26],[3,20,0,14,50.4,6,9,26],[3,35,0,14,26.9,6,9,26],[3,2,0,14,49.3,6,9,26],[3,20,0,14,16.6,6,9,26],[3,34,0,14,31.8,6,9,26],[3,28,0,14,25.4,6,9,26],[3,16,0,17,44.1,14,2,27],[3,25,0,17,32.6,14,2,27],[3,6,0,17,37.8,14,2,27],[3,2,0,17,39.6,14,2,27],[3,1,0,17,50.5,14,2,27],[3,3,0,17,53.5,14,2,27],[3,22,1,17,38.2,14,2,27],[3,25,0,17,22.2,14,2,27],[3,14,0,17,65.2,14,2,27],[3,1,0,17,41.7,14,2,27],[3,20,0,11,52.9,11,9,28],[3,35,0,11,50.4,11,9,28],[3,16,0,11,69.8,11,9,28],[3,2,0,11,60.6,11,9,28],[3,2,0,11,43.6,11,9,28],[3,2,0,11,25.8,11,9,28],[3,2,1,11,47.4,11,9,28],[3,35,1,11,47.7,11,9,28],[3,25,0,11,32.6,11,9,28],[3,2,0,11,28.0,11,9,28],[3,2,0,17,37.4,14,2,29],[3,10,0,17,36.7,14,2,29],[3,17,0,17,19.8,14,2,29],[3,25,0,17,33.6,14,2,29],[3,18,0,17,24.3,14,2,29],[3,25,0,17,57.9,14,2,29],[3,3,0,17,61.8,14,2,29],[3,2,0,13,51.1,10,21,30],[3,9,0,13,58.7,10,21,30],[3,2,0,13,68.0,10,21,30],[3,24,0,13,57.8,10,21,30],[3,35,1,13,22.9,10,21,30],[3,28,0,13,35.5,10,21,30],[3,0,0,13,0.1,10,21,30],[3,7,0,13,0.3,10,21,30],[3,1,0,13,50.5,10,21,30],[3,14,0,13,50.6,10,21,30],[3,7,0,13,44.3,10,21,30],[3,16,0,13,25.5,10,21,30],[3,2,0,13,29.6,10,21,30],[3,0,0,13,31.1,10,21,30],[3,16,0,13,19.0,10,21,30],[3,16,2,9,38.9,0,72,31],[3,35,2,9,36.5,0,72,31],[3,2,2,9,45.7,0,72,31],[3,2,2,9,28.5,0,72,31],[3,13,2,9,31.4,0,72,31],[3,2,2,9,32.1,0,72,31],[3,3,2,9,48.5,0,72,31],[3,2,2,9,56.3,0,72,31],[3,2,2,10,57.4,3,42,32],[3,16,2,10,59.4,3,42,32],[3,2,2,10,64.7,3,42,32],[3,35,2,10,47.7,3,42,32],[3,2,2,10,60.8,3,42,32],[3,20,2,10,52.9,3,42,32],[3,2,2,10,44.9,3,42,32],[3,20,2,10,26.3,3,42,32],[3,20,2,10,0.1,3,42,32],[3,20,2,10,50.4,3,43,33],[3,2,2,10,33.4,3,43,33],[3,20,2,10,28.6,3,43,33],[3,18,2,10,24.3,3,43,33],[3,35,2,10,44.7,3,43,33],[3,2,2,10,28.0,3,43,33],[3,10,2,10,42.6,3,43,33],[3,30,2,10,48.3,3,43,33],[3,25,2,10,28.4,3,43,33],[3,16,2,3,64.5,13,72,34],[3,2,2,3,39.4,13,72,34],[3,33,2,3,44.3,13,72,34],[3,2,2,3,66.8,13,72,34],[3,35,2,3,48.7,13,72,34],[3,2,2,3,46.8,13,72,34],[3,2,2,3,44.7,13,72,34],[3,2,2,3,33.8,13,72,34],[3,1,2,3,46.7,13,72,34],[3,29,2,3,46.3,13,72,34],[3,35,2,3,46.5,13,72,34],[3,25,2,3,43.0,13,72,34],[3,16,1,14,69.8,6,9,35],[3,25,0,14,32.6,6,9,35],[3,20,0,14,55.0,6,9,35],[3,26,0,14,54.5,6,9,35],[3,16,0,14,42.4,6,9,35],[3,8,0,14,53.0,6,9,35],[3,8,0,14,86.7,6,9,35],[3,3,1,14,32.0,6,9,35],[3,2,0,14,37.4,6,9,36],[3,3,0,14,36.1,6,9,36],[3,7,0,14,25.6,6,9,36],[3,2,0,14,31.6,6,9,36],[3,25,0,14,22.2,6,9,36],[3,19,0,14,39.0,6,9,36],[3,2,0,14,41.0,6,9,36],[3,20,0,14,44.3,6,9,36],[3,0,0,11,0.1,11,9,37],[3,9,0,11,58.7,11,9,37],[3,24,0,11,57.8,11,9,37],[3,16,0,11,42.4,11,9,37],[3,7,0,11,0.3,11,9,37],[3,2,0,11,68.0,11,9,37],[3,28,0,11,56.6,11,9,37],[3,25,0,12,32.6,10,12,38],[3,2,1,12,51.1,10,12,38],[3,7,0,12,0.3,10,12,38],[3,2,1,12,43.4,10,12,38],[3,2,0,12,68.0,10,12,38],[3,24,0,12,57.8,10,12,38],[3,16,0,12,42.4,10,12,38],[3,12,0,12,55.2,10,12,38],[3,2,0,12,67.6,10,12,38],[3,28,1,12,56.6,10,12,38],[3,2,1,12,0.1,10,12,38],[3,34,0,19,22.8,9,3,39],[3,33,1,19,56.2,9,3,39],[3,16,0,19,16.9,9,3,39],[3,35,0,19,63.0,9,3,39],[3,2,0,19,44.5,9,3,39],[3,16,0,19,45.2,9,3,39],[3,2,0,19,21.5,9,3,39],[3,25,1,19,33.5,9,3,39],[3,2,0,19,54.6,9,3,39],[3,2,0,19,44.7,9,3,39],[3,25,0,18,40.2,9,3,40],[3,35,0,18,37.0,9,3,40],[3,34,0,18,32.8,9,3,40],[3,28,1,18,26.3,9,3,40],[3,33,1,18,51.8,9,3,40],[3,2,0,18,36.9,9,3,40],[3,20,0,18,38.7,9,3,40],[3,25,1,18,26.0,9,3,40],[3,15,0,18,34.8,9,3,40],[3,32,1,18,40.6,9,3,40],[3,35,0,18,34.0,9,3,40],[3,2,0,20,22.3,9,3,41],[3,2,0,20,21.3,9,3,41],[3,2,0,20,17.7,9,3,41],[3,25,0,20,19.4,9,3,41],[3,3,0,20,18.6,9,3,41],[3,8,0,20,34.3,9,3,41],[3,25,0,20,44.2,9,3,41],[3,34,1,20,37.1,9,3,41],[3,3,0,20,34.0,9,3,41],[3,2,0,20,45.3,9,3,41],[3,2,0,20,22.9,9,3,41],[3,34,0,19,28.0,9,3,42],[3,20,0,19,55.0,9,3,42],[3,31,0,19,0.0,9,3,42],[3,20,0,19,50.5,9,3,42],[3,8,0,19,53.0,9,3,42],[3,10,0,19,54.7,9,3,42],[3,33,0,19,56.2,9,3,42],[3,2,0,19,32.8,9,3,42],[3,7,0,19,35.2,9,3,42],[3,35,0,19,63.0,9,3,42]]};
 
-const listaCursosSummary = [
-  {"NOME_CURSO":"WORKSHOP - CONSERTOS E REPAROS","CATEGORIA":"Ofícios e Geração de Renda","EDICOES":4,"CONCLUINTES":34,"TOTAL_INSCRITOS":34,"TAXA_CONCLUSAO":100.0,"ch":16,"inst":"ANA CRISTINA DO NASCIMENTO REIS"},
-  {"NOME_CURSO":"COSTURA INICIANTE","CATEGORIA":"Ofícios e Geração de Renda","EDICOES":5,"CONCLUINTES":30,"TOTAL_INSCRITOS":49,"TAXA_CONCLUSAO":61.2,"ch":72,"inst":"ROSELAINE FREIRE DE OLIVEIRA CRUZ"},
-  {"NOME_CURSO":"OFICINA DE VELA ARTESANAL","CATEGORIA":"Ofícios e Geração de Renda","EDICOES":4,"CONCLUINTES":28,"TOTAL_INSCRITOS":32,"TAXA_CONCLUSAO":87.5,"ch":9,"inst":"JORDANA DAL PIERO"},
-  {"NOME_CURSO":"MANICURE & ALONGAMENTO EM GEL","CATEGORIA":"Beleza e Estética","EDICOES":2,"CONCLUINTES":23,"TOTAL_INSCRITOS":30,"TAXA_CONCLUSAO":76.7,"ch":72,"inst":"MARIA CLARA DE MORAES PEREIRA"},
-  {"NOME_CURSO":"BARBEARIA","CATEGORIA":"Beleza e Estética","EDICOES":1,"CONCLUINTES":10,"TOTAL_INSCRITOS":10,"TAXA_CONCLUSAO":100.0,"ch":80,"inst":"AXEL HENRIQUE MARTINS GUIMARÃES"},
-  {"NOME_CURSO":"ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS","CATEGORIA":"Gestão e Empreendedorismo","EDICOES":1,"CONCLUINTES":8,"TOTAL_INSCRITOS":8,"TAXA_CONCLUSAO":100.0,"ch":80,"inst":"MARCO VALENTE"},
-  {"NOME_CURSO":"ARTE TERAPIA","CATEGORIA":"Bem-Estar","EDICOES":5,"CONCLUINTES":0,"TOTAL_INSCRITOS":73,"TAXA_CONCLUSAO":0.0,"ch":36,"inst":"ANA CAROLINA BOSCATTO"}
-];
-
-// Lista de Monitores / Instrutores validados com dados do SigaCap
-const listaMonitores = [
-  { nome: "MARIA CLARA DE MORAES PEREIRA", turmas: 6, formados: 58 },
-  { nome: "ANA CRISTINA DO NASCIMENTO REIS", turmas: 4, formados: 36 },
-  { nome: "JORDANA DAL PIERO", turmas: 4, formados: 28 },
-  { nome: "ROSELAINE FREIRE DE OLIVEIRA CRUZ", turmas: 5, formados: 28 },
-  { nome: "PRISCILA MORAES MOURA MANGANELLI", turmas: 2, formados: 21 },
-  { nome: "SERGIO MANCINI", turmas: 3, formados: 21 },
-  { nome: "RITA DE CASSIA MARTINS CORREA", turmas: 2, formados: 15 },
-  { nome: "ADEILDA VICENTE SILVA FERREIRA", turmas: 2, formados: 11 },
-  { nome: "AXEL HENRIQUE MARTINS GUIMARÃES", turmas: 1, formados: 10 },
-  { nome: "MARCO VALENTE", turmas: 1, formados: 8 },
-  { nome: "GÉSSYKA PÂMILLA DE MATOS", turmas: 1, formados: 6 },
-  { nome: "ANA CAROLINA BOSCATTO", turmas: 5, formados: 0 },
-  { nome: "ANA PAULA SIQUEIRA", turmas: 2, formados: 0 },
-  { nome: "MARIA ANGÉLICA HERNANDES", turmas: 2, formados: 0 },
-  { nome: "ROSANGELA APARECIDA SANTOS", turmas: 3, formados: 0 }
-];
+const records = DB.data.map(r => ({
+  c: DB.cats[r[0]],
+  b: DB.bairros[r[1]],
+  s: DB.statuses[r[2]],
+  n: DB.cursos[r[3]],
+  i: r[4],
+  inst: DB.insts[r[5]],
+  ch: r[6],
+  cid: DB.cids[r[7]]
+}));
 
 const FAIXAS = ["Jovem (18–29)", "Adulto (30–49)", "Melhor Idade (50+)"];
 const FAIXA_COR = ["#0071CE", "#006837", "#FDB913"];
-const CATEGORIAS = ["Ofícios e Geração de Renda", "Beleza e Estética", "Bem-Estar", "Gestão e Empreendedorismo"];
-const BAIRROS = ["BARRA VELHA","ÁGUA BRANCA","REINO","ITAQUANDUBA","PEREQUÊ","BEXIGA","ZABUMBA","COSTA BELA"];
+const CAT_ORDER = ["Ofícios e Geração de Renda", "Beleza e Estética", "Bem-Estar", "Gestão e Empreendedorismo"];
+const CAT_COLORS = ["#006837", "#0071CE", "#FDB913", "#8b5cf6"];
 const faixaDe = i => i < 30 ? FAIXAS[0] : i < 50 ? FAIXAS[1] : FAIXAS[2];
 
 let activeFilter = { category: '', bairro: '', status: '' };
@@ -266,10 +228,20 @@ function applyDropdownFilter() {
   activeFilter.bairro = $('selectBairro').value;
   updateDashboard();
 }
+
 function resetFilters() {
   activeFilter = { category: '', bairro: '', status: '' };
-  $('selectCategory').value = ''; $('selectBairro').value = '';
+  $('selectCategory').value = '';
+  $('selectBairro').value = '';
   updateDashboard();
+}
+
+function getFiltered(ignoreKey = '') {
+  return records.filter(r =>
+    (ignoreKey === 'category' || !activeFilter.category || r.c === activeFilter.category) &&
+    (ignoreKey === 'bairro' || !activeFilter.bairro || r.b === activeFilter.bairro) &&
+    (ignoreKey === 'status' || !activeFilter.status || r.s === activeFilter.status)
+  );
 }
 
 function updateDashboard() {
@@ -280,73 +252,126 @@ function updateDashboard() {
   $('filter-status-text').innerHTML = '<i class="fa-solid fa-filter"></i> ' + labels.join(' | ');
   $('filter-status-box').classList.toggle('hidden', labels.length === 0);
 
-  const filtered = rawMatriculas.filter(i =>
-    (!activeFilter.category || i.c === activeFilter.category) &&
-    (!activeFilter.bairro || i.b === activeFilter.bairro) &&
-    (!activeFilter.status || i.s === activeFilter.status));
+  const filtered = getFiltered();
 
   if (currentTab === 'overview') renderOverview(filtered);
+  if (currentTab === 'courses') renderCoursesTab(filtered);
   if (currentTab === 'demo') renderDemo(filtered);
   if (currentTab === 'impact') renderImpact(filtered);
-  if (currentTab === 'instr') renderInstr();
+  if (currentTab === 'instr') renderInstr(filtered);
 }
 
+/* =====================================================================
+   ABA 1: VISÃO GERAL - TOTALMENTE INTERLIGADA AOS 455 REGISTROS
+   ===================================================================== */
 function renderOverview(filtered) {
-  const baseCat = { 'Ofícios e Geração de Renda': 292, 'Beleza e Estética': 82, 'Bem-Estar': 73, 'Gestão e Empreendedorismo': 8 };
-  const baseStatus = { 'CONCLUIU': 242, 'DESISTIU': 39, 'REPROVOU': 1, 'NÃO INFORMADO': 173 };
-  const baseBairro = { 'BARRA VELHA':122, 'ÁGUA BRANCA':60, 'REINO':40, 'ITAQUANDUBA':31, 'PEREQUÊ':26, 'BEXIGA':24, 'ZABUMBA':14, 'COSTA BELA':14 };
-
-  let totalMat = 455;
-  let conclFinal = 242;
-  let avgAge = '39.0';
-
-  if (filtered.length > 0 && (activeFilter.category || activeFilter.bairro || activeFilter.status)) {
-    totalMat = filtered.length * 12;
-    conclFinal = Math.round(totalMat * 0.53);
-    avgAge = (filtered.reduce((a, c) => a + c.idade, 0) / filtered.length).toFixed(1);
-  } else {
-    totalMat = 455;
-    conclFinal = 242;
-    avgAge = '39.0';
-  }
-
+  const totalMat = filtered.length;
+  const conclFinal = filtered.filter(r => r.s === 'CONCLUIU').length;
+  const cursosEnvolvidos = new Set(filtered.map(r => r.cid)).size;
+  const avgAge = totalMat > 0 ? (filtered.reduce((a, c) => a + c.i, 0) / totalMat).toFixed(1) : '0.0';
   const taxa = totalMat > 0 ? ((conclFinal / totalMat) * 100).toFixed(1) : '0.0';
 
   const kpis = [
-    ['Total Matrículas', totalMat, 'emerald', 'fa-id-card', 'fa-file-signature', 'Seleção atual'],
-    ['Cursos Envolvidos', 43, 'sky', 'fa-layer-group', 'fa-book-open', 'Modalidades'],
-    ['Alunos Concluintes', conclFinal, 'amber', 'fa-users', 'fa-user-check', 'Formados'],
+    ['Total Matrículas', fmt(totalMat), 'emerald', 'fa-id-card', 'fa-file-signature', activeFilter.category || activeFilter.bairro || activeFilter.status ? 'Na seleção atual' : 'Base oficial SigaCap'],
+    ['Cursos Envolvidos', fmt(cursosEnvolvidos), 'sky', 'fa-layer-group', 'fa-book-open', 'Turmas / Edições'],
+    ['Alunos Concluintes', fmt(conclFinal), 'amber', 'fa-users', 'fa-user-check', 'Formados'],
     ['Média de Idade', avgAge + ' anos', 'purple', 'fa-user-clock', 'fa-cake-candles', 'Perfil etário'],
     ['Taxa Conclusão', taxa + '%', 'emerald', 'fa-graduation-cap', 'fa-award', 'Aproveitamento']
   ];
   $('kpi-grid').innerHTML = kpis.map(k => kpiCard(k[0], k[1], k[2], k[3], k[4], k[5])).join('');
+
   $('summary-title').innerText = activeFilter.category || 'Visão Geral das Categorias';
-  $('summary-mat').innerText = totalMat; $('summary-conc').innerText = conclFinal; $('summary-idade').innerText = avgAge + ' anos';
+  $('summary-mat').innerText = fmt(totalMat);
+  $('summary-conc').innerText = fmt(conclFinal);
+  $('summary-idade').innerText = avgAge + ' anos';
 
-  const catKeys = Object.keys(baseCat);
-  const catColors = ['#006837', '#0071CE', '#FDB913', '#8b5cf6'];
-  const catBg = catKeys.map((k, i) => activeFilter.category && activeFilter.category !== k ? GREY : catColors[i]);
+  // 1. Gráfico de Rosca (Categorias): reflete filtros de Bairro/Status, mas mantém todas as fatias visíveis
+  const baseForCat = getFiltered('category');
+  const catData = CAT_ORDER.map(cat => baseForCat.filter(r => r.c === cat).length);
+  const catBg = CAT_ORDER.map((cat, idx) => activeFilter.category && activeFilter.category !== cat ? GREY : CAT_COLORS[idx]);
 
-  mk('chartCategorias', { type: 'doughnut',
-    data: { labels: catKeys, datasets: [{ data: Object.values(baseCat), borderWidth: 2, borderColor: '#fff', backgroundColor: catBg }] },
-    options: { onClick: (e, el) => { if (el.length) { const l = catKeys[el[0].index]; activeFilter.category = activeFilter.category === l ? '' : l; $('selectCategory').value = activeFilter.category; updateDashboard(); } },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
+  mk('chartCategorias', {
+    type: 'doughnut',
+    data: {
+      labels: CAT_ORDER,
+      datasets: [{ data: catData, borderWidth: 2, borderColor: '#fff', backgroundColor: catBg }]
+    },
+    options: {
+      onClick: (e, el) => {
+        if (el.length) {
+          const clicked = CAT_ORDER[el[0].index];
+          activeFilter.category = activeFilter.category === clicked ? '' : clicked;
+          $('selectCategory').value = activeFilter.category;
+          updateDashboard();
+        }
+      },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } }
+    }
+  });
 
-  const stKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'], stColors = ['#10b981', '#f43f5e', '#64748b'];
-  const stBg = stKeys.map((k, i) => activeFilter.status && activeFilter.status !== k ? GREY : stColors[i]);
+  // 2. Gráfico de Status: dinâmico conforme Categoria e Bairro selecionados!
+  const baseForStatus = getFiltered('status');
+  const stKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'];
+  const stLabels = ['Concluiu', 'Desistiu', 'Reprovou'];
+  const stColors = ['#10b981', '#f43f5e', '#64748b'];
+  const stData = stKeys.map(st => baseForStatus.filter(r => r.s === st).length);
+  const stBg = stKeys.map((st, idx) => activeFilter.status && activeFilter.status !== st ? GREY : stColors[idx]);
 
-  mk('chartStatus', { type: 'bar',
-    data: { labels: ['Concluiu', 'Desistiu', 'Reprovou'], datasets: [{ data: [baseStatus['CONCLUIU'], baseStatus['DESISTIU'], baseStatus['REPROVOU']], borderRadius: 8, barThickness: 45, backgroundColor: stBg }] },
-    options: { onClick: (e, el) => { if (el.length) { const s = stKeys[el[0].index]; activeFilter.status = activeFilter.status === s ? '' : s; updateDashboard(); } },
-      plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+  mk('chartStatus', {
+    type: 'bar',
+    data: {
+      labels: stLabels,
+      datasets: [{ data: stData, borderRadius: 8, barThickness: 45, backgroundColor: stBg }]
+    },
+    options: {
+      onClick: (e, el) => {
+        if (el.length) {
+          const clicked = stKeys[el[0].index];
+          activeFilter.status = activeFilter.status === clicked ? '' : clicked;
+          updateDashboard();
+        }
+      },
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+    }
+  });
 
-  const bKeys = Object.keys(baseBairro);
-  const bBg = bKeys.map(k => activeFilter.bairro && activeFilter.bairro !== k ? GREY : '#006837');
+  // 3. Gráfico de Bairros: dinâmico conforme Categoria e Status selecionados!
+  const baseForBairro = getFiltered('bairro');
+  const bairroMap = {};
+  baseForBairro.forEach(r => {
+    if (r.b && r.b !== 'NÃO INFORMADO') {
+      bairroMap[r.b] = (bairroMap[r.b] || 0) + 1;
+    }
+  });
+  const sortedBairros = Object.entries(bairroMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  if (activeFilter.bairro && !sortedBairros.some(x => x[0] === activeFilter.bairro)) {
+    sortedBairros.push([activeFilter.bairro, bairroMap[activeFilter.bairro] || 0]);
+  }
+  const bKeys = sortedBairros.map(x => x[0]);
+  const bData = sortedBairros.map(x => x[1]);
+  const bBg = bKeys.map(b => activeFilter.bairro && activeFilter.bairro !== b ? GREY : '#006837');
 
-  mk('chartBairros', { type: 'bar',
-    data: { labels: bKeys, datasets: [{ data: Object.values(baseBairro), borderRadius: 6, barThickness: 20, backgroundColor: bBg }] },
-    options: { indexAxis: 'y', onClick: (e, el) => { if (el.length) { const b = bKeys[el[0].index]; activeFilter.bairro = activeFilter.bairro === b ? '' : b; $('selectBairro').value = activeFilter.bairro; updateDashboard(); } },
-      plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+  mk('chartBairros', {
+    type: 'bar',
+    data: {
+      labels: bKeys,
+      datasets: [{ data: bData, borderRadius: 6, barThickness: 20, backgroundColor: bBg }]
+    },
+    options: {
+      indexAxis: 'y',
+      onClick: (e, el) => {
+        if (el.length) {
+          const clicked = bKeys[el[0].index];
+          activeFilter.bairro = activeFilter.bairro === clicked ? '' : clicked;
+          $('selectBairro').value = activeFilter.bairro;
+          updateDashboard();
+        }
+      },
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } }
+    }
+  });
 }
 
 function kpiCard(title, value, color, icon, subIcon, sub) {
@@ -360,95 +385,166 @@ function kpiCard(title, value, color, icon, subIcon, sub) {
     </div></div>`;
 }
 
-function renderTable(data) {
-  $('coursesTableBody').innerHTML = data.map(i => {
-    const b = i.TAXA_CONCLUSAO >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : i.TAXA_CONCLUSAO >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
-    return `<tr class="hover:bg-slate-50/80 transition"><td class="py-3 px-4 font-bold text-slate-800">${i.NOME_CURSO}</td><td class="py-3 px-4 text-slate-500 font-medium">${i.CATEGORIA}</td><td class="py-3 px-4 text-center font-bold text-slate-700">${i.EDICOES}</td><td class="py-3 px-4 text-center text-slate-600">${i.TOTAL_INSCRITOS}</td><td class="py-3 px-4 text-center font-bold text-emerald-600">${i.CONCLUINTES}</td><td class="py-3 px-4 text-center"><span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${b}">${i.TAXA_CONCLUSAO}%</span></td></tr>`;
+/* =====================================================================
+   ABA 2: CURSOS (DINÂMICA)
+   ===================================================================== */
+function renderCoursesTab(filtered = getFiltered()) {
+  const q = ($('searchInput')?.value || '').toLowerCase();
+  const map = {};
+  filtered.forEach(r => {
+    if (!map[r.n]) {
+      map[r.n] = { nome: r.n, cat: r.c, cids: new Set(), insc: 0, conc: 0 };
+    }
+    map[r.n].cids.add(r.cid);
+    map[r.n].insc++;
+    if (r.s === 'CONCLUIU') map[r.n].conc++;
+  });
+
+  const list = Object.values(map)
+    .filter(item => item.nome.toLowerCase().includes(q))
+    .sort((a, b) => b.insc - a.insc);
+
+  $('coursesTableBody').innerHTML = list.map(i => {
+    const taxa = i.insc > 0 ? ((i.conc / i.insc) * 100).toFixed(1) : '0.0';
+    const b = taxa >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : taxa >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
+    return `<tr class="hover:bg-slate-50/80 transition"><td class="py-3 px-4 font-bold text-slate-800">${i.nome}</td><td class="py-3 px-4 text-slate-500 font-medium">${i.cat}</td><td class="py-3 px-4 text-center font-bold text-slate-700">${i.cids.size}</td><td class="py-3 px-4 text-center text-slate-600">${i.insc}</td><td class="py-3 px-4 text-center font-bold text-emerald-600">${i.conc}</td><td class="py-3 px-4 text-center"><span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${b}">${taxa}%</span></td></tr>`;
   }).join('');
 }
-function filterCoursesTable() {
-  const q = $('searchInput').value.toLowerCase();
-  renderTable(listaCursosSummary.filter(i => i.NOME_CURSO.toLowerCase().includes(q)));
-}
 
+/* =====================================================================
+   ABA 3: PERFIL DEMOGRÁFICO (DINÂMICA)
+   ===================================================================== */
 function renderDemo(filtered) {
-  mk('chartFaixaDonut', { type: 'doughnut',
-    data: { labels: FAIXAS, datasets: [{ data: [150, 200, 105], backgroundColor: FAIXA_COR, borderWidth: 2, borderColor: '#fff' }] },
-    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
+  const tot = FAIXAS.map(f => filtered.filter(d => faixaDe(d.i) === f).length);
+  mk('chartFaixaDonut', {
+    type: 'doughnut',
+    data: { labels: FAIXAS, datasets: [{ data: tot, backgroundColor: FAIXA_COR, borderWidth: 2, borderColor: '#fff' }] },
+    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } }
+  });
 
-  mk('chartFaixaCat', { type: 'bar',
-    data: { labels: CATEGORIAS, datasets: FAIXAS.map((f, i) => ({ label: f, backgroundColor: FAIXA_COR[i], borderRadius: 4, data: [80, 25, 20, 3] })) },
-    options: { scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' } } },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } } });
+  mk('chartFaixaCat', {
+    type: 'bar',
+    data: {
+      labels: CAT_ORDER,
+      datasets: FAIXAS.map((f, idx) => ({
+        label: f,
+        backgroundColor: FAIXA_COR[idx],
+        borderRadius: 4,
+        data: CAT_ORDER.map(cat => filtered.filter(d => d.c === cat && faixaDe(d.i) === f).length)
+      }))
+    },
+    options: {
+      scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' } } },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } }
+    }
+  });
 }
 
+/* =====================================================================
+   ABA 4: IMPACTO SOCIAL (DINÂMICA)
+   ===================================================================== */
 function renderImpact(filtered) {
-  const cs = listaCursosSummary.map(c => ({ ...c, horas: c.ch * c.CONCLUINTES }));
-  const horas = 12480; const conc = 242;
+  const concluintes = filtered.filter(r => r.s === 'CONCLUIU');
+  const horas = concluintes.reduce((acc, r) => acc + r.ch, 0);
+  const concCount = concluintes.length;
+  const mediaAluno = concCount > 0 ? (horas / concCount).toFixed(1) : '0.0';
+  const cursosUnicos = new Set(filtered.map(r => r.cid));
+  let somaCh = 0;
+  const seenCid = new Set();
+  filtered.forEach(r => {
+    if (!seenCid.has(r.cid)) {
+      seenCid.add(r.cid);
+      somaCh += r.ch;
+    }
+  });
+  const cargaMedia = seenCid.size > 0 ? Math.round(somaCh / seenCid.size) : 0;
+
   $('impact-kpis').innerHTML = [
     kpiCard('Horas de Formação', fmt(horas) + ' h', 'emerald', 'fa-clock', 'fa-hand-holding-heart', 'Entregues à comunidade'),
-    kpiCard('Concluintes', fmt(conc), 'amber', 'fa-users', 'fa-user-check', 'Pessoas formadas'),
-    kpiCard('Média por Aluno', '51.5 h', 'sky', 'fa-user-graduate', 'fa-chart-simple', 'Horas por concluinte'),
-    kpiCard('Carga Média/Curso', '40 h', 'purple', 'fa-book', 'fa-hourglass-half', 'Duração típica')
+    kpiCard('Concluintes', fmt(concCount), 'amber', 'fa-users', 'fa-user-check', 'Pessoas formadas'),
+    kpiCard('Média por Aluno', mediaAluno + ' h', 'sky', 'fa-user-graduate', 'fa-chart-simple', 'Horas por concluinte'),
+    kpiCard('Carga Média/Curso', cargaMedia + ' h', 'purple', 'fa-book', 'fa-hourglass-half', 'Duração típica')
   ].join('');
 
-  const porCat = [8500, 2400, 1200, 380];
-  mk('chartHorasCat', { type: 'bar',
-    data: { labels: CATEGORIAS, datasets: [{ data: porCat, borderRadius: 8, backgroundColor: ['#006837', '#0071CE', '#FDB913', '#8b5cf6'] }] },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } } });
+  const porCat = CAT_ORDER.map(cat => concluintes.filter(r => r.c === cat).reduce((a, r) => a + r.ch, 0));
+  mk('chartHorasCat', {
+    type: 'bar',
+    data: { labels: CAT_ORDER, datasets: [{ data: porCat, borderRadius: 8, backgroundColor: CAT_COLORS }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+  });
 
-  const rank = [...cs].sort((a, b) => b.horas - a.horas);
-  mk('chartHorasCurso', { type: 'bar',
-    data: { labels: rank.map(c => c.NOME_CURSO.length > 28 ? c.NOME_CURSO.slice(0, 26) + '…' : c.NOME_CURSO), datasets: [{ data: rank.map(c => c.horas), borderRadius: 6, backgroundColor: '#006837' }] },
-    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } } });
+  const cursoHorasMap = {};
+  concluintes.forEach(r => {
+    cursoHorasMap[r.n] = (cursoHorasMap[r.n] || 0) + r.ch;
+  });
+  const rank = Object.entries(cursoHorasMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  mk('chartHorasCurso', {
+    type: 'bar',
+    data: {
+      labels: rank.map(c => c[0].length > 28 ? c[0].slice(0, 26) + '…' : c[0]),
+      datasets: [{ data: rank.map(c => c[1]), borderRadius: 6, backgroundColor: '#006837' }]
+    },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } }
+  });
 }
 
-/* ---------- INSTRUTORES E MONITORES (REFACTOR) ---------- */
-function renderInstr() {
-  // 1. Gráfico Expandido de Alunos Formados por Monitor
-  const labels = listaMonitores.map(m => m.nome.length > 22 ? m.nome.slice(0, 20) + '…' : m.nome);
-  const dataFormados = listaMonitores.map(m => m.formados);
+/* =====================================================================
+   ABA 5: INSTRUTORES E MONITORES (DINÂMICA)
+   ===================================================================== */
+function renderInstr(filtered) {
+  const map = {};
+  filtered.forEach(r => {
+    if (!map[r.inst]) {
+      map[r.inst] = { nome: r.inst, cids: new Set(), formados: 0 };
+    }
+    map[r.inst].cids.add(r.cid);
+    if (r.s === 'CONCLUIU') map[r.inst].formados++;
+  });
 
-  mk('chartInstrVol', { 
+  const list = Object.values(map).sort((a, b) => b.formados - a.formados);
+  const labels = list.map(m => m.nome.length > 24 ? m.nome.slice(0, 22) + '…' : m.nome);
+  const dataFormados = list.map(m => m.formados);
+
+  mk('chartInstrVol', {
     type: 'bar',
-    data: { 
-      labels: labels, 
-      datasets: [{ 
-        label: 'Alunos Formados', 
-        data: dataFormados, 
-        backgroundColor: '#006837', 
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Alunos Formados',
+        data: dataFormados,
+        backgroundColor: '#006837',
         borderRadius: 6,
         barThickness: 18
-      }] 
+      }]
     },
-    options: { 
+    options: {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } }, 
-      scales: { 
-        x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, 
-        y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } } 
-      } 
-    } 
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+        y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }
+      }
+    }
   });
 
-  // 2. Tabela Simplificada (Nome | Turmas | Formados)
-  $('instrTableBody').innerHTML = listaMonitores.map(m => `
+  $('instrTableBody').innerHTML = list.map(m => `
     <tr class="hover:bg-slate-50/80 transition">
       <td class="py-3.5 px-4 font-bold text-slate-800">${m.nome}</td>
-      <td class="py-3.5 px-4 text-center font-bold text-slate-700">${m.turmas}</td>
+      <td class="py-3.5 px-4 text-center font-bold text-slate-700">${m.cids.size}</td>
       <td class="py-3.5 px-4 text-center font-extrabold text-emerald-600">${m.formados}</td>
     </tr>
   `).join('');
 }
 
 Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-$('selectCategory').innerHTML = '<option value="">Todas as Categorias</option>' + CATEGORIAS.map(c => `<option value="${c}">${c}</option>`).join('');
-$('selectBairro').innerHTML = '<option value="">Todos os Bairros</option>' + BAIRROS.map(b => `<option value="${b}">${b.charAt(0) + b.slice(1).toLowerCase()}</option>`).join('');
+$('selectCategory').innerHTML = '<option value="">Todas as Categorias</option>' + CAT_ORDER.map(c => `<option value="${c}">${c}</option>`).join('');
+const topBairrosDropdown = ["BARRA VELHA","ÁGUA BRANCA","REINO","ITAQUANDUBA","PEREQUÊ","BEXIGA","COSTA BELA","ZABUMBA","ITAGUASSU","ARMAÇÃO"];
+$('selectBairro').innerHTML = '<option value="">Todos os Bairros</option>' + topBairrosDropdown.map(b => `<option value="${b}">${b.charAt(0) + b.slice(1).toLowerCase()}</option>`).join('');
 renderNav();
-renderTable(listaCursosSummary);
 updateDashboard();
 </script>
 </body>
 </html>
+Processado e analisado em código
