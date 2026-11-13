@@ -23,13 +23,13 @@
 
   <!-- Cabeçalho Institucional -->
   <header class="bg-ilha-green text-white shadow-md">
-    <div class="max-w-[98%] mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="max-w-[98%] mx-auto px-4 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-4">
-        <!-- Logo Institucional Fixada com Sombra e Fundo Branco -->
-        <div class="bg-white text-ilha-green font-extrabold px-3.5 py-2 rounded-xl text-center leading-tight shadow-md border border-emerald-800">
-          <span class="block text-[10px] tracking-wider font-semibold text-gray-600">FUNDO</span>
-          <span class="block text-sm font-black text-ilha-green">SOCIAL</span>
-          <span class="block text-[8px] font-bold text-gray-500 uppercase tracking-widest">ILHABELA</span>
+        <!-- Logo HTML Direta (Garantido que aparece sem depender de arquivo de imagem externo) -->
+        <div class="bg-white text-ilha-green font-black px-4 py-2.5 rounded-xl text-center leading-none shadow-md border-2 border-emerald-800 flex flex-col items-center justify-center">
+          <span class="text-[9px] tracking-widest font-bold text-gray-500 uppercase">FUNDO</span>
+          <span class="text-base font-extrabold text-ilha-green tracking-tight my-0.5">SOCIAL</span>
+          <span class="text-[8px] font-black text-gray-600 uppercase tracking-widest">ILHABELA</span>
         </div>
         <div>
           <div class="flex items-center gap-2">
@@ -64,7 +64,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3.5 flex flex-col md:flex-row items-center justify-between gap-3">
       <div class="text-xs sm:text-sm text-gray-600 flex items-center gap-2">
         <svg class="w-4 h-4 text-ilha-green shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-        <span>Filtre os indicadores abaixo ou <strong>clique nas barras/fatias dos gráficos</strong> para refinar:</span>
+        <span>Filtre os indicadores abaixo ou <strong>clique nos gráficos</strong> para refinar a análise:</span>
       </div>
 
       <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -95,7 +95,7 @@
     </div>
   </div>
 
-  <!-- Conteúdo Principal (Largura Expandida para ocupar melhor o monitor) -->
+  <!-- Conteúdo Principal -->
   <main class="max-w-[98%] w-full mx-auto px-4 py-5 flex-1 flex flex-col gap-5">
 
     <!-- Cards de KPIs -->
@@ -131,34 +131,43 @@
       </div>
     </div>
 
-    <!-- ABA 1: VISÃO GERAL & KPIs (3 Colunas Lado a Lado Otimizadas) -->
+    <!-- ABA 1: VISÃO GERAL & KPIs (Gráficos com Altura Aumentada e Títulos Elegantes) -->
     <section id="sec-visaoGeral" class="tab-section">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <!-- Gráfico Categorias -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4.5 flex flex-col">
-          <h2 class="text-sm font-bold text-gray-800">Distribuição por Categoria</h2>
-          <p class="text-[11px] text-gray-400 mb-3">Clique para filtrar por eixo formativo</p>
-          <div class="relative flex-1 min-h-[300px] flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between">
+          <div>
+            <h2 class="text-base font-extrabold text-gray-900 tracking-tight">Distribuição por Categoria</h2>
+            <p class="text-xs font-medium text-emerald-700 mt-0.5">Proporção de matrículas por eixo formativo</p>
+          </div>
+          <div class="relative w-full h-[360px] my-3 flex items-center justify-center">
             <canvas id="chartCategorias"></canvas>
           </div>
+          <p class="text-[11px] text-gray-400 text-center italic">Dica: clique em uma fatia para filtrar o painel</p>
         </div>
 
         <!-- Gráfico Status -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4.5 flex flex-col">
-          <h2 class="text-sm font-bold text-gray-800">Status das Matrículas</h2>
-          <p class="text-[11px] text-gray-400 mb-3">Clique para filtrar pela situação do aluno</p>
-          <div class="relative flex-1 min-h-[300px]">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between">
+          <div>
+            <h2 class="text-base font-extrabold text-gray-900 tracking-tight">Status das Matrículas</h2>
+            <p class="text-xs font-medium text-emerald-700 mt-0.5">Panorama atual da situação dos alunos</p>
+          </div>
+          <div class="relative w-full h-[360px] my-3">
             <canvas id="chartStatus"></canvas>
           </div>
+          <p class="text-[11px] text-gray-400 text-center italic">Dica: clique nas colunas para filtrar por status</p>
         </div>
 
         <!-- Gráfico Bairros -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4.5 flex flex-col">
-          <h2 class="text-sm font-bold text-gray-800">Concentração por Bairro</h2>
-          <p class="text-[11px] text-gray-400 mb-3">Top 8 bairros atendidos (clique para filtrar)</p>
-          <div class="relative flex-1 min-h-[300px]">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between">
+          <div>
+            <h2 class="text-base font-extrabold text-gray-900 tracking-tight">Concentração Geográfica</h2>
+            <p class="text-xs font-medium text-emerald-700 mt-0.5">Top 8 bairros com maior número de alunos</p>
+          </div>
+          <div class="relative w-full h-[360px] my-3">
             <canvas id="chartBairros"></canvas>
           </div>
+          <p class="text-[11px] text-gray-400 text-center italic">Dica: clique nas barras para filtrar por bairro</p>
         </div>
       </div>
     </section>
@@ -166,16 +175,16 @@
     <!-- ABA 2: DESEMPENHO DOS CURSOS -->
     <section id="sec-desempenho" class="tab-section hidden space-y-5">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h2 class="text-base font-bold text-gray-800">Volume por Curso / Oficina</h2>
-        <p class="text-xs text-gray-400 mb-4">Ranking dos cursos com maior número de matrículas</p>
-        <div class="relative h-[420px]">
+        <h2 class="text-base font-extrabold text-gray-900 tracking-tight">Volume por Curso / Oficina</h2>
+        <p class="text-xs font-medium text-emerald-700 mt-0.5 mb-4">Ranking dos cursos com maior demanda e matrículas registradas</p>
+        <div class="relative h-[440px]">
           <canvas id="chartCursosRanking"></canvas>
         </div>
       </div>
 
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-5 border-b border-gray-100">
-          <h2 class="text-base font-bold text-gray-800">Detalhamento por Curso</h2>
+          <h2 class="text-base font-extrabold text-gray-900">Detalhamento Analítico por Curso</h2>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full text-left text-xs sm:text-sm">
@@ -199,17 +208,17 @@
     <section id="sec-demografico" class="tab-section hidden space-y-5">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-          <h2 class="text-base font-bold text-gray-800">Todos os Bairros Atendidos</h2>
-          <p class="text-xs text-gray-400 mb-4">Distribuição geográfica completa das matrículas</p>
-          <div class="relative h-[460px]">
+          <h2 class="text-base font-extrabold text-gray-900 tracking-tight">Distribuição por Bairro</h2>
+          <p class="text-xs font-medium text-emerald-700 mt-0.5 mb-4">Panorama completo dos bairros atendidos em Ilhabela</p>
+          <div class="relative h-[480px]">
             <canvas id="chartBairrosCompleto"></canvas>
           </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-          <h2 class="text-base font-bold text-gray-800">Distribuição por Faixa Etária</h2>
-          <p class="text-xs text-gray-400 mb-4">Perfil de idade dos participantes</p>
-          <div class="relative h-[460px]">
+          <h2 class="text-base font-extrabold text-gray-900 tracking-tight">Faixa Etária dos Participantes</h2>
+          <p class="text-xs font-medium text-emerald-700 mt-0.5 mb-4">Perfil de idade dos cidadãos atendidos pelos programas</p>
+          <div class="relative h-[480px]">
             <canvas id="chartFaixaEtaria"></canvas>
           </div>
         </div>
@@ -219,16 +228,16 @@
     <!-- ABA 4: DESEMPENHO DOS INSTRUTORES -->
     <section id="sec-instrutores" class="tab-section hidden space-y-5">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h2 class="text-base font-bold text-gray-800">Matrículas e Certificações por Monitor / Instrutor</h2>
-        <p class="text-xs text-gray-400 mb-4">Volume de alunos atendidos por profissional</p>
-        <div class="relative h-[420px]">
+        <h2 class="text-base font-extrabold text-gray-900 tracking-tight">Atuação por Monitor / Instrutor</h2>
+        <p class="text-xs font-medium text-emerald-700 mt-0.5 mb-4">Volume de alunos capacitados e turmas sob responsabilidade de cada profissional</p>
+        <div class="relative h-[440px]">
           <canvas id="chartInstrutores"></canvas>
         </div>
       </div>
 
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-5 border-b border-gray-100">
-          <h2 class="text-base font-bold text-gray-800">Resumo por Monitor / Instrutor</h2>
+          <h2 class="text-base font-extrabold text-gray-900">Resumo Operacional por Instrutor</h2>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full text-left text-xs sm:text-sm">
@@ -257,7 +266,6 @@
   </footer>
 
   <script>
-    // URL CSV DA ABA BASE_PAINEL_BI (gid=1715631 convertido diretamente para saída CSV)
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQARjUEog-LEDm45GRbILx9YT9MSMK2IKRSDkZ4ZrMqF-eqODkf3YzzqFK-zPoeLFNOEwSEUS-vAAoI/pub?gid=1715631&single=true&output=csv";
 
     let dadosBrutos = [];
@@ -483,7 +491,7 @@
       const catData = agruparContagem(baseCat, 'categoria');
       const catLabels = catData.map(x => x[0]);
       criarOuAtualizarGrafico('chartCategorias', 'doughnut', catLabels, catData.map(x => x[1]), aplicarTransparenciaCores(catLabels, paleta, catAtiva), {
-        cutout: '62%',
+        cutout: '60%',
         onClick: (e, el) => {
           if (el.length > 0) {
             const clicado = catLabels[el[0].index];
@@ -636,3 +644,4 @@
   </script>
 </body>
 </html>
+Analisando
