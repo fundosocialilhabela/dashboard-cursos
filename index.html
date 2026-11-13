@@ -1,575 +1,571 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Executivo - Fundo Social de Solidariedade de Ilhabela</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-body{font-family:'Plus Jakarta Sans',sans-serif}
-.glass-header{background:linear-gradient(135deg,#004d28 0%,#006837 50%,#004423 100%)}
-.card-shadow{box-shadow:0 4px 20px -2px rgba(0,0,0,.05),0 2px 6px -1px rgba(0,0,0,.02)}
-.card-hover{transition:all .25s cubic-bezier(.4,0,.2,1)}
-.card-hover:hover{transform:translateY(-3px);box-shadow:0 12px 28px -4px rgba(0,0,0,.09)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fundo Social de Solidariedade - Painel Interativo SigaCap 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f3f6f4; color: #1f2937; }
+    .bg-ilha-green { background-color: #0b5d3b; }
+    .bg-ilha-dark { background-color: #074229; }
+    .text-ilha-green { color: #0b5d3b; }
+    .border-ilha-green { border-color: #0b5d3b; }
+    .tab-active { background-color: #ffffff; color: #0b5d3b; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .kpi-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col">
 
-<header class="glass-header text-white shadow-lg border-b border-emerald-700/50">
-  <div class="max-w-[96%] mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
-    <div class="flex items-center gap-5">
-      <div class="bg-white p-2.5 rounded-2xl shadow-md flex items-center justify-center border border-emerald-100/50">
-        <img src="LOGO%20FUNDO%20COLOR.png" alt="Logo Fundo Social de Ilhabela" class="h-12 w-auto object-contain" onerror="this.onerror=null;this.src='logo.png';">
-      </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="bg-amber-400 text-emerald-950 text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-md">BI Oficial</span>
-          <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">Fundo Social de Solidariedade</h1>
+  <!-- Cabeçalho Institucional -->
+  <header class="bg-ilha-green text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="bg-white text-ilha-green font-extrabold px-3 py-2 rounded-lg text-center leading-tight shadow-sm">
+          <span class="block text-xs tracking-wider">FUNDO</span>
+          <span class="block text-sm">SOCIAL</span>
+          <span class="block text-[10px] font-semibold text-gray-500">ILHABELA</span>
         </div>
-        <p class="text-emerald-200/90 text-xs mt-0.5 font-medium">Prefeitura Municipal de Ilhabela • Painel Interativo SigaCap</p>
-      </div>
-    </div>
-    <div id="filter-status-box" class="hidden bg-amber-400 text-emerald-950 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-3 shadow-md">
-      <span id="filter-status-text"></span>
-      <button onclick="resetFilters()" class="bg-emerald-950 text-white px-3 py-1 rounded-lg text-[11px] hover:bg-emerald-900 transition"><i class="fa-solid fa-xmark"></i> Limpar Filtros</button>
-    </div>
-  </div>
-  <div class="max-w-[96%] mx-auto px-4 mt-1 flex gap-2 overflow-x-auto" id="tab-nav"></div>
-</header>
-
-<main class="max-w-[96%] mx-auto px-4 py-6 w-full flex-grow space-y-6">
-
-  <!-- Barra de filtros global -->
-  <div class="bg-white p-3.5 rounded-2xl card-shadow border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
-      <i class="fa-solid fa-sliders text-emerald-600"></i> Clique em qualquer fatia ou barra para filtrar todo o painel em tempo real:
-    </div>
-    <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-      <select id="selectCategory" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500"></select>
-      <select id="selectBairro" onchange="applyDropdownFilter()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500"></select>
-      <button onclick="resetFilters()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition"><i class="fa-solid fa-arrow-rotate-left"></i> Resetar</button>
-    </div>
-  </div>
-
-  <!-- ABA 1: VISÃO GERAL (Layout 3 Colunas Otimizado para Tela Única) -->
-  <div id="tab-overview" class="space-y-6">
-    <!-- KPIs -->
-    <div id="kpi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
-
-    <!-- Grid de 3 Colunas: Categorias | Status | Bairros -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <!-- 1. Categorias -->
-      <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100 flex flex-col justify-between">
         <div>
-          <h2 class="text-sm font-bold text-slate-900">Categorias</h2>
-          <p class="text-[11px] text-slate-400 mb-2">Clique na fatia para filtrar</p>
-        </div>
-        <div class="relative h-48"><canvas id="chartCategorias"></canvas></div>
-        <div class="mt-3 pt-3 border-t border-slate-100 bg-slate-50 p-3 rounded-xl text-xs space-y-1.5">
-          <p class="font-bold text-slate-700"><i class="fa-solid fa-circle-info text-emerald-600"></i> <span id="summary-title">Visão Geral</span></p>
-          <div class="flex justify-between text-slate-600"><span>Matrículas:</span><strong id="summary-mat"></strong></div>
-          <div class="flex justify-between text-slate-600"><span>Concluintes:</span><strong id="summary-conc" class="text-emerald-600"></strong></div>
-          <div class="flex justify-between text-slate-600"><span>Média Idade:</span><strong id="summary-idade" class="text-purple-600"></strong></div>
+          <div class="flex items-center gap-2">
+            <span class="bg-yellow-400 text-gray-900 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">BI Oficial</span>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Fundo Social de Solidariedade</h1>
+          </div>
+          <p class="text-emerald-100 text-xs sm:text-sm mt-0.5">Prefeitura Municipal de Ilhabela • Painel Interativo SigaCap 2026</p>
         </div>
       </div>
 
-      <!-- 2. Status das Matrículas (Compacto) -->
-      <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100 flex flex-col justify-between">
-        <div>
-          <h2 class="text-sm font-bold text-slate-900">Status das Matrículas</h2>
-          <p class="text-[11px] text-slate-400 mb-2">Clique na barra para filtrar</p>
-        </div>
-        <div class="relative h-56"><canvas id="chartStatus"></canvas></div>
-        <div class="mt-3 pt-3 border-t border-slate-100 text-[11px] text-slate-500 text-center font-medium">
-          Distribuição de Conclusão e Desistência na seleção atual
-        </div>
+      <div class="flex items-center gap-3 text-xs">
+        <span id="statusConexao" class="inline-flex items-center gap-1.5 bg-ilha-dark px-3 py-1.5 rounded-full text-emerald-200 border border-emerald-700">
+          <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+          Sincronizando com Google Sheets...
+        </span>
       </div>
-
-      <!-- 3. Concentração por Bairro (Compacto) -->
-      <div class="bg-white rounded-2xl p-5 card-shadow border border-slate-100 flex flex-col justify-between">
-        <div>
-          <h2 class="text-sm font-bold text-slate-900">Concentração por Bairro</h2>
-          <p class="text-[11px] text-slate-400 mb-2">Top bairros • Clique na barra para filtrar</p>
-        </div>
-        <div class="relative h-64"><canvas id="chartBairros"></canvas></div>
-      </div>
-
     </div>
-  </div>
 
-  <!-- ABA 2: CURSOS -->
-  <div id="tab-courses" class="hidden space-y-6">
-    <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div><h2 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-list-check text-emerald-600"></i> Catálogo Completo de Cursos</h2><p class="text-xs text-slate-400">Reflete os filtros ativos</p></div>
-        <div class="relative w-full sm:w-64">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="searchInput" onkeyup="renderCoursesTab()" placeholder="Buscar curso..." class="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full">
-        </div>
+    <!-- Barra de Navegação -->
+    <div class="bg-ilha-dark/60 border-t border-emerald-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap gap-2">
+        <button onclick="switchTab('visaoGeral')" id="tab-visaoGeral" class="tab-btn tab-active px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Visão Geral & KPIs</button>
+        <button onclick="switchTab('desempenho')" id="tab-desempenho" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Desempenho dos Cursos</button>
+        <button onclick="switchTab('demografico')" id="tab-demografico" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Perfil Demográfico & Bairros</button>
+        <button onclick="switchTab('instrutores')" id="tab-instrutores" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Instrutores & Carga Horária</button>
       </div>
-      <div class="overflow-x-auto"><table class="w-full text-left border-collapse">
-        <thead><tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-          <th class="py-3.5 px-4">Nome do Curso</th><th class="py-3.5 px-4">Categoria</th><th class="py-3.5 px-4 text-center">Turmas</th><th class="py-3.5 px-4 text-center">Inscritos</th><th class="py-3.5 px-4 text-center">Formados</th><th class="py-3.5 px-4 text-center">Aproveitamento</th>
-        </tr></thead><tbody id="coursesTableBody" class="divide-y divide-slate-100 text-xs"></tbody></table></div>
     </div>
-  </div>
+  </header>
 
-  <!-- ABA 3: PERFIL DEMOGRÁFICO -->
-  <div id="tab-demo" class="hidden space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Distribuição por Faixa Etária</h2><p class="text-xs text-slate-400 mb-4">Seguindo os filtros ativos</p>
-        <div class="relative h-72"><canvas id="chartFaixaDonut"></canvas></div>
+  <!-- Barra de Filtros Globais -->
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="text-xs sm:text-sm text-gray-600 flex items-center gap-2">
+        <svg class="w-4 h-4 text-ilha-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+        <span>Filtre os indicadores abaixo ou clique nas barras dos gráficos para refinar a análise:</span>
       </div>
-      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100 lg:col-span-2">
-        <h2 class="text-base font-bold text-slate-900">Faixa Etária por Categoria de Curso</h2><p class="text-xs text-slate-400 mb-4">Quais modalidades atraem cada público</p>
-        <div class="relative h-72"><canvas id="chartFaixaCat"></canvas></div>
+
+      <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+        <select id="filtroCategoria" onchange="aplicarFiltros()" class="bg-gray-50 border border-gray-300 text-gray-800 text-xs sm:text-sm rounded-lg focus:ring-emerald-600 focus:border-emerald-600 px-3 py-2">
+          <option value="TODAS">Todas as Categorias</option>
+        </select>
+
+        <select id="filtroBairro" onchange="aplicarFiltros()" class="bg-gray-50 border border-gray-300 text-gray-800 text-xs sm:text-sm rounded-lg focus:ring-emerald-600 focus:border-emerald-600 px-3 py-2">
+          <option value="TODOS">Todos os Bairros</option>
+        </select>
+
+        <select id="filtroStatus" onchange="aplicarFiltros()" class="bg-gray-50 border border-gray-300 text-gray-800 text-xs sm:text-sm rounded-lg focus:ring-emerald-600 focus:border-emerald-600 px-3 py-2">
+          <option value="TODOS">Todos os Status</option>
+        </select>
+
+        <button onclick="resetarFiltros()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-xs sm:text-sm px-3 py-2 rounded-lg border border-gray-300 transition">
+          Resetar
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- ABA 4: IMPACTO SOCIAL -->
-  <div id="tab-impact" class="hidden space-y-6">
-    <div id="impact-kpis" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Horas de Formação por Categoria</h2><p class="text-xs text-slate-400 mb-4">Concluintes × carga horária oficial</p>
-        <div class="relative h-72"><canvas id="chartHorasCat"></canvas></div>
-      </div>
-      <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Horas Entregues por Curso (Top 10)</h2><p class="text-xs text-slate-400 mb-4">Ranking de impacto</p>
-        <div class="relative h-72"><canvas id="chartHorasCurso"></canvas></div>
-      </div>
+  <!-- Alerta de Diagnóstico da Aba Publicada -->
+  <div id="alertaEstrutura" class="hidden max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl shadow-sm text-xs sm:text-sm text-amber-900">
+      <p class="font-bold">Atenção: Estrutura da aba publicada detectada</p>
+      <p id="alertaMensagem" class="mt-1"></p>
     </div>
   </div>
 
-  <!-- ABA 5: INSTRUTORES E MONITORES -->
-  <div id="tab-instr" class="hidden space-y-6">
-    <div class="bg-white rounded-2xl p-6 card-shadow border border-slate-100">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h2 class="text-base font-bold text-slate-900">Alunos Formados por Monitor / Instrutor</h2>
-          <p class="text-xs text-slate-400">Total de concluintes sob responsabilidade de cada educador na seleção atual</p>
+  <!-- Conteúdo Principal -->
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1">
+
+    <!-- Cards de KPIs -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+      <div class="kpi-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-emerald-600">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Matrículas</p>
+        <p id="kpiTotalMatriculas" class="text-3xl font-extrabold text-gray-900 mt-1">-</p>
+        <p id="kpiSubMatriculas" class="text-xs text-emerald-700 mt-1 font-medium">Base oficial SigaCap</p>
+      </div>
+
+      <div class="kpi-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-sky-500">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Turmas / Edições</p>
+        <p id="kpiTotalCursos" class="text-3xl font-extrabold text-gray-900 mt-1">-</p>
+        <p class="text-xs text-sky-700 mt-1 font-medium">Cursos ofertados</p>
+      </div>
+
+      <div class="kpi-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-amber-500">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Alunos Certificados</p>
+        <p id="kpiConcluintes" class="text-3xl font-extrabold text-gray-900 mt-1">-</p>
+        <p class="text-xs text-amber-700 mt-1 font-medium">Concluíram com êxito</p>
+      </div>
+
+      <div class="kpi-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-purple-500">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Média de Idade</p>
+        <p id="kpiMediaIdade" class="text-3xl font-extrabold text-gray-900 mt-1">-</p>
+        <p class="text-xs text-purple-700 mt-1 font-medium">Perfil etário atendido</p>
+      </div>
+
+      <div class="kpi-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-teal-500">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Taxa de Conclusão</p>
+        <p id="kpiTaxaConclusao" class="text-3xl font-extrabold text-gray-900 mt-1">-</p>
+        <p class="text-xs text-teal-700 mt-1 font-medium">Sobre turmas encerradas</p>
+      </div>
+    </div>
+
+    <!-- ABA 1: VISÃO GERAL & KPIs -->
+    <section id="sec-visaoGeral" class="tab-section space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Gráfico Categorias -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col">
+          <h2 class="text-base font-bold text-gray-800">Distribuição por Categoria</h2>
+          <p class="text-xs text-gray-400 mb-4">Proporção de registros por eixo formativo</p>
+          <div class="relative flex-1 min-h-[240px] flex items-center justify-center">
+            <canvas id="chartCategorias"></canvas>
+          </div>
         </div>
-        <span class="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold">Desempenho Geral</span>
+
+        <!-- Gráfico Status -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col">
+          <h2 class="text-base font-bold text-gray-800">Status das Matrículas</h2>
+          <p class="text-xs text-gray-400 mb-4">Situação final e andamento dos alunos</p>
+          <div class="relative flex-1 min-h-[240px]">
+            <canvas id="chartStatus"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico Bairros -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col">
+          <h2 class="text-base font-bold text-gray-800">Concentração por Bairro</h2>
+          <p class="text-xs text-gray-400 mb-4">Top bairros atendidos em Ilhabela</p>
+          <div class="relative flex-1 min-h-[240px]">
+            <canvas id="chartBairros"></canvas>
+          </div>
+        </div>
       </div>
-      <div class="relative h-[420px] w-full">
-        <canvas id="chartInstrVol"></canvas>
+    </section>
+
+    <!-- ABA 2: DESEMPENHO DOS CURSOS -->
+    <section id="sec-desempenho" class="tab-section hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <h2 class="text-base font-bold text-gray-800">Volume por Curso / Oficina</h2>
+        <p class="text-xs text-gray-400 mb-4">Ranking dos cursos com maior número de registros</p>
+        <div class="relative h-[380px]">
+          <canvas id="chartCursosRanking"></canvas>
+        </div>
       </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-5 border-b border-gray-100">
+          <h2 class="text-base font-bold text-gray-800">Detalhamento por Curso</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left text-xs sm:text-sm">
+            <thead class="bg-gray-50 text-gray-600 font-semibold border-b">
+              <tr>
+                <th class="px-4 py-3">Curso</th>
+                <th class="px-4 py-3">Categoria</th>
+                <th class="px-4 py-3 text-center">Registros / Matrículas</th>
+                <th class="px-4 py-3 text-center">Concluintes</th>
+                <th class="px-4 py-3 text-center">Aproveitamento</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaCursosBody" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 3: PERFIL DEMOGRÁFICO & BAIRROS -->
+    <section id="sec-demografico" class="tab-section hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h2 class="text-base font-bold text-gray-800">Todos os Bairros Atendidos</h2>
+          <p class="text-xs text-gray-400 mb-4">Distribuição geográfica completa dos alunos</p>
+          <div class="relative h-[360px]">
+            <canvas id="chartBairrosCompleto"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h2 class="text-base font-bold text-gray-800">Distribuição por Faixa Etária</h2>
+          <p class="text-xs text-gray-400 mb-4">Perfil de idade dos participantes</p>
+          <div class="relative h-[360px]">
+            <canvas id="chartFaixaEtaria"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 4: INSTRUTORES & CARGA HORÁRIA -->
+    <section id="sec-instrutores" class="tab-section hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <h2 class="text-base font-bold text-gray-800">Atuação por Instrutor</h2>
+        <p class="text-xs text-gray-400 mb-4">Quantidade de turmas/matrículas vinculadas a cada profissional</p>
+        <div class="relative h-[360px]">
+          <canvas id="chartInstrutores"></canvas>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="bg-white border-t border-gray-200 py-4 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-2">
+      <span>Fundo Social de Solidariedade de Ilhabela • Painel Interativo de Gestão</span>
+      <span id="ultimaAtualizacao">Conectado via Google Sheets CSV</span>
     </div>
+  </footer>
 
-    <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-6">
-      <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-chalkboard-user text-emerald-600"></i> Relação de Monitores e Instrutores
-      </h2>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-              <th class="py-3.5 px-4 rounded-l-xl">Nome do Monitor / Instrutor</th>
-              <th class="py-3.5 px-4 text-center">Turmas Ministradas</th>
-              <th class="py-3.5 px-4 text-center rounded-r-xl">Alunos Formados (Concluintes)</th>
-            </tr>
-          </thead>
-          <tbody id="instrTableBody" class="divide-y divide-slate-100"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  <script>
+    // URL PÚBLICA DO SEU GOOGLE SHEETS (CSV)
+    const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQARjUEog-LEDm45GRbILx9YT9MSMK2IKRSDkZ4ZrMqF-eqODkf3YzzqFK-zPoeLFNOEwSEUS-vAAoI/pub?output=csv";
 
-</main>
+    // Identificadores internos das abas (GIDs padrão do Google Sheets)
+    // Caso a aba publicada seja a primeira (CURSOS), o código detecta automaticamente e tenta ler também as outras abas se publicadas
+    let dadosBrutos = [];
+    let dadosFiltrados = [];
+    let charts = {};
 
-<footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-  <p>Fundo Social de Solidariedade de Ilhabela • Painel Interativo de Gestão</p>
-</footer>
+    // Navegação entre abas do painel
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('text-emerald-100');
+      });
+      document.getElementById('sec-' + tabName).classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-' + tabName);
+      activeBtn.classList.add('tab-active');
+      activeBtn.classList.remove('text-emerald-100');
+    }
 
-<script>
-const DB = {
-  "cats": ["Beleza e Estética", "Bem-Estar", "Gestão e Empreendedorismo", "Ofícios e Geração de Renda"],
-  "bairros": ["ALTO DA BARRA", "ARMAÇÃO", "BARRA VELHA", "BEXIGA", "BORRIFOS", "CABARAÚ", "COCAIA", "COSTA BELA", "CURRAL", "ENGENHO D'ÁGUA", "FEITICEIRA", "FURNAS", "GARAPOCAIA", "GREEN PARK", "ITAGUASSU", "ITAPECERICA", "ITAQUANDUBA", "ITATINGA", "MORRO DA CRUZ", "NÃO INFORMADO", "PEREQUÊ", "PIÚVA", "PONTA AZEDA", "PORTINHO", "PRAIA GRANDE", "REINO", "RIBEIRÃO", "SACO DA CAPELA", "SANTA TEREZA", "SIRIUBA", "TOCA", "VELOSO", "VIANA", "VILA", "ZABUMBA", "ÁGUA BRANCA"],
-  "statuses": ["CONCLUIU", "DESISTIU", "NÃO INFORMADO", "REPROVOU"],
-  "cursos": ["ADMINISTRAÇÃO DE PEQUENOS NEGÓCIOS", "ARTE TERAPIA", "BARBEARIA", "COSTURA INICIANTE", "CROCHÊ", "CROCHÊ AVANÇADO", "MANICURE & ALONGAMENTO EM GEL", "MANICURE & PEDICURE", "MAQUIAGEM", "MODELAGEM", "MOSAICO", "OFICINA DE DECOUPAGEM", "OFICINA DE FELTRO", "OFICINA DE NATAL", "OFICINA DE VELA ARTESANAL", "PINTURA EM TECIDO", "WORKSHOP - CONSERTOS E REPAROS", "WORKSHOP - PINTURA EM TECIDO", "WORKSHOP MAQUIAGEM DO DIA A DIA", "WORKSHOP MAQUIAGEM PARA PELE MADURA", "WORKSHOP PELE PROFISSIONAL"],
-  "insts": ["ADEILDA VICENTE SILVA FERREIRA", "ANA CAROLINA BOSCATTO", "ANA CRISTINA DO NASCIMENTO REIS", "ANA PAULA SIQUEIRA", "AXEL HENRIQUE MARTINS GUIMARÃES", "GÉSSYKA PÂMILLA DE MATOS", "JORDANA DAL PIERO", "MARCO VALENTE", "MARIA ANGÉLICA HERNANDES", "MARIA CLARA DE MORAES PEREIRA", "PRISCILA MORAES MOURA MANGANELLI", "RITA DE CASSIA MARTINS CORREA", "ROSANGELA APARECIDA SANTOS", "ROSELAINE FREIRE DE OLIVEIRA CRUZ", "SERGIO MANCINI"],
-  "cids": ["CUR-2026-01", "CUR-2026-02", "CUR-2026-03", "CUR-2026-04", "CUR-2026-05", "CUR-2026-06", "CUR-2026-07", "CUR-2026-08", "CUR-2026-09", "CUR-2026-10", "CUR-2026-11", "CUR-2026-12", "CUR-2026-13", "CUR-2026-14", "CUR-2026-15", "CUR-2026-16", "CUR-2026-17", "CUR-2026-18", "CUR-2026-19", "CUR-2026-20", "CUR-2026-21", "CUR-2026-22", "CUR-2026-23", "CUR-2026-24", "CUR-2026-25", "CUR-2026-26", "CUR-2026-27", "CUR-2026-28", "CUR-2026-29", "CUR-2026-30", "CUR-2026-31", "CUR-2026-32", "CUR-2026-33", "CUR-2026-34", "CUR-2026-35", "CUR-2026-36", "CUR-2026-37", "CUR-2026-38", "CUR-2026-39", "CUR-2026-40", "CUR-2026-41", "CUR-2026-42", "CUR-2026-43"],
-  "data": [[3,2,0,16,42,2,16,0],[2,0,0,0,44,7,80,1],[3,2,0,16,49,13,16,2],[3,2,0,3,40,13,72,3],[3,2,0,3,38,13,72,4],[0,2,0,2,30,4,80,5],[0,2,0,8,30,5,80,6],[3,2,0,16,41,2,16,7],[0,2,0,9,30,9,72,8],[3,2,0,16,51,2,16,9],[3,2,0,3,47,13,72,10],[3,2,0,3,35,13,72,11],[3,2,0,9,41,0,72,12],[3,2,0,4,50,8,72,13],[3,2,0,4,55,8,72,14],[3,2,0,15,41,14,12,15],[1,2,0,1,34,1,36,16],[1,2,0,1,45,1,36,17],[1,2,0,1,50,1,36,18],[1,2,0,1,40,1,36,19],[1,2,0,1,48,1,36,20],[0,2,0,7,50,12,72,21],[0,2,0,7,42,12,72,22],[0,2,0,7,39,12,72,23],[0,2,0,9,31,9,72,24],[3,2,0,14,44,6,9,25],[3,2,0,14,53,6,9,26],[3,2,0,15,50,14,2,27],[3,2,0,11,46,11,9,28],[3,2,0,15,39,14,2,29],[3,2,0,13,42,10,21,30],[3,2,0,9,38,0,72,31],[3,2,0,10,45,3,42,32],[3,2,0,10,48,3,43,33],[3,2,0,3,52,13,72,34],[3,2,0,14,40,6,9,35],[3,2,0,14,47,6,9,36],[3,2,0,12,38,11,9,37],[3,2,0,13,41,10,12,38],[0,2,0,8,55,9,3,39],[0,2,0,8,44,9,3,40],[0,2,0,8,48,9,3,41],[0,2,0,8,52,9,3,42]]
-};
+    // Função auxiliar para baixar e parsear CSV pulando linhas de título mescladas
+    async function fetchCsvData(url) {
+      const response = await fetch(url + "&t=" + new Date().getTime());
+      const text = await response.text();
+      const parsed = Papa.parse(text, { skipEmptyLines: true });
+      const rows = parsed.data;
 
-const records = DB.data.map(r => ({
-  c: DB.cats[r[0]],
-  b: DB.bairros[r[1]],
-  s: DB.statuses[r[2]],
-  n: DB.cursos[r[3]],
-  i: r[4],
-  inst: DB.insts[r[5]],
-  ch: r[6],
-  cid: DB.cids[r[7]]
-}));
+      // Encontra automaticamente a linha de cabeçalho real (onde está ID_CURSO, ID_MATRICULA ou ID_ALUNO)
+      let headerIdx = rows.findIndex(r =>
+        r.some(cell => {
+          const val = String(cell || '').trim().toUpperCase();
+          return val === 'ID_CURSO' || val === 'ID_MATRICULA' || val === 'ID_ALUNO' || val === 'NOME_CURSO' || val === 'BAIRRO';
+        })
+      );
 
-const FAIXAS = ["Jovem (18–29)", "Adulto (30–49)", "Melhor Idade (50+)"];
-const FAIXA_COR = ["#0071CE", "#006837", "#FDB913"];
-const CAT_ORDER = ["Ofícios e Geração de Renda", "Beleza e Estética", "Bem-Estar", "Gestão e Empreendedorismo"];
-const CAT_COLORS = ["#006837", "#0071CE", "#FDB913", "#8b5cf6"];
-const faixaDe = i => i < 30 ? FAIXAS[0] : i < 50 ? FAIXAS[1] : FAIXAS[2];
+      if (headerIdx === -1) headerIdx = 0;
+      const headers = rows[headerIdx].map(h => String(h || '').trim().toUpperCase());
+      const records = [];
 
-let activeFilter = { category: '', bairro: '', status: '' };
-let currentTab = 'overview';
-const charts = {};
-const fmt = n => Number(n).toLocaleString('pt-BR');
-const $ = id => document.getElementById(id);
-const GREY = 'rgba(203,213,225,0.4)';
+      for (let i = headerIdx + 1; i < rows.length; i++) {
+        const row = rows[i];
+        const obj = {};
+        let hasData = false;
+        headers.forEach((h, idx) => {
+          if (h) {
+            const val = String(row[idx] || '').trim();
+            obj[h] = val;
+            if (val) hasData = true;
+          }
+        });
+        if (hasData) records.push(obj);
+      }
+      return { headers, records };
+    }
 
-function mk(id, cfg) {
-  if (charts[id]) charts[id].destroy();
-  cfg.options = Object.assign({ responsive: true, maintainAspectRatio: false }, cfg.options || {});
-  charts[id] = new Chart($(id).getContext('2d'), cfg);
-}
+    // Calcula idade a partir de DD/MM/AAAA ou MM/DD/AAAA
+    function calcularIdade(dataStr) {
+      if (!dataStr) return null;
+      const partes = dataStr.split('/');
+      if (partes.length !== 3) return null;
+      let dia = parseInt(partes[0], 10);
+      let mes = parseInt(partes[1], 10) - 1;
+      let ano = parseInt(partes[2], 10);
+      if (mes > 11) { [dia, mes] = [mes + 1, dia - 1]; } // Caso formato americano
+      const nasc = new Date(ano, mes, dia);
+      if (isNaN(nasc.getTime())) return null;
+      const hoje = new Date();
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+      return (idade > 5 && idade < 110) ? idade : null;
+    }
 
-const TABS = [
-  ['overview','fa-chart-pie','Visão Geral & KPIs'],
-  ['courses','fa-graduation-cap','Desempenho dos Cursos'],
-  ['demo','fa-users-viewfinder','Perfil Demográfico'],
-  ['impact','fa-hand-holding-heart','Impacto Social'],
-  ['instr','fa-chalkboard-user','Instrutores']
-];
+    // Carrega e unifica os dados
+    async function inicializarDashboard() {
+      const statusEl = document.getElementById('statusConexao');
+      try {
+        const principal = await fetchCsvData(CSV_BASE_URL);
+        const headers = principal.headers;
 
-function renderNav() {
-  $('tab-nav').innerHTML = TABS.map(([id, icon, label]) => {
-    const on = id === currentTab;
-    return `<button onclick="switchTab('${id}')" class="px-5 py-3 text-sm whitespace-nowrap border-b-2 flex items-center gap-2.5 transition ${on ? 'font-bold border-amber-400 text-white' : 'font-semibold border-transparent text-emerald-200/80 hover:text-white'}"><i class="fa-solid ${icon} ${on ? 'text-amber-400' : ''}"></i> ${label}</button>`;
-  }).join('');
-}
+        // Verifica qual aba foi publicada no link CSV
+        const isAbaCursos = headers.includes('ID_CURSO') && !headers.includes('ID_MATRICULA');
+        const isAbaMatriculas = headers.includes('ID_MATRICULA');
 
-function switchTab(tab) {
-  currentTab = tab;
-  TABS.forEach(([id]) => $('tab-' + id).classList.toggle('hidden', id !== tab));
-  renderNav();
-  updateDashboard();
-}
+        if (isAbaCursos) {
+          // A aba publicada no link atual é a aba CURSOS (43 turmas)!
+          // Vamos tentar buscar as abas MATRICULAS e ALUNOS caso "Todo o documento" esteja publicado,
+          // ou exibir o aviso explicativo de como ativar as 460 matrículas e bairros
+          document.getElementById('alertaEstrutura').classList.remove('hidden');
+          document.getElementById('alertaMensagem').innerHTML =
+            'O link CSV publicado está apontando apenas para a aba <strong>CURSOS</strong> (43 turmas). Para que o painel some automaticamente todas as <strong>455+ matrículas</strong>, <strong>certificados</strong> e <strong>bairros</strong> da aba <em>ALUNOS</em>, vá em <strong>Arquivo > Compartilhar > Publicar na web</strong> na sua planilha e selecione <strong>"Todo o documento"</strong> (em vez de apenas a aba CURSOS).';
 
-function applyDropdownFilter() {
-  activeFilter.category = $('selectCategory').value;
-  activeFilter.bairro = $('selectBairro').value;
-  updateDashboard();
-}
-
-function resetFilters() {
-  activeFilter = { category: '', bairro: '', status: '' };
-  $('selectCategory').value = '';
-  $('selectBairro').value = '';
-  updateDashboard();
-}
-
-function getFiltered(ignoreKey = '') {
-  return records.filter(r =>
-    (ignoreKey === 'category' || !activeFilter.category || r.c === activeFilter.category) &&
-    (ignoreKey === 'bairro' || !activeFilter.bairro || r.b === activeFilter.bairro) &&
-    (ignoreKey === 'status' || !activeFilter.status || r.s === activeFilter.status)
-  );
-}
-
-function updateDashboard() {
-  const labels = [];
-  if (activeFilter.category) labels.push('Categoria: ' + activeFilter.category);
-  if (activeFilter.bairro) labels.push('Bairro: ' + activeFilter.bairro);
-  if (activeFilter.status) labels.push('Status: ' + activeFilter.status);
-  $('filter-status-text').innerHTML = '<i class="fa-solid fa-filter"></i> ' + labels.join(' | ');
-  $('filter-status-box').classList.toggle('hidden', labels.length === 0);
-
-  const filtered = getFiltered();
-
-  if (currentTab === 'overview') renderOverview(filtered);
-  if (currentTab === 'courses') renderCoursesTab(filtered);
-  if (currentTab === 'demo') renderDemo(filtered);
-  if (currentTab === 'impact') renderImpact(filtered);
-  if (currentTab === 'instr') renderInstr(filtered);
-}
-
-/* =====================================================================
-   ABA 1: VISÃO GERAL - 3 COLUNAS EM TELA ÚNICA
-   ===================================================================== */
-function renderOverview(filtered) {
-  const totalMat = filtered.length;
-  const conclFinal = filtered.filter(r => r.s === 'CONCLUIU').length;
-  const cursosEnvolvidos = new Set(filtered.map(r => r.cid)).size;
-  const avgAge = totalMat > 0 ? (filtered.reduce((a, c) => a + c.i, 0) / totalMat).toFixed(1) : '0.0';
-  const taxa = totalMat > 0 ? ((conclFinal / totalMat) * 100).toFixed(1) : '0.0';
-
-  const kpis = [
-    ['Total Matrículas', fmt(totalMat), 'emerald', 'fa-id-card', 'fa-file-signature', activeFilter.category || activeFilter.bairro || activeFilter.status ? 'Na seleção atual' : 'Base oficial SigaCap'],
-    ['Cursos Envolvidos', fmt(cursosEnvolvidos), 'sky', 'fa-layer-group', 'fa-book-open', 'Turmas / Edições'],
-    ['Alunos Concluintes', fmt(conclFinal), 'amber', 'fa-users', 'fa-user-check', 'Formados'],
-    ['Média de Idade', avgAge + ' anos', 'purple', 'fa-user-clock', 'fa-cake-candles', 'Perfil etário'],
-    ['Taxa Conclusão', taxa + '%', 'emerald', 'fa-graduation-cap', 'fa-award', 'Aproveitamento']
-  ];
-  $('kpi-grid').innerHTML = kpis.map(k => kpiCard(k[0], k[1], k[2], k[3], k[4], k[5])).join('');
-
-  $('summary-title').innerText = activeFilter.category || 'Visão Geral';
-  $('summary-mat').innerText = fmt(totalMat);
-  $('summary-conc').innerText = fmt(conclFinal);
-  $('summary-idade').innerText = avgAge + ' anos';
-
-  // 1. Gráfico de Rosca (Categorias)
-  const baseForCat = getFiltered('category');
-  const catData = CAT_ORDER.map(cat => baseForCat.filter(r => r.c === cat).length);
-  const catBg = CAT_ORDER.map((cat, idx) => activeFilter.category && activeFilter.category !== cat ? GREY : CAT_COLORS[idx]);
-
-  mk('chartCategorias', {
-    type: 'doughnut',
-    data: {
-      labels: CAT_ORDER,
-      datasets: [{ data: catData, borderWidth: 2, borderColor: '#fff', backgroundColor: catBg }]
-    },
-    options: {
-      onClick: (e, el) => {
-        if (el.length) {
-          const clicked = CAT_ORDER[el[0].index];
-          activeFilter.category = activeFilter.category === clicked ? '' : clicked;
-          $('selectCategory').value = activeFilter.category;
-          updateDashboard();
+          dadosBrutos = principal.records.map(r => ({
+            id_curso: r.ID_CURSO || '',
+            curso: r.NOME_CURSO || 'Não informado',
+            categoria: r.CATEGORIA || 'Outros',
+            instrutor: r.INSTUTOR || r.INSTRUTOR || 'Não informado',
+            carga_horaria: parseInt(r.CARGA_HORARIA) || 0,
+            vagas: parseInt(r.VAGAS_TOTAIS) || 0,
+            bairro: r.BAIRRO || 'Não informado (Aba CURSOS)',
+            status: r.STATUS_FINAL || 'TURMA OFERTADA',
+            idade: null
+          }));
+        } else if (isAbaMatriculas) {
+          // Se a aba publicada for MATRICULAS, mapeia cada matrícula individual
+          dadosBrutos = principal.records.map(r => ({
+            id_matricula: r.ID_MATRICULA || '',
+            id_aluno: r.ID_ALUNO || '',
+            id_curso: r.ID_CURSO || '',
+            curso: r.NOME_CURSO || 'Não informado',
+            categoria: r.CATEGORIA || 'Geral',
+            instrutor: r.INSTRUTOR || r.INSTUTOR || 'Não informado',
+            bairro: r.BAIRRO || 'Não informado',
+            status: (r.STATUS_FINAL || 'EM ANDAMENTO').toUpperCase(),
+            idade: calcularIdade(r.DATA_NASCIMENTO)
+          }));
+        } else {
+          // Caso seja outra aba (ex: ALUNOS ou personalizada)
+          dadosBrutos = principal.records.map(r => ({
+            curso: r.NOME_CURSO || 'Cadastro Geral',
+            categoria: r.CATEGORIA || 'Geral',
+            instrutor: r.INSTRUTOR || r.INSTUTOR || 'Não informado',
+            bairro: (r.BAIRRO || 'Não informado').toUpperCase(),
+            status: (r.STATUS_FINAL || 'CADASTRADO').toUpperCase(),
+            idade: calcularIdade(r.DATA_NASCIMENTO)
+          }));
         }
-      },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 9, weight: '600' } } } }
-    }
-  });
 
-  // 2. Gráfico de Status (Compacto)
-  const baseForStatus = getFiltered('status');
-  const stKeys = ['CONCLUIU', 'DESISTIU', 'REPROVOU'];
-  const stLabels = ['Concluiu', 'Desistiu', 'Reprovou'];
-  const stColors = ['#10b981', '#f43f5e', '#64748b'];
-  const stData = stKeys.map(st => baseForStatus.filter(r => r.s === st).length);
-  const stBg = stKeys.map((st, idx) => activeFilter.status && activeFilter.status !== st ? GREY : stColors[idx]);
+        statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectado (${dadosBrutos.length} registros)`;
+        document.getElementById('ultimaAtualizacao').textContent = 'Sincronizado em: ' + new Date().toLocaleTimeString('pt-BR');
 
-  mk('chartStatus', {
-    type: 'bar',
-    data: {
-      labels: stLabels,
-      datasets: [{ data: stData, borderRadius: 6, barThickness: 32, backgroundColor: stBg }]
-    },
-    options: {
-      onClick: (e, el) => {
-        if (el.length) {
-          const clicked = stKeys[el[0].index];
-          activeFilter.status = activeFilter.status === clicked ? '' : clicked;
-          updateDashboard();
-        }
-      },
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false }, ticks: { font: { size: 10 } } } }
-    }
-  });
+        popularFiltros();
+        aplicarFiltros();
 
-  // 3. Gráfico de Bairros (Compacto - Top Bairros)
-  const baseForBairro = getFiltered('bairro');
-  const bairroMap = {};
-  baseForBairro.forEach(r => {
-    if (r.b && r.b !== 'NÃO INFORMADO') {
-      bairroMap[r.b] = (bairroMap[r.b] || 0) + 1;
-    }
-  });
-  const sortedBairros = Object.entries(bairroMap).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  if (activeFilter.bairro && !sortedBairros.some(x => x[0] === activeFilter.bairro)) {
-    sortedBairros.push([activeFilter.bairro, bairroMap[activeFilter.bairro] || 0]);
-  }
-  const bKeys = sortedBairros.map(x => x[0]);
-  const bData = sortedBairros.map(x => x[1]);
-  const bBg = bKeys.map(b => activeFilter.bairro && activeFilter.bairro !== b ? GREY : '#006837');
-
-  mk('chartBairros', {
-    type: 'bar',
-    data: {
-      labels: bKeys,
-      datasets: [{ data: bData, borderRadius: 4, barThickness: 14, backgroundColor: bBg }]
-    },
-    options: {
-      indexAxis: 'y',
-      onClick: (e, el) => {
-        if (el.length) {
-          const clicked = bKeys[el[0].index];
-          activeFilter.bairro = activeFilter.bairro === clicked ? '' : clicked;
-          $('selectBairro').value = activeFilter.bairro;
-          updateDashboard();
-        }
-      },
-      plugins: { legend: { display: false } },
-      scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false }, ticks: { font: { size: 9, weight: '600' } } } }
-    }
-  });
-}
-
-function kpiCard(title, value, color, icon, subIcon, sub) {
-  return `<div class="bg-white rounded-2xl p-4 card-shadow card-hover border border-slate-100 relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-1.5 h-full bg-${color}-500"></div>
-    <div class="flex items-center justify-between"><div>
-      <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">${title}</p>
-      <h3 class="text-2xl font-extrabold text-slate-900 mt-0.5">${value}</h3>
-      <p class="text-[11px] font-semibold text-${color}-600 mt-1 flex items-center gap-1"><i class="fa-solid ${subIcon}"></i> ${sub}</p></div>
-      <div class="w-10 h-10 rounded-xl bg-${color}-50 text-${color}-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid ${icon}"></i></div>
-    </div></div>`;
-}
-
-/* =====================================================================
-   ABA 2: CURSOS (DINÂMICA)
-   ===================================================================== */
-function renderCoursesTab(filtered = getFiltered()) {
-  const q = ($('searchInput')?.value || '').toLowerCase();
-  const map = {};
-  filtered.forEach(r => {
-    if (!map[r.n]) {
-      map[r.n] = { nome: r.n, cat: r.c, cids: new Set(), insc: 0, conc: 0 };
-    }
-    map[r.n].cids.add(r.cid);
-    map[r.n].insc++;
-    if (r.s === 'CONCLUIU') map[r.n].conc++;
-  });
-
-  const list = Object.values(map)
-    .filter(item => item.nome.toLowerCase().includes(q))
-    .sort((a, b) => b.insc - a.insc);
-
-  $('coursesTableBody').innerHTML = list.map(i => {
-    const taxa = i.insc > 0 ? ((i.conc / i.insc) * 100).toFixed(1) : '0.0';
-    const b = taxa >= 80 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : taxa >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200';
-    return `<tr class="hover:bg-slate-50/80 transition"><td class="py-3 px-4 font-bold text-slate-800">${i.nome}</td><td class="py-3 px-4 text-slate-500 font-medium">${i.cat}</td><td class="py-3 px-4 text-center font-bold text-slate-700">${i.cids.size}</td><td class="py-3 px-4 text-center text-slate-600">${i.insc}</td><td class="py-3 px-4 text-center font-bold text-emerald-600">${i.conc}</td><td class="py-3 px-4 text-center"><span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${b}">${taxa}%</span></td></tr>`;
-  }).join('');
-}
-
-/* =====================================================================
-   ABA 3: PERFIL DEMOGRÁFICO (DINÂMICA)
-   ===================================================================== */
-function renderDemo(filtered) {
-  const tot = FAIXAS.map(f => filtered.filter(d => faixaDe(d.i) === f).length);
-  mk('chartFaixaDonut', {
-    type: 'doughnut',
-    data: { labels: FAIXAS, datasets: [{ data: tot, backgroundColor: FAIXA_COR, borderWidth: 2, borderColor: '#fff' }] },
-    options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } } }
-  });
-
-  mk('chartFaixaCat', {
-    type: 'bar',
-    data: {
-      labels: CAT_ORDER,
-      datasets: FAIXAS.map((f, idx) => ({
-        label: f,
-        backgroundColor: FAIXA_COR[idx],
-        borderRadius: 4,
-        data: CAT_ORDER.map(cat => filtered.filter(d => d.c === cat && faixaDe(d.i) === f).length)
-      }))
-    },
-    options: {
-      scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' } } },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } }
-    }
-  });
-}
-
-/* =====================================================================
-   ABA 4: IMPACTO SOCIAL (DINÂMICA)
-   ===================================================================== */
-function renderImpact(filtered) {
-  const concluintes = filtered.filter(r => r.s === 'CONCLUIU');
-  const horas = concluintes.reduce((acc, r) => acc + r.ch, 0);
-  const concCount = concluintes.length;
-  const mediaAluno = concCount > 0 ? (horas / concCount).toFixed(1) : '0.0';
-  let somaCh = 0;
-  const seenCid = new Set();
-  filtered.forEach(r => {
-    if (!seenCid.has(r.cid)) {
-      seenCid.add(r.cid);
-      somaCh += r.ch;
-    }
-  });
-  const cargaMedia = seenCid.size > 0 ? Math.round(somaCh / seenCid.size) : 0;
-
-  $('impact-kpis').innerHTML = [
-    kpiCard('Horas de Formação', fmt(horas) + ' h', 'emerald', 'fa-clock', 'fa-hand-holding-heart', 'Entregues à comunidade'),
-    kpiCard('Concluintes', fmt(concCount), 'amber', 'fa-users', 'fa-user-check', 'Pessoas formadas'),
-    kpiCard('Média por Aluno', mediaAluno + ' h', 'sky', 'fa-user-graduate', 'fa-chart-simple', 'Horas por concluinte'),
-    kpiCard('Carga Média/Curso', cargaMedia + ' h', 'purple', 'fa-book', 'fa-hourglass-half', 'Duração típica')
-  ].join('');
-
-  const porCat = CAT_ORDER.map(cat => concluintes.filter(r => r.c === cat).reduce((a, r) => a + r.ch, 0));
-  mk('chartHorasCat', {
-    type: 'bar',
-    data: { labels: CAT_ORDER, datasets: [{ data: porCat, borderRadius: 8, backgroundColor: CAT_COLORS }] },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
-  });
-
-  const cursoHorasMap = {};
-  concluintes.forEach(r => {
-    cursoHorasMap[r.n] = (cursoHorasMap[r.n] || 0) + r.ch;
-  });
-  const rank = Object.entries(cursoHorasMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
-  mk('chartHorasCurso', {
-    type: 'bar',
-    data: {
-      labels: rank.map(c => c[0].length > 28 ? c[0].slice(0, 26) + '…' : c[0]),
-      datasets: [{ data: rank.map(c => c[1]), borderRadius: 6, backgroundColor: '#006837' }]
-    },
-    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } }
-  });
-}
-
-/* =====================================================================
-   ABA 5: INSTRUTORES E MONITORES (DINÂMICA)
-   ===================================================================== */
-function renderInstr(filtered) {
-  const map = {};
-  filtered.forEach(r => {
-    if (!map[r.inst]) {
-      map[r.inst] = { nome: r.inst, cids: new Set(), formados: 0 };
-    }
-    map[r.inst].cids.add(r.cid);
-    if (r.s === 'CONCLUIU') map[r.inst].formados++;
-  });
-
-  const list = Object.values(map).sort((a, b) => b.formados - a.formados);
-  const labels = list.map(m => m.nome.length > 24 ? m.nome.slice(0, 22) + '…' : m.nome);
-  const dataFormados = list.map(m => m.formados);
-
-  mk('chartInstrVol', {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Alunos Formados',
-        data: dataFormados,
-        backgroundColor: '#006837',
-        borderRadius: 6,
-        barThickness: 18
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-        y: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } }
+      } catch (err) {
+        console.error(err);
+        statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500"></span> Erro ao ler planilha`;
       }
     }
-  });
 
-  $('instrTableBody').innerHTML = list.map(m => `
-    <tr class="hover:bg-slate-50/80 transition">
-      <td class="py-3.5 px-4 font-bold text-slate-800">${m.nome}</td>
-      <td class="py-3.5 px-4 text-center font-bold text-slate-700">${m.cids.size}</td>
-      <td class="py-3.5 px-4 text-center font-extrabold text-emerald-600">${m.formados}</td>
-    </tr>
-  `).join('');
-}
+    function popularFiltros() {
+      const categorias = [...new Set(dadosBrutos.map(d => d.categoria).filter(Boolean))].sort();
+      const bairros = [...new Set(dadosBrutos.map(d => d.bairro).filter(Boolean))].sort();
+      const statusList = [...new Set(dadosBrutos.map(d => d.status).filter(Boolean))].sort();
 
-Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-$('selectCategory').innerHTML = '<option value="">Todas as Categorias</option>' + CAT_ORDER.map(c => `<option value="${c}">${c}</option>`).join('');
-const topBairrosDropdown = ["BARRA VELHA","ÁGUA BRANCA","REINO","ITAQUANDUBA","PEREQUÊ","BEXIGA","COSTA BELA","ZABUMBA","ITAGUASSU","ARMAÇÃO"];
-$('selectBairro').innerHTML = '<option value="">Todos os Bairros</option>' + topBairrosDropdown.map(b => `<option value="${b}">${b.charAt(0) + b.slice(1).toLowerCase()}</option>`).join('');
-renderNav();
-updateDashboard();
-</script>
+      const selCat = document.getElementById('filtroCategoria');
+      categorias.forEach(c => selCat.innerHTML += `<option value="${c}">${c}</option>`);
+
+      const selBairro = document.getElementById('filtroBairro');
+      bairros.forEach(b => selBairro.innerHTML += `<option value="${b}">${b}</option>`);
+
+      const selStatus = document.getElementById('filtroStatus');
+      statusList.forEach(s => selStatus.innerHTML += `<option value="${s}">${s}</option>`);
+    }
+
+    function resetarFiltros() {
+      document.getElementById('filtroCategoria').value = 'TODAS';
+      document.getElementById('filtroBairro').value = 'TODOS';
+      document.getElementById('filtroStatus').value = 'TODOS';
+      aplicarFiltros();
+    }
+
+    function aplicarFiltros() {
+      const cat = document.getElementById('filtroCategoria').value;
+      const bairro = document.getElementById('filtroBairro').value;
+      const status = document.getElementById('filtroStatus').value;
+
+      dadosFiltrados = dadosBrutos.filter(d => {
+        if (cat !== 'TODAS' && d.categoria !== cat) return false;
+        if (bairro !== 'TODOS' && d.bairro !== bairro) return false;
+        if (status !== 'TODOS' && d.status !== status) return false;
+        return true;
+      });
+
+      atualizarKPIs();
+      renderizarGraficos();
+      renderizarTabelaCursos();
+    }
+
+    function atualizarKPIs() {
+      const total = dadosFiltrados.length;
+      const turmasUnicas = new Set(dadosFiltrados.map(d => d.id_curso || d.curso)).size;
+      const concluintes = dadosFiltrados.filter(d => d.status.includes('CONCLUIU') || d.status.includes('CERTIFICADO')).length;
+      const desistentes = dadosFiltrados.filter(d => d.status.includes('DESISTIU') || d.status.includes('REPROVOU')).length;
+
+      const idadesValidas = dadosFiltrados.map(d => d.idade).filter(i => i !== null);
+      const mediaIdade = idadesValidas.length > 0
+        ? (idadesValidas.reduce((a, b) => a + b, 0) / idadesValidas.length).toFixed(1) + ' anos'
+        : 'N/D';
+
+      const baseEncerrados = concluintes + desistentes;
+      const taxa = baseEncerrados > 0 ? ((concluintes / baseEncerrados) * 100).toFixed(1) + '%' : (concluintes > 0 ? '100%' : '0.0%');
+
+      document.getElementById('kpiTotalMatriculas').textContent = total;
+      document.getElementById('kpiTotalCursos').textContent = turmasUnicas;
+      document.getElementById('kpiConcluintes').textContent = concluintes;
+      document.getElementById('kpiMediaIdade').textContent = mediaIdade;
+      document.getElementById('kpiTaxaConclusao').textContent = taxa;
+    }
+
+    function agruparContagem(lista, campo) {
+      const mapa = {};
+      lista.forEach(item => {
+        const chave = item[campo] || 'Não informado';
+        mapa[chave] = (mapa[chave] || 0) + 1;
+      });
+      return Object.entries(mapa).sort((a, b) => b[1] - a[1]);
+    }
+
+    function criarOuAtualizarGrafico(id, tipo, labels, data, cores, opcoesExtras = {}) {
+      if (charts[id]) charts[id].destroy();
+      const ctx = document.getElementById(id).getContext('2d');
+      charts[id] = new Chart(ctx, {
+        type: tipo,
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: cores,
+            borderRadius: tipo === 'bar' ? 6 : 0,
+            borderWidth: tipo === 'doughnut' ? 2 : 0,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: tipo === 'doughnut', position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+          },
+          ...opcoesExtras
+        }
+      });
+    }
+
+    function renderizarGraficos() {
+      const paleta = ['#0b5d3b', '#0ea5e9', '#f59e0b', '#8b5cf6', '#10b981', '#ec4899', '#64748b'];
+
+      // 1. Categorias
+      const catData = agruparContagem(dadosFiltrados, 'categoria');
+      criarOuAtualizarGrafico('chartCategorias', 'doughnut', catData.map(x => x[0]), catData.map(x => x[1]), paleta, { cutout: '65%' });
+
+      // 2. Status
+      const statusData = agruparContagem(dadosFiltrados, 'status');
+      criarOuAtualizarGrafico('chartStatus', 'bar', statusData.map(x => x[0]), statusData.map(x => x[1]), ['#10b981', '#ef4444', '#f59e0b', '#3b82f6'], {
+        scales: { y: { beginAtZero: true } }
+      });
+
+      // 3. Top 8 Bairros
+      const bairrosData = agruparContagem(dadosFiltrados, 'bairro');
+      const topBairros = bairrosData.slice(0, 8);
+      criarOuAtualizarGrafico('chartBairros', 'bar', topBairros.map(x => x[0]), topBairros.map(x => x[1]), '#0b5d3b', {
+        indexAxis: 'y',
+        scales: { x: { beginAtZero: true } }
+      });
+
+      // 4. Ranking Cursos (Top 12)
+      const cursosData = agruparContagem(dadosFiltrados, 'curso').slice(0, 12);
+      criarOuAtualizarGrafico('chartCursosRanking', 'bar', cursosData.map(x => x[0]), cursosData.map(x => x[1]), '#0ea5e9', {
+        indexAxis: 'y',
+        scales: { x: { beginAtZero: true } }
+      });
+
+      // 5. Bairros Completo
+      criarOuAtualizarGrafico('chartBairrosCompleto', 'bar', bairrosData.map(x => x[0]), bairrosData.map(x => x[1]), '#0b5d3b', {
+        indexAxis: 'y',
+        scales: { x: { beginAtZero: true } }
+      });
+
+      // 6. Faixa Etária
+      const faixas = { 'Até 25 anos': 0, '26 a 35 anos': 0, '36 a 50 anos': 0, '51 a 60 anos': 0, '60+ anos': 0, 'Não informada': 0 };
+      dadosFiltrados.forEach(d => {
+        if (!d.idade) faixas['Não informada']++;
+        else if (d.idade <= 25) faixas['Até 25 anos']++;
+        else if (d.idade <= 35) faixas['26 a 35 anos']++;
+        else if (d.idade <= 50) faixas['36 a 50 anos']++;
+        else if (d.idade <= 60) faixas['51 a 60 anos']++;
+        else faixas['60+ anos']++;
+      });
+      criarOuAtualizarGrafico('chartFaixaEtaria', 'bar', Object.keys(faixas), Object.values(faixas), '#8b5cf6', {
+        scales: { y: { beginAtZero: true } }
+      });
+
+      // 7. Instrutores
+      const instData = agruparContagem(dadosFiltrados, 'instrutor').slice(0, 12);
+      criarOuAtualizarGrafico('chartInstrutores', 'bar', instData.map(x => x[0]), instData.map(x => x[1]), '#f59e0b', {
+        indexAxis: 'y',
+        scales: { x: { beginAtZero: true } }
+      });
+    }
+
+    function renderizarTabelaCursos() {
+      const tbody = document.getElementById('tabelaCursosBody');
+      tbody.innerHTML = '';
+      const resumo = {};
+
+      dadosFiltrados.forEach(d => {
+        if (!resumo[d.curso]) {
+          resumo[d.curso] = { categoria: d.categoria, total: 0, concluidos: 0 };
+        }
+        resumo[d.curso].total++;
+        if (d.status.includes('CONCLUIU') || d.status.includes('CERTIFICADO')) {
+          resumo[d.curso].concluidos++;
+        }
+      });
+
+      Object.entries(resumo)
+        .sort((a, b) => b[1].total - a[1].total)
+        .forEach(([curso, info]) => {
+          const pct = info.total > 0 ? Math.round((info.concluidos / info.total) * 100) : 0;
+          tbody.innerHTML += `
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 font-medium text-gray-900">${curso}</td>
+              <td class="px-4 py-3 text-gray-600">${info.categoria}</td>
+              <td class="px-4 py-3 text-center font-semibold">${info.total}</td>
+              <td class="px-4 py-3 text-center text-emerald-700 font-semibold">${info.concluidos}</td>
+              <td class="px-4 py-3 text-center">
+                <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${pct >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}">
+                  ${pct}%
+                </span>
+              </td>
+            </tr>
+          `;
+        });
+    }
+
+    // Inicia automaticamente
+    inicializarDashboard();
+  </script>
 </body>
 </html>
