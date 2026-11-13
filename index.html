@@ -53,7 +53,8 @@
         <button onclick="switchTab('visaoGeral')" id="tab-visaoGeral" class="tab-btn tab-active px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Visão Geral & KPIs</button>
         <button onclick="switchTab('desempenho')" id="tab-desempenho" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Desempenho dos Cursos</button>
         <button onclick="switchTab('demografico')" id="tab-demografico" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Perfil Demográfico & Bairros</button>
-        <button onclick="switchTab('instrutores')" id="tab-instrutores" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Instrutores & Carga Horária</button>
+        <button onclick="switchTab('impacto')" id="tab-impacto" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Impacto Social</button>
+        <button onclick="switchTab('instrutores')" id="tab-instrutores" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Desempenho dos Instrutores</button>
       </div>
     </div>
   </header>
@@ -63,7 +64,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="text-xs sm:text-sm text-gray-600 flex items-center gap-2">
         <svg class="w-4 h-4 text-ilha-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-        <span>Filtre os indicadores abaixo ou clique nas barras dos gráficos para refinar a análise:</span>
+        <span>Filtre os indicadores abaixo ou utilize as opções para refinar a análise:</span>
       </div>
 
       <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -195,33 +196,79 @@
 
     <!-- ABA 3: PERFIL DEMOGRÁFICO & BAIRROS -->
     <section id="sec-demografico" class="tab-section hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <p id="notaIdade" class="text-xs text-amber-700 font-medium"></p>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-          <h2 class="text-base font-bold text-gray-800">Todos os Bairros Atendidos</h2>
-          <p class="text-xs text-gray-400 mb-4">Distribuição geográfica completa dos alunos</p>
-          <div class="relative h-[360px]">
-            <canvas id="chartBairrosCompleto"></canvas>
-          </div>
+          <h2 class="text-base font-bold text-gray-800">Faixa Etária</h2>
+          <p class="text-xs text-gray-400 mb-4">Jovem, Adulto e Melhor Idade</p>
+          <div class="relative h-[300px]"><canvas id="chartFaixaDonut"></canvas></div>
         </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-          <h2 class="text-base font-bold text-gray-800">Distribuição por Faixa Etária</h2>
-          <p class="text-xs text-gray-400 mb-4">Perfil de idade dos participantes</p>
-          <div class="relative h-[360px]">
-            <canvas id="chartFaixaEtaria"></canvas>
-          </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 lg:col-span-2">
+          <h2 class="text-base font-bold text-gray-800">Faixa Etária por Categoria</h2>
+          <p class="text-xs text-gray-400 mb-4">Quais eixos formativos atraem cada público</p>
+          <div class="relative h-[300px]"><canvas id="chartFaixaCategoria"></canvas></div>
         </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="p-5 border-b border-gray-100"><h2 class="text-base font-bold text-gray-800">Perfil Etário por Curso</h2></div>
+        <div class="overflow-x-auto"><table class="min-w-full text-left text-xs sm:text-sm">
+          <thead class="bg-gray-50 text-gray-600 font-semibold border-b"><tr>
+            <th class="px-4 py-3">Curso</th><th class="px-4 py-3 text-center">Idade média</th>
+            <th class="px-4 py-3 text-center">Jovem (até 29)</th><th class="px-4 py-3 text-center">Adulto (30–49)</th><th class="px-4 py-3 text-center">Melhor Idade (50+)</th>
+          </tr></thead><tbody id="tabelaDemoBody" class="divide-y divide-gray-100"></tbody></table></div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <h2 class="text-base font-bold text-gray-800">Todos os Bairros Atendidos</h2>
+        <p class="text-xs text-gray-400 mb-4">Distribuição geográfica completa dos alunos</p>
+        <div class="relative h-[360px]"><canvas id="chartBairrosCompleto"></canvas></div>
       </div>
     </section>
 
-    <!-- ABA 4: INSTRUTORES & CARGA HORÁRIA -->
-    <section id="sec-instrutores" class="tab-section hidden space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-        <h2 class="text-base font-bold text-gray-800">Atuação por Instrutor</h2>
-        <p class="text-xs text-gray-400 mb-4">Quantidade de turmas/matrículas vinculadas a cada profissional</p>
-        <div class="relative h-[360px]">
-          <canvas id="chartInstrutores"></canvas>
+    <!-- ABA 4: IMPACTO SOCIAL -->
+    <section id="sec-impacto" class="tab-section hidden space-y-6">
+      <div id="avisoImpacto" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs sm:text-sm text-amber-900"></div>
+      <div id="kpisImpacto" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h2 class="text-base font-bold text-gray-800">Horas de Formação por Categoria</h2>
+          <p class="text-xs text-gray-400 mb-4">Concluintes × carga horária do curso</p>
+          <div class="relative h-[300px]"><canvas id="chartHorasCategoria"></canvas></div>
         </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h2 class="text-base font-bold text-gray-800">Horas Entregues por Curso</h2>
+          <p class="text-xs text-gray-400 mb-4">Os 10 cursos com maior volume de formação</p>
+          <div class="relative h-[300px]"><canvas id="chartHorasCurso"></canvas></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto"><table class="min-w-full text-left text-xs sm:text-sm">
+          <thead class="bg-gray-50 text-gray-600 font-semibold border-b"><tr>
+            <th class="px-4 py-3">Curso</th><th class="px-4 py-3 text-center">Carga horária</th><th class="px-4 py-3 text-center">Concluintes</th><th class="px-4 py-3 text-center">Horas entregues</th>
+          </tr></thead><tbody id="tabelaImpactoBody" class="divide-y divide-gray-100"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ABA 5: DESEMPENHO DOS INSTRUTORES -->
+    <section id="sec-instrutores" class="tab-section hidden space-y-6">
+      <div id="avisoInstrutores" class="hidden bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs sm:text-sm text-amber-900"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h2 class="text-base font-bold text-gray-800">Taxa de Retenção por Instrutor</h2>
+          <p class="text-xs text-gray-400 mb-4">Concluintes ÷ (concluintes + desistentes/reprovados)</p>
+          <div class="relative h-[320px]"><canvas id="chartInstrTaxa"></canvas></div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+          <h2 class="text-base font-bold text-gray-800">Volume de Alunos por Instrutor</h2>
+          <p class="text-xs text-gray-400 mb-4">Concluintes, desistentes e em andamento</p>
+          <div class="relative h-[320px]"><canvas id="chartInstrVolume"></canvas></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto"><table class="min-w-full text-left text-xs sm:text-sm">
+          <thead class="bg-gray-50 text-gray-600 font-semibold border-b"><tr>
+            <th class="px-4 py-3">Instrutor</th><th class="px-4 py-3">Cursos</th><th class="px-4 py-3 text-center">Turmas</th><th class="px-4 py-3 text-center">Matrículas</th>
+            <th class="px-4 py-3 text-center">Concluintes</th><th class="px-4 py-3 text-center">Desistentes</th><th class="px-4 py-3 text-center">Retenção</th><th class="px-4 py-3 text-center">Horas entregues</th>
+          </tr></thead><tbody id="tabelaInstrBody" class="divide-y divide-gray-100"></tbody></table></div>
       </div>
     </section>
 
@@ -236,16 +283,25 @@
   </footer>
 
   <script>
-    // URL PÚBLICA DO SEU GOOGLE SHEETS (CSV)
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQARjUEog-LEDm45GRbILx9YT9MSMK2IKRSDkZ4ZrMqF-eqODkf3YzzqFK-zPoeLFNOEwSEUS-vAAoI/pub?output=csv";
 
-    // Identificadores internos das abas (GIDs padrão do Google Sheets)
-    // Caso a aba publicada seja a primeira (CURSOS), o código detecta automaticamente e tenta ler também as outras abas se publicadas
+    // OPCIONAL: link CSV da aba CURSOS (Arquivo > Compartilhar > Publicar na Web > aba CURSOS > CSV).
+    // Serve para buscar CARGA_HORARIA e INSTRUTOR por curso quando a aba de matrículas não tiver essas colunas.
+    const CSV_CURSOS_URL = "";
+    // OPCIONAL: carga horária manual por curso (use se não publicar a aba CURSOS). Ex.: {"COSTURA INICIANTE": 40}
+    const CARGA_MANUAL = {};
+
+    const FAIXAS = [['Jovem (até 29)', '#0ea5e9'], ['Adulto (30–49)', '#0b5d3b'], ['Melhor Idade (50+)', '#f59e0b']];
+    const faixaDe = i => i < 30 ? 0 : i < 50 ? 1 : 2;
+    const ehConcluinte = d => d.status.includes('CONCLUIU') || d.status.includes('CERTIFICADO');
+    const ehDesistente = d => d.status.includes('DESISTIU') || d.status.includes('REPROVOU');
+    const nf = n => Number(n).toLocaleString('pt-BR');
+    let modoSomenteCursos = false;
+
     let dadosBrutos = [];
     let dadosFiltrados = [];
     let charts = {};
 
-    // Navegação entre abas do painel
     function switchTab(tabName) {
       document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -258,14 +314,12 @@
       activeBtn.classList.remove('text-emerald-100');
     }
 
-    // Função auxiliar para baixar e parsear CSV pulando linhas de título mescladas
     async function fetchCsvData(url) {
       const response = await fetch(url + "&t=" + new Date().getTime());
       const text = await response.text();
       const parsed = Papa.parse(text, { skipEmptyLines: true });
       const rows = parsed.data;
 
-      // Encontra automaticamente a linha de cabeçalho real (onde está ID_CURSO, ID_MATRICULA ou ID_ALUNO)
       let headerIdx = rows.findIndex(r =>
         r.some(cell => {
           const val = String(cell || '').trim().toUpperCase();
@@ -293,7 +347,6 @@
       return { headers, records };
     }
 
-    // Calcula idade a partir de DD/MM/AAAA ou MM/DD/AAAA
     function calcularIdade(dataStr) {
       if (!dataStr) return null;
       const partes = dataStr.split('/');
@@ -301,7 +354,7 @@
       let dia = parseInt(partes[0], 10);
       let mes = parseInt(partes[1], 10) - 1;
       let ano = parseInt(partes[2], 10);
-      if (mes > 11) { [dia, mes] = [mes + 1, dia - 1]; } // Caso formato americano
+      if (mes > 11) { [dia, mes] = [mes + 1, dia - 1]; }
       const nasc = new Date(ano, mes, dia);
       if (isNaN(nasc.getTime())) return null;
       const hoje = new Date();
@@ -311,24 +364,19 @@
       return (idade > 5 && idade < 110) ? idade : null;
     }
 
-    // Carrega e unifica os dados
     async function inicializarDashboard() {
       const statusEl = document.getElementById('statusConexao');
       try {
         const principal = await fetchCsvData(CSV_BASE_URL);
         const headers = principal.headers;
 
-        // Verifica qual aba foi publicada no link CSV
         const isAbaCursos = headers.includes('ID_CURSO') && !headers.includes('ID_MATRICULA');
         const isAbaMatriculas = headers.includes('ID_MATRICULA');
 
         if (isAbaCursos) {
-          // A aba publicada no link atual é a aba CURSOS (43 turmas)!
-          // Vamos tentar buscar as abas MATRICULAS e ALUNOS caso "Todo o documento" esteja publicado,
-          // ou exibir o aviso explicativo de como ativar as 460 matrículas e bairros
           document.getElementById('alertaEstrutura').classList.remove('hidden');
           document.getElementById('alertaMensagem').innerHTML =
-            'O link CSV publicado está apontando apenas para a aba <strong>CURSOS</strong> (43 turmas). Para que o painel some automaticamente todas as <strong>455+ matrículas</strong>, <strong>certificados</strong> e <strong>bairros</strong> da aba <em>ALUNOS</em>, vá em <strong>Arquivo > Compartilhar > Publicar na web</strong> na sua planilha e selecione <strong>"Todo o documento"</strong> (em vez de apenas a aba CURSOS).';
+            'O link CSV publicado está apontando apenas para a aba <strong>CURSOS</strong> (43 turmas). Para que o painel some automaticamente todas as <strong>455+ matrículas</strong>, <strong>certificados</strong> e <strong>bairros</strong>, publique "Todo o documento" no Google Sheets.';
 
           dadosBrutos = principal.records.map(r => ({
             id_curso: r.ID_CURSO || '',
@@ -337,12 +385,11 @@
             instrutor: r.INSTUTOR || r.INSTRUTOR || 'Não informado',
             carga_horaria: parseInt(r.CARGA_HORARIA) || 0,
             vagas: parseInt(r.VAGAS_TOTAIS) || 0,
-            bairro: r.BAIRRO || 'Não informado (Aba CURSOS)',
+            bairro: r.BAIRRO || 'Não informado',
             status: r.STATUS_FINAL || 'TURMA OFERTADA',
             idade: null
           }));
         } else if (isAbaMatriculas) {
-          // Se a aba publicada for MATRICULAS, mapeia cada matrícula individual
           dadosBrutos = principal.records.map(r => ({
             id_matricula: r.ID_MATRICULA || '',
             id_aluno: r.ID_ALUNO || '',
@@ -350,12 +397,12 @@
             curso: r.NOME_CURSO || 'Não informado',
             categoria: r.CATEGORIA || 'Geral',
             instrutor: r.INSTRUTOR || r.INSTUTOR || 'Não informado',
+            carga_horaria: parseInt(r.CARGA_HORARIA) || 0,
             bairro: r.BAIRRO || 'Não informado',
             status: (r.STATUS_FINAL || 'EM ANDAMENTO').toUpperCase(),
             idade: calcularIdade(r.DATA_NASCIMENTO)
           }));
         } else {
-          // Caso seja outra aba (ex: ALUNOS ou personalizada)
           dadosBrutos = principal.records.map(r => ({
             curso: r.NOME_CURSO || 'Cadastro Geral',
             categoria: r.CATEGORIA || 'Geral',
@@ -365,6 +412,8 @@
             idade: calcularIdade(r.DATA_NASCIMENTO)
           }));
         }
+
+        await enriquecerComCursos(isAbaCursos);
 
         statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectado (${dadosBrutos.length} registros)`;
         document.getElementById('ultimaAtualizacao').textContent = 'Sincronizado em: ' + new Date().toLocaleTimeString('pt-BR');
@@ -415,6 +464,9 @@
       atualizarKPIs();
       renderizarGraficos();
       renderizarTabelaCursos();
+      renderizarDemografia();
+      renderizarImpacto();
+      renderizarInstrutores();
     }
 
     function atualizarKPIs() {
@@ -476,17 +528,14 @@
     function renderizarGraficos() {
       const paleta = ['#0b5d3b', '#0ea5e9', '#f59e0b', '#8b5cf6', '#10b981', '#ec4899', '#64748b'];
 
-      // 1. Categorias
       const catData = agruparContagem(dadosFiltrados, 'categoria');
       criarOuAtualizarGrafico('chartCategorias', 'doughnut', catData.map(x => x[0]), catData.map(x => x[1]), paleta, { cutout: '65%' });
 
-      // 2. Status
       const statusData = agruparContagem(dadosFiltrados, 'status');
       criarOuAtualizarGrafico('chartStatus', 'bar', statusData.map(x => x[0]), statusData.map(x => x[1]), ['#10b981', '#ef4444', '#f59e0b', '#3b82f6'], {
         scales: { y: { beginAtZero: true } }
       });
 
-      // 3. Top 8 Bairros
       const bairrosData = agruparContagem(dadosFiltrados, 'bairro');
       const topBairros = bairrosData.slice(0, 8);
       criarOuAtualizarGrafico('chartBairros', 'bar', topBairros.map(x => x[0]), topBairros.map(x => x[1]), '#0b5d3b', {
@@ -494,36 +543,13 @@
         scales: { x: { beginAtZero: true } }
       });
 
-      // 4. Ranking Cursos (Top 12)
       const cursosData = agruparContagem(dadosFiltrados, 'curso').slice(0, 12);
       criarOuAtualizarGrafico('chartCursosRanking', 'bar', cursosData.map(x => x[0]), cursosData.map(x => x[1]), '#0ea5e9', {
         indexAxis: 'y',
         scales: { x: { beginAtZero: true } }
       });
 
-      // 5. Bairros Completo
       criarOuAtualizarGrafico('chartBairrosCompleto', 'bar', bairrosData.map(x => x[0]), bairrosData.map(x => x[1]), '#0b5d3b', {
-        indexAxis: 'y',
-        scales: { x: { beginAtZero: true } }
-      });
-
-      // 6. Faixa Etária
-      const faixas = { 'Até 25 anos': 0, '26 a 35 anos': 0, '36 a 50 anos': 0, '51 a 60 anos': 0, '60+ anos': 0, 'Não informada': 0 };
-      dadosFiltrados.forEach(d => {
-        if (!d.idade) faixas['Não informada']++;
-        else if (d.idade <= 25) faixas['Até 25 anos']++;
-        else if (d.idade <= 35) faixas['26 a 35 anos']++;
-        else if (d.idade <= 50) faixas['36 a 50 anos']++;
-        else if (d.idade <= 60) faixas['51 a 60 anos']++;
-        else faixas['60+ anos']++;
-      });
-      criarOuAtualizarGrafico('chartFaixaEtaria', 'bar', Object.keys(faixas), Object.values(faixas), '#8b5cf6', {
-        scales: { y: { beginAtZero: true } }
-      });
-
-      // 7. Instrutores
-      const instData = agruparContagem(dadosFiltrados, 'instrutor').slice(0, 12);
-      criarOuAtualizarGrafico('chartInstrutores', 'bar', instData.map(x => x[0]), instData.map(x => x[1]), '#f59e0b', {
         indexAxis: 'y',
         scales: { x: { beginAtZero: true } }
       });
@@ -564,7 +590,174 @@
         });
     }
 
-    // Inicia automaticamente
+
+    /* ===== ENRIQUECIMENTO: carga horária e instrutor por curso ===== */
+    async function enriquecerComCursos(somenteCursos) {
+      modoSomenteCursos = somenteCursos;
+      const porId = {}, porNome = {};
+      if (CSV_CURSOS_URL) {
+        try {
+          const c = await fetchCsvData(CSV_CURSOS_URL);
+          c.records.forEach(r => {
+            const m = { ch: parseInt(r.CARGA_HORARIA) || 0, inst: r.INSTRUTOR || r.INSTUTOR || '' };
+            if (r.ID_CURSO) porId[r.ID_CURSO] = m;
+            if (r.NOME_CURSO) porNome[r.NOME_CURSO.toUpperCase()] = m;
+          });
+        } catch (e) { console.warn('Não foi possível ler a aba CURSOS:', e); }
+      }
+      dadosBrutos.forEach(d => {
+        const m = porId[d.id_curso] || porNome[(d.curso || '').toUpperCase()] || {};
+        if (!d.carga_horaria) d.carga_horaria = m.ch || CARGA_MANUAL[d.curso] || 0;
+        if ((!d.instrutor || d.instrutor === 'Não informado') && m.inst) d.instrutor = m.inst;
+      });
+    }
+
+    function novoGrafico(id, tipo, data, opcoes = {}) {
+      if (charts[id]) charts[id].destroy();
+      charts[id] = new Chart(document.getElementById(id).getContext('2d'), {
+        type: tipo, data,
+        options: { responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: tipo === 'doughnut' || (data.datasets.length > 1), position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+          ...opcoes }
+      });
+    }
+
+    function kpiSimples(titulo, valor, sub, cor) {
+      const borda = { emerald: 'border-emerald-600', sky: 'border-sky-500', amber: 'border-amber-500', purple: 'border-purple-500' }[cor];
+      const txt = { emerald: 'text-emerald-700', sky: 'text-sky-700', amber: 'text-amber-700', purple: 'text-purple-700' }[cor];
+      return `<div class="kpi-card bg-white rounded-xl p-5 shadow-sm border-l-4 ${borda}">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">${titulo}</p>
+        <p class="text-3xl font-extrabold text-gray-900 mt-1">${valor}</p>
+        <p class="text-xs ${txt} mt-1 font-medium">${sub}</p></div>`;
+    }
+
+    function mostrarAviso(id, msgs) {
+      const el = document.getElementById(id);
+      el.classList.toggle('hidden', msgs.length === 0);
+      el.innerHTML = msgs.join('<br>');
+    }
+
+    /* ===== A. PERFIL DEMOGRÁFICO ===== */
+    function renderizarDemografia() {
+      const comIdade = dadosFiltrados.filter(d => d.idade != null);
+      const semIdade = dadosFiltrados.length - comIdade.length;
+      document.getElementById('notaIdade').textContent = semIdade
+        ? `${semIdade} registro(s) sem data de nascimento válida não entram nos gráficos de idade.` : '';
+
+      const tot = [0, 0, 0];
+      comIdade.forEach(d => tot[faixaDe(d.idade)]++);
+      novoGrafico('chartFaixaDonut', 'doughnut',
+        { labels: FAIXAS.map(f => f[0]), datasets: [{ data: tot, backgroundColor: FAIXAS.map(f => f[1]), borderWidth: 2, borderColor: '#fff' }] },
+        { cutout: '60%' });
+
+      const cats = [...new Set(comIdade.map(d => d.categoria))].sort();
+      novoGrafico('chartFaixaCategoria', 'bar', {
+        labels: cats,
+        datasets: FAIXAS.map((f, i) => ({ label: f[0], backgroundColor: f[1], borderRadius: 4,
+          data: cats.map(c => comIdade.filter(d => d.categoria === c && faixaDe(d.idade) === i).length) }))
+      }, { scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true } } });
+
+      const porCurso = {};
+      comIdade.forEach(d => { (porCurso[d.curso] = porCurso[d.curso] || []).push(d.idade); });
+      document.getElementById('tabelaDemoBody').innerHTML = Object.entries(porCurso)
+        .sort((a, b) => b[1].length - a[1].length)
+        .map(([curso, ids]) => {
+          const media = (ids.reduce((a, b) => a + b, 0) / ids.length).toFixed(1);
+          const pc = [0, 1, 2].map(k => Math.round(100 * ids.filter(i => faixaDe(i) === k).length / ids.length));
+          return `<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-medium text-gray-900">${curso}</td>
+            <td class="px-4 py-3 text-center font-semibold text-purple-700">${media}</td>
+            ${pc.map(p => `<td class="px-4 py-3 text-center">${p}%</td>`).join('')}</tr>`;
+        }).join('') || '<tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">Sem dados de idade para o filtro atual.</td></tr>';
+    }
+
+    /* ===== B. IMPACTO SOCIAL (horas = concluintes × carga horária) ===== */
+    function renderizarImpacto() {
+      const conc = dadosFiltrados.filter(ehConcluinte);
+      const semCH = conc.filter(d => !d.carga_horaria).length;
+      const avisos = [];
+      if (modoSomenteCursos) avisos.push('O link publicado contém só a aba <strong>CURSOS</strong>: não há concluintes individuais para calcular as horas. Publique a aba de matrículas.');
+      else if (semCH) avisos.push(`${semCH} concluinte(s) sem carga horária cadastrada ficaram fora do total de horas. Preencha CARGA_HORARIA na planilha, ou use <code>CSV_CURSOS_URL</code> / <code>CARGA_MANUAL</code> no código.`);
+      mostrarAviso('avisoImpacto', avisos);
+
+      const horas = conc.reduce((a, d) => a + d.carga_horaria, 0);
+      const comCH = conc.filter(d => d.carga_horaria);
+      const cursosComCH = new Set(comCH.map(d => d.curso)).size;
+      document.getElementById('kpisImpacto').innerHTML =
+        kpiSimples('Horas de Formação', nf(horas) + ' h', 'Entregues à comunidade', 'emerald') +
+        kpiSimples('Concluintes', nf(conc.length), 'Pessoas certificadas', 'amber') +
+        kpiSimples('Média por Aluno', (comCH.length ? (horas / comCH.length).toFixed(1) : '0') + ' h', 'Horas por concluinte', 'sky') +
+        kpiSimples('Cursos com Carga Horária', cursosComCH, 'Base do cálculo', 'purple');
+
+      const porCat = {}, porCurso = {};
+      conc.forEach(d => {
+        porCat[d.categoria] = (porCat[d.categoria] || 0) + d.carga_horaria;
+        const o = porCurso[d.curso] = porCurso[d.curso] || { ch: d.carga_horaria, n: 0, h: 0 };
+        o.n++; o.h += d.carga_horaria;
+      });
+      const cats = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
+      novoGrafico('chartHorasCategoria', 'bar',
+        { labels: cats.map(x => x[0]), datasets: [{ data: cats.map(x => x[1]), backgroundColor: ['#0b5d3b', '#0ea5e9', '#f59e0b', '#8b5cf6', '#10b981', '#ec4899', '#64748b'], borderRadius: 6 }] },
+        { scales: { y: { beginAtZero: true } } });
+
+      const cursos = Object.entries(porCurso).sort((a, b) => b[1].h - a[1].h);
+      novoGrafico('chartHorasCurso', 'bar',
+        { labels: cursos.slice(0, 10).map(x => x[0]), datasets: [{ data: cursos.slice(0, 10).map(x => x[1].h), backgroundColor: '#0b5d3b', borderRadius: 6 }] },
+        { indexAxis: 'y', scales: { x: { beginAtZero: true } } });
+
+      document.getElementById('tabelaImpactoBody').innerHTML = cursos.map(([c, o]) =>
+        `<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-medium text-gray-900">${c}</td>
+          <td class="px-4 py-3 text-center">${o.ch ? o.ch + ' h' : '<span class="text-amber-600">não informada</span>'}</td>
+          <td class="px-4 py-3 text-center text-emerald-700 font-semibold">${o.n}</td>
+          <td class="px-4 py-3 text-center font-bold">${nf(o.h)} h</td></tr>`).join('')
+        + (cursos.length ? `<tr class="bg-gray-50 font-bold"><td class="px-4 py-3">TOTAL</td><td></td><td class="px-4 py-3 text-center">${conc.length}</td><td class="px-4 py-3 text-center">${nf(horas)} h</td></tr>`
+          : '<tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">Sem concluintes para o filtro atual.</td></tr>');
+    }
+
+    /* ===== C. DESEMPENHO DOS INSTRUTORES ===== */
+    function renderizarInstrutores() {
+      const g = {};
+      dadosFiltrados.forEach(d => {
+        const k = d.instrutor || 'Não informado';
+        const o = g[k] = g[k] || { nome: k, matr: 0, conc: 0, desist: 0, horas: 0, turmas: new Set(), cursos: new Set() };
+        o.matr++; o.turmas.add(d.id_curso || d.curso); o.cursos.add(d.curso);
+        if (ehConcluinte(d)) { o.conc++; o.horas += d.carga_horaria || 0; }
+        else if (ehDesistente(d)) o.desist++;
+      });
+      const lista = Object.values(g).map(o => ({ ...o, andamento: o.matr - o.conc - o.desist,
+        taxa: (o.conc + o.desist) > 0 ? +(100 * o.conc / (o.conc + o.desist)).toFixed(1) : null }))
+        .sort((a, b) => b.matr - a.matr);
+
+      const avisos = [];
+      if (modoSomenteCursos) avisos.push('O link publicado contém só a aba <strong>CURSOS</strong>: retenção e desistência exigem a aba de matrículas.');
+      if (g['Não informado']) avisos.push(`${g['Não informado'].matr} matrícula(s) sem instrutor vinculado (coluna INSTRUTOR vazia).`);
+      mostrarAviso('avisoInstrutores', avisos);
+
+      const comTaxa = lista.filter(o => o.taxa !== null).sort((a, b) => b.taxa - a.taxa);
+      novoGrafico('chartInstrTaxa', 'bar',
+        { labels: comTaxa.map(o => o.nome), datasets: [{ data: comTaxa.map(o => o.taxa), borderRadius: 6,
+          backgroundColor: comTaxa.map(o => o.taxa >= 80 ? '#10b981' : o.taxa >= 50 ? '#f59e0b' : '#ef4444') }] },
+        { indexAxis: 'y', scales: { x: { beginAtZero: true, max: 100 } } });
+
+      const top = lista.slice(0, 12);
+      novoGrafico('chartInstrVolume', 'bar', {
+        labels: top.map(o => o.nome),
+        datasets: [
+          { label: 'Concluintes', data: top.map(o => o.conc), backgroundColor: '#10b981', borderRadius: 4 },
+          { label: 'Desistentes', data: top.map(o => o.desist), backgroundColor: '#ef4444', borderRadius: 4 },
+          { label: 'Em andamento', data: top.map(o => o.andamento), backgroundColor: '#94a3b8', borderRadius: 4 }]
+      }, { indexAxis: 'y', scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } } });
+
+      document.getElementById('tabelaInstrBody').innerHTML = lista.map(o => {
+        const cls = o.taxa === null ? 'bg-gray-100 text-gray-500' : o.taxa >= 80 ? 'bg-emerald-100 text-emerald-800' : o.taxa >= 50 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
+        return `<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-medium text-gray-900">${o.nome}</td>
+          <td class="px-4 py-3 text-gray-600">${[...o.cursos].join(', ')}</td>
+          <td class="px-4 py-3 text-center">${o.turmas.size}</td><td class="px-4 py-3 text-center font-semibold">${o.matr}</td>
+          <td class="px-4 py-3 text-center text-emerald-700 font-semibold">${o.conc}</td><td class="px-4 py-3 text-center text-red-600">${o.desist}</td>
+          <td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-xs font-semibold ${cls}">${o.taxa === null ? 'N/D' : o.taxa + '%'}</span></td>
+          <td class="px-4 py-3 text-center font-bold">${nf(o.horas)} h</td></tr>`;
+      }).join('');
+    }
+
     inicializarDashboard();
   </script>
 </body>
