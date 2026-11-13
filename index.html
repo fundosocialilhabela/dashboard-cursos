@@ -285,9 +285,12 @@
   <script>
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQARjUEog-LEDm45GRbILx9YT9MSMK2IKRSDkZ4ZrMqF-eqODkf3YzzqFK-zPoeLFNOEwSEUS-vAAoI/pub?output=csv";
 
-    // OPCIONAL: link CSV da aba CURSOS (Arquivo > Compartilhar > Publicar na Web > aba CURSOS > CSV).
-    // Serve para buscar CARGA_HORARIA e INSTRUTOR por curso quando a aba de matrículas não tiver essas colunas.
-    const CSV_CURSOS_URL = "";
+    // O Google Sheets só publica CSV UMA ABA POR VEZ. Publique cada aba separadamente
+    // (Arquivo > Compartilhar > Publicar na Web > escolha a ABA (não "Todo o documento") > CSV)
+    // e cole cada link abaixo. CSV_BASE_URL (acima) continua sendo a aba principal de MATRÍCULAS.
+    // As abas abaixo são opcionais: complementam a principal cruzando por ID_CURSO e ID_ALUNO.
+    const CSV_CURSOS_URL = "";   // aba CURSOS: NOME_CURSO, CATEGORIA, INSTRUTOR, CARGA_HORARIA
+    const CSV_ALUNOS_URL = "";   // aba ALUNOS: BAIRRO, DATA_NASCIMENTO
     // OPCIONAL: carga horária manual por curso (use se não publicar a aba CURSOS). Ex.: {"COSTURA INICIANTE": 40}
     const CARGA_MANUAL = {};
 
@@ -376,7 +379,7 @@
         if (isAbaCursos) {
           document.getElementById('alertaEstrutura').classList.remove('hidden');
           document.getElementById('alertaMensagem').innerHTML =
-            'O link CSV publicado está apontando apenas para a aba <strong>CURSOS</strong> (43 turmas). Para que o painel some automaticamente todas as <strong>455+ matrículas</strong>, <strong>certificados</strong> e <strong>bairros</strong>, publique "Todo o documento" no Google Sheets.';
+            'O link CSV publicado está apontando apenas para a aba <strong>CURSOS</strong> (43 turmas). Para que o painel some automaticamente todas as <strong>455+ matrículas</strong>, <strong>certificados</strong> e <strong>bairros</strong>, publique a aba de <strong>matrículas</strong> como CSV (o Google Sheets publica uma aba por vez) e use o link dela em <code>CSV_BASE_URL</code>.';
 
           dadosBrutos = principal.records.map(r => ({
             id_curso: r.ID_CURSO || '',
@@ -592,23 +595,36 @@
 
 
     /* ===== ENRIQUECIMENTO: carga horária e instrutor por curso ===== */
+    async function lerAbaOpcional(url, nome) {
+      if (!url) return [];
+      try { return (await fetchCsvData(url)).records; }
+      catch (e) { console.warn('Não foi possível ler a aba ' + nome + ':', e); return []; }
+    }
+
     async function enriquecerComCursos(somenteCursos) {
       modoSomenteCursos = somenteCursos;
-      const porId = {}, porNome = {};
-      if (CSV_CURSOS_URL) {
-        try {
-          const c = await fetchCsvData(CSV_CURSOS_URL);
-          c.records.forEach(r => {
-            const m = { ch: parseInt(r.CARGA_HORARIA) || 0, inst: r.INSTRUTOR || r.INSTUTOR || '' };
-            if (r.ID_CURSO) porId[r.ID_CURSO] = m;
-            if (r.NOME_CURSO) porNome[r.NOME_CURSO.toUpperCase()] = m;
-          });
-        } catch (e) { console.warn('Não foi possível ler a aba CURSOS:', e); }
-      }
+      const [cursosRec, alunosRec] = await Promise.all([lerAbaOpcional(CSV_CURSOS_URL, 'CURSOS'), lerAbaOpcional(CSV_ALUNOS_URL, 'ALUNOS')]);
+
+      const porId = {}, porNome = {}, alunos = {};
+      cursosRec.forEach(r => {
+        const m = { nome: r.NOME_CURSO || '', cat: r.CATEGORIA || '', ch: parseInt(r.CARGA_HORARIA) || 0, inst: r.INSTRUTOR || r.INSTUTOR || '' };
+        if (r.ID_CURSO) porId[r.ID_CURSO] = m;
+        if (m.nome) porNome[m.nome.toUpperCase()] = m;
+      });
+      alunosRec.forEach(r => { if (r.ID_ALUNO) alunos[r.ID_ALUNO] = r; });
+
       dadosBrutos.forEach(d => {
         const m = porId[d.id_curso] || porNome[(d.curso || '').toUpperCase()] || {};
+        if ((!d.curso || d.curso === 'Não informado') && m.nome) d.curso = m.nome;
+        if ((!d.categoria || d.categoria === 'Geral' || d.categoria === 'Outros') && m.cat) d.categoria = m.cat;
         if (!d.carga_horaria) d.carga_horaria = m.ch || CARGA_MANUAL[d.curso] || 0;
         if ((!d.instrutor || d.instrutor === 'Não informado') && m.inst) d.instrutor = m.inst;
+
+        const a = alunos[d.id_aluno];
+        if (a) {
+          if ((!d.bairro || d.bairro === 'Não informado') && a.BAIRRO) d.bairro = a.BAIRRO.toUpperCase();
+          if (d.idade == null) d.idade = calcularIdade(a.DATA_NASCIMENTO);
+        }
       });
     }
 
