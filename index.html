@@ -9,39 +9,39 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #f3f6f4; color: #1f2937; }
+    body { font-family: 'Inter', sans-serif; background-color: #f0f4f1; color: #1f2937; }
     .bg-ilha-green { background-color: #0b5d3b; }
     .bg-ilha-dark { background-color: #074229; }
     .text-ilha-green { color: #0b5d3b; }
     .border-ilha-green { border-color: #0b5d3b; }
     .tab-active { background-color: #ffffff; color: #0b5d3b; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
     .kpi-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
-    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.06); }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.06); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
   <!-- Cabeçalho Institucional -->
   <header class="bg-ilha-green text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="max-w-[98%] mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-4">
-        <img src="logo.png" alt="Fundo Social de Solidariedade" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';" class="h-12 w-auto bg-white p-1.5 rounded-lg shadow-sm" />
-        <div id="logoFallback" style="display:none;" class="bg-white text-ilha-green font-extrabold px-3 py-1.5 rounded-lg text-center leading-tight shadow-sm">
-          <span class="block text-[10px] tracking-wider">FUNDO</span>
-          <span class="block text-xs">SOCIAL</span>
-          <span class="block text-[9px] font-semibold text-gray-500">ILHABELA</span>
+        <!-- Logo Institucional Fixada com Sombra e Fundo Branco -->
+        <div class="bg-white text-ilha-green font-extrabold px-3.5 py-2 rounded-xl text-center leading-tight shadow-md border border-emerald-800">
+          <span class="block text-[10px] tracking-wider font-semibold text-gray-600">FUNDO</span>
+          <span class="block text-sm font-black text-ilha-green">SOCIAL</span>
+          <span class="block text-[8px] font-bold text-gray-500 uppercase tracking-widest">ILHABELA</span>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="bg-yellow-400 text-gray-900 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider">BI Oficial</span>
-            <h1 class="text-lg sm:text-2xl font-bold tracking-tight">Fundo Social de Solidariedade</h1>
+            <span class="bg-yellow-400 text-gray-900 text-[10px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shadow-sm">BI Oficial</span>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Fundo Social de Solidariedade</h1>
           </div>
-          <p class="text-emerald-100 text-xs sm:text-sm mt-0.5">Prefeitura Municipal de Ilhabela • Painel Interativo SigaCap 2026</p>
+          <p class="text-emerald-100 text-xs sm:text-sm mt-0.5 font-medium">Prefeitura Municipal de Ilhabela • Painel Interativo SigaCap 2026</p>
         </div>
       </div>
 
       <div class="flex items-center gap-3 text-xs">
-        <span id="statusConexao" class="inline-flex items-center gap-1.5 bg-ilha-dark px-3 py-1.5 rounded-full text-emerald-200 border border-emerald-700">
+        <span id="statusConexao" class="inline-flex items-center gap-1.5 bg-ilha-dark px-3.5 py-1.5 rounded-full text-emerald-200 border border-emerald-700 shadow-inner">
           <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
           Sincronizando com Google Sheets...
         </span>
@@ -49,22 +49,22 @@
     </div>
 
     <!-- Barra de Navegação -->
-    <div class="bg-ilha-dark/60 border-t border-emerald-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap gap-2">
-        <button onclick="switchTab('visaoGeral')" id="tab-visaoGeral" class="tab-btn tab-active px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Visão Geral & KPIs</button>
-        <button onclick="switchTab('desempenho')" id="tab-desempenho" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Desempenho dos Cursos</button>
-        <button onclick="switchTab('demografico')" id="tab-demografico" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Perfil Demográfico & Bairros</button>
-        <button onclick="switchTab('instrutores')" id="tab-instrutores" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-md text-xs sm:text-sm transition">Desempenho dos Instrutores</button>
+    <div class="bg-ilha-dark/70 border-t border-emerald-800">
+      <div class="max-w-[98%] mx-auto px-4 py-2 flex flex-wrap gap-2">
+        <button onclick="switchTab('visaoGeral')" id="tab-visaoGeral" class="tab-btn tab-active px-4 py-1.5 rounded-lg text-xs sm:text-sm transition">Visão Geral & KPIs</button>
+        <button onclick="switchTab('desempenho')" id="tab-desempenho" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-lg text-xs sm:text-sm transition">Desempenho dos Cursos</button>
+        <button onclick="switchTab('demografico')" id="tab-demografico" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-lg text-xs sm:text-sm transition">Perfil Demográfico & Bairros</button>
+        <button onclick="switchTab('instrutores')" id="tab-instrutores" class="tab-btn text-emerald-100 hover:bg-white/10 px-4 py-1.5 rounded-lg text-xs sm:text-sm transition">Desempenho dos Instrutores</button>
       </div>
     </div>
   </header>
 
   <!-- Barra de Filtros Globais -->
-  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+  <div class="max-w-[98%] w-full mx-auto px-4 mt-4">
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3.5 flex flex-col md:flex-row items-center justify-between gap-3">
       <div class="text-xs sm:text-sm text-gray-600 flex items-center gap-2">
         <svg class="w-4 h-4 text-ilha-green shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-        <span>Filtre os indicadores abaixo ou <strong>clique nas barras/fatias dos gráficos</strong> para filtrar:</span>
+        <span>Filtre os indicadores abaixo ou <strong>clique nas barras/fatias dos gráficos</strong> para refinar:</span>
       </div>
 
       <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -80,26 +80,26 @@
           <option value="TODOS">Todos os Status</option>
         </select>
 
-        <button onclick="resetarFiltros()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-xs sm:text-sm px-3 py-1.5 rounded-lg border border-gray-300 transition">
+        <button onclick="resetarFiltros()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-xs sm:text-sm px-3.5 py-1.5 rounded-lg border border-gray-300 transition">
           Resetar
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Alerta de Erro de Conexão (exibido apenas se falhar) -->
-  <div id="alertaEstrutura" class="hidden max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+  <!-- Alerta de Erro de Conexão -->
+  <div id="alertaEstrutura" class="hidden max-w-[98%] w-full mx-auto px-4 mt-4">
     <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl shadow-sm text-xs sm:text-sm text-red-900">
       <p class="font-bold">Aviso de Leitura</p>
       <p id="alertaMensagem" class="mt-1"></p>
     </div>
   </div>
 
-  <!-- Conteúdo Principal -->
-  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 flex-1">
+  <!-- Conteúdo Principal (Largura Expandida para ocupar melhor o monitor) -->
+  <main class="max-w-[98%] w-full mx-auto px-4 py-5 flex-1 flex flex-col gap-5">
 
     <!-- Cards de KPIs -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mb-5">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
       <div class="kpi-card bg-white rounded-xl p-4 shadow-sm border-l-4 border-emerald-600">
         <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Total Matrículas</p>
         <p id="kpiTotalMatriculas" class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">-</p>
@@ -131,32 +131,32 @@
       </div>
     </div>
 
-    <!-- ABA 1: VISÃO GERAL & KPIs (3 Colunas lado a lado em tela única) -->
+    <!-- ABA 1: VISÃO GERAL & KPIs (3 Colunas Lado a Lado Otimizadas) -->
     <section id="sec-visaoGeral" class="tab-section">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <!-- Gráfico Categorias -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4.5 flex flex-col">
           <h2 class="text-sm font-bold text-gray-800">Distribuição por Categoria</h2>
           <p class="text-[11px] text-gray-400 mb-3">Clique para filtrar por eixo formativo</p>
-          <div class="relative flex-1 min-h-[250px] flex items-center justify-center">
+          <div class="relative flex-1 min-h-[300px] flex items-center justify-center">
             <canvas id="chartCategorias"></canvas>
           </div>
         </div>
 
         <!-- Gráfico Status -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4.5 flex flex-col">
           <h2 class="text-sm font-bold text-gray-800">Status das Matrículas</h2>
           <p class="text-[11px] text-gray-400 mb-3">Clique para filtrar pela situação do aluno</p>
-          <div class="relative flex-1 min-h-[250px]">
+          <div class="relative flex-1 min-h-[300px]">
             <canvas id="chartStatus"></canvas>
           </div>
         </div>
 
         <!-- Gráfico Bairros -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4.5 flex flex-col">
           <h2 class="text-sm font-bold text-gray-800">Concentração por Bairro</h2>
           <p class="text-[11px] text-gray-400 mb-3">Top 8 bairros atendidos (clique para filtrar)</p>
-          <div class="relative flex-1 min-h-[250px]">
+          <div class="relative flex-1 min-h-[300px]">
             <canvas id="chartBairros"></canvas>
           </div>
         </div>
@@ -164,11 +164,11 @@
     </section>
 
     <!-- ABA 2: DESEMPENHO DOS CURSOS -->
-    <section id="sec-desempenho" class="tab-section hidden space-y-6">
+    <section id="sec-desempenho" class="tab-section hidden space-y-5">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
         <h2 class="text-base font-bold text-gray-800">Volume por Curso / Oficina</h2>
         <p class="text-xs text-gray-400 mb-4">Ranking dos cursos com maior número de matrículas</p>
-        <div class="relative h-[380px]">
+        <div class="relative h-[420px]">
           <canvas id="chartCursosRanking"></canvas>
         </div>
       </div>
@@ -196,12 +196,12 @@
     </section>
 
     <!-- ABA 3: PERFIL DEMOGRÁFICO & BAIRROS -->
-    <section id="sec-demografico" class="tab-section hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <section id="sec-demografico" class="tab-section hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
           <h2 class="text-base font-bold text-gray-800">Todos os Bairros Atendidos</h2>
           <p class="text-xs text-gray-400 mb-4">Distribuição geográfica completa das matrículas</p>
-          <div class="relative h-[420px]">
+          <div class="relative h-[460px]">
             <canvas id="chartBairrosCompleto"></canvas>
           </div>
         </div>
@@ -209,7 +209,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
           <h2 class="text-base font-bold text-gray-800">Distribuição por Faixa Etária</h2>
           <p class="text-xs text-gray-400 mb-4">Perfil de idade dos participantes</p>
-          <div class="relative h-[420px]">
+          <div class="relative h-[460px]">
             <canvas id="chartFaixaEtaria"></canvas>
           </div>
         </div>
@@ -217,11 +217,11 @@
     </section>
 
     <!-- ABA 4: DESEMPENHO DOS INSTRUTORES -->
-    <section id="sec-instrutores" class="tab-section hidden space-y-6">
+    <section id="sec-instrutores" class="tab-section hidden space-y-5">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
         <h2 class="text-base font-bold text-gray-800">Matrículas e Certificações por Monitor / Instrutor</h2>
         <p class="text-xs text-gray-400 mb-4">Volume de alunos atendidos por profissional</p>
-        <div class="relative h-[380px]">
+        <div class="relative h-[420px]">
           <canvas id="chartInstrutores"></canvas>
         </div>
       </div>
@@ -250,7 +250,7 @@
 
   <!-- Rodapé -->
   <footer class="bg-white border-t border-gray-200 py-3.5 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-2">
+    <div class="max-w-[98%] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-2">
       <span>Fundo Social de Solidariedade de Ilhabela • Painel Interativo de Gestão</span>
       <span id="ultimaAtualizacao">Conectado à aba segura BASE_PAINEL_BI</span>
     </div>
@@ -264,7 +264,6 @@
     let dadosFiltrados = [];
     let charts = {};
 
-    // Navegação entre abas do painel
     function switchTab(tabName) {
       document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -277,14 +276,12 @@
       activeBtn.classList.remove('text-emerald-100');
     }
 
-    // Baixa e lê o CSV da aba BASE_PAINEL_BI pulando linhas mescladas de título (linhas 1 a 4)
     async function fetchCsvData(url) {
       const response = await fetch(url + "&t=" + new Date().getTime());
       const text = await response.text();
       const parsed = Papa.parse(text, { skipEmptyLines: true });
       const rows = parsed.data;
 
-      // Localiza automaticamente a linha 5 onde está ID_MATRICULA
       let headerIdx = rows.findIndex(r =>
         r.some(cell => {
           const val = String(cell || '').trim().toUpperCase();
@@ -312,7 +309,6 @@
       return { headers, records };
     }
 
-    // Calcula idade a partir de DD/MM/AAAA ou MM/DD/AAAA
     function calcularIdade(dataStr) {
       if (!dataStr) return null;
       const partes = dataStr.split('/');
@@ -330,7 +326,6 @@
       return (idade > 5 && idade < 110) ? idade : null;
     }
 
-    // Padroniza o texto do status
     function normalizarStatus(st) {
       const s = (st || '').trim().toUpperCase();
       if (s === 'CONCLUIU' || s === 'CONCLUÍDO' || s === 'CERTIFICADO') return 'CONCLUIU';
@@ -339,7 +334,6 @@
       return 'EM ANDAMENTO';
     }
 
-    // Inicializa e carrega os dados da aba BASE_PAINEL_BI
     async function inicializarDashboard() {
       const statusEl = document.getElementById('statusConexao');
       try {
@@ -443,13 +437,12 @@
       return Object.entries(mapa).sort((a, b) => b[1] - a[1]);
     }
 
-    // Aplica transparência sutil (cross-filtering) nos itens não selecionados
     function aplicarTransparenciaCores(labels, coresBase, valorSelecionado) {
       return labels.map((label, idx) => {
         const cor = Array.isArray(coresBase) ? coresBase[idx % coresBase.length] : coresBase;
         if (!valorSelecionado || valorSelecionado === 'TODAS' || valorSelecionado === 'TODOS') return cor;
         if (label === valorSelecionado) return cor;
-        return cor + '33'; // Adiciona transparência (alpha ~20%) aos não selecionados
+        return cor + '33';
       });
     }
 
@@ -485,7 +478,7 @@
       const bairroAtivo = document.getElementById('filtroBairro').value;
       const statusAtivo = document.getElementById('filtroStatus').value;
 
-      // 1. Categorias (com cross-filtering ao clicar)
+      // 1. Categorias
       const baseCat = dadosBrutos.filter(d => (bairroAtivo === 'TODOS' || d.bairro === bairroAtivo) && (statusAtivo === 'TODOS' || d.status === statusAtivo));
       const catData = agruparContagem(baseCat, 'categoria');
       const catLabels = catData.map(x => x[0]);
@@ -501,7 +494,7 @@
         }
       });
 
-      // 2. Status (com cross-filtering ao clicar)
+      // 2. Status
       const baseStatus = dadosBrutos.filter(d => (catAtiva === 'TODAS' || d.categoria === catAtiva) && (bairroAtivo === 'TODOS' || d.bairro === bairroAtivo));
       const ordemStatus = ['CONCLUIU', 'EM ANDAMENTO', 'DESISTIU', 'REPROVOU'];
       const mapaStatus = { 'CONCLUIU': 0, 'EM ANDAMENTO': 0, 'DESISTIU': 0, 'REPROVOU': 0 };
@@ -523,7 +516,7 @@
         }
       });
 
-      // 3. Top 8 Bairros (com cross-filtering ao clicar)
+      // 3. Top 8 Bairros
       const baseBairro = dadosBrutos.filter(d => (catAtiva === 'TODAS' || d.categoria === catAtiva) && (statusAtivo === 'TODOS' || d.status === statusAtivo));
       const bairrosData = agruparContagem(baseBairro, 'bairro');
       const topBairros = bairrosData.slice(0, 8);
@@ -578,7 +571,6 @@
     }
 
     function renderizarTabelas() {
-      // Tabela Cursos
       const tbodyCursos = document.getElementById('tabelaCursosBody');
       tbodyCursos.innerHTML = '';
       const resumoCursos = {};
@@ -613,7 +605,6 @@
           `;
         });
 
-      // Tabela Instrutores
       const tbodyInst = document.getElementById('tabelaInstrutoresBody');
       tbodyInst.innerHTML = '';
       const resumoInst = {};
@@ -641,7 +632,6 @@
         });
     }
 
-    // Inicia automaticamente
     inicializarDashboard();
   </script>
 </body>
